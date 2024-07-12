@@ -72,6 +72,12 @@ public class CalcMacActivity extends BaseAppCompatActivity {
                         case R.id.rb_mac_type7:
                             mCalcType = AidlConstantsV2.Security.MAC_ALG_CUP_SM4_MAC_ALG1;
                             break;
+                        case R.id.rb_mac_type8:
+                            mCalcType = AidlConstantsV2.Security.MAC_ALG_FAST_MODE_INTERNATIONAL;
+                            break;
+                        case R.id.rb_mac_type9:
+                            mCalcType = AidlConstantsV2.Security.MAC_ALG_CBC_INTERNATIONAL;
+                            break;
                     }
                 }
         );
@@ -192,5 +198,4 @@ public class CalcMacActivity extends BaseAppCompatActivity {
             e.printStackTrace();
         }
     }
-
 }

@@ -149,6 +149,14 @@
                         android:textColor="@color/colorTextContent"
                         android:textSize="14sp" />
 
+                    <CheckBox
+                        android:id="@+id/chk_mode_cancel_to_clear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pin_pad_mode_cancel_to_clear"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="14sp" />
+
                     <android.support.design.button.MaterialButton
                         android:id="@+id/mb_set_mode"
                         android:layout_width="match_parent"

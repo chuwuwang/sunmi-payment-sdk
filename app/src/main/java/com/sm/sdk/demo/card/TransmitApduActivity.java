@@ -19,7 +19,6 @@ import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
-import com.sunmi.pay.hardware.aidl.AidlConstants;
 import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
@@ -38,6 +37,8 @@ import sunmi.sunmiui.utils.LogUtil;
  */
 public class TransmitApduActivity extends BaseAppCompatActivity {
     private EditText apdu;
+    private EditText edtActiveCtr;
+    private EditText edtApduCtr;
     private Button checkCard;
     private Button sendApdu;
     private TextView result;
@@ -54,6 +55,8 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
     private void initView() {
         initToolbarBringBack(R.string.card_test_transmit_apdu);
         apdu = findViewById(R.id.apdu);
+        edtActiveCtr = findViewById(R.id.active_ctr_code);
+        edtApduCtr = findViewById(R.id.apdu_ctr_code);
         checkCard = findViewById(R.id.check_card);
         sendApdu = findViewById(R.id.send_apdu);
         result = findViewById(R.id.result);
@@ -94,20 +97,22 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void findICCard(String atr) throws RemoteException {
+        public void findICCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
+            String atr = info.getString("atr");
             LogUtil.e(TAG, "findICCard, atr:" + atr);
             handleCheckCardSuccess("findICCard, atr:" + atr);
-            cardType = AidlConstantsV2.CardType.IC.getValue();
+            cardType = info.getInt("cardType");
             showSpendTime();
         }
 
         @Override
-        public void findRFCard(String uuid) throws RemoteException {
+        public void findRFCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
+            String uuid = info.getString("uuid");
             LogUtil.e(TAG, "findRFCard, uuid:" + uuid);
             handleCheckCardSuccess("findRFCard, uuid:" + uuid);
-            cardType = AidlConstantsV2.CardType.NFC.getValue();
+            cardType = info.getInt("cardType");
             showSpendTime();
             //If want to transmit apdu to Mifare or Felica card,
             //change cardType to corresponding value, eg:
@@ -115,8 +120,10 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void onError(final int code, final String msg) throws RemoteException {
+        public void onErrorEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
+            int code = info.getInt("code");
+            String msg = info.getString("message");
             LogUtil.e(TAG, "check card error,code:" + code + "message:" + msg);
             handleCheckCardFailed(code, msg);
             showSpendTime();
@@ -126,13 +133,21 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
     /** 刷卡 */
     private void checkCard() {
         try {
+            String ctrStr = edtActiveCtr.getText().toString();
+            if (TextUtils.isEmpty(ctrStr)) {
+                showToast("卡片激活控制参数不能为空");
+                edtActiveCtr.requestFocus();
+                return;
+            }
+            int activeCtr = Integer.parseInt(ctrStr, 16);
             //支持M1卡
-            int allType = AidlConstants.CardType.NFC.getValue()
-                    | AidlConstants.CardType.IC.getValue()
-                    | AidlConstants.CardType.MIFARE.getValue()
-                    | AidlConstants.CardType.FELICA.getValue();
+            int allType = CardType.NFC.getValue()
+                    | CardType.IC.getValue()
+                    | CardType.MIFARE.getValue()
+                    | CardType.FELICA.getValue()
+                    | CardType.PSAM0.getValue();
             addStartTimeWithClear("checkCard()");
-            MyApplication.app.readCardOptV2.checkCard(allType, mReadCardCallback, 60);
+            MyApplication.app.readCardOptV2.checkCardEx(allType, activeCtr, 0, mReadCardCallback, 60);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -144,7 +159,6 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
             sb.append(msg);
             sb.append("\n");
             result.setText(sb);
-            result.setTag(sb);
             sendApdu.setEnabled(true);
         });
     }
@@ -174,6 +188,12 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
             showToast("apdu should hex characters!");
             return false;
         }
+        String apduCtrStr = edtApduCtr.getText().toString();
+        if (TextUtils.isEmpty(apduCtrStr)) {
+            edtApduCtr.requestFocus();
+            showToast("卡片数据交互控制参数不能为空！");
+            return false;
+        }
         return true;
     }
 
@@ -181,11 +201,16 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
      * 透传APDU到卡片
      */
     private void transmitApdu() {
-        byte[] send = ByteUtil.hexStr2Bytes(apdu.getText().toString());
-        byte[] recv = new byte[260];
+        String apduCtrStr = edtApduCtr.getText().toString();
+        int apduCtr = Integer.parseInt(apduCtrStr, 16);
+        String apduStr = apdu.getText().toString();
+        LogUtil.e(TAG, "transmitApdu:" + apduStr);
+        byte[] send = ByteUtil.hexStr2Bytes(apduStr);
+        byte[] recv = new byte[2048];
         try {
             addStartTimeWithClear("transmitApdu()");
-            int len = MyApplication.app.readCardOptV2.transmitApdu(cardType, send, recv);
+            LogUtil.e(TAG, "transmitApdu,send:" + ByteUtil.bytes2HexStr(send));
+            int len = MyApplication.app.readCardOptV2.transmitApduExx(cardType, apduCtr, send, recv);
             addEndTime("transmitApdu()");
             if (len < 0) {
                 LogUtil.e(TAG, "transmitApdu failed,code:" + len);
@@ -236,7 +261,7 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
     }
 
     private void addText(CharSequence msg) {
-        String preMsg = result.getTag().toString();
+        CharSequence preMsg = result.getText();
         runOnUiThread(() -> result.setText(TextUtils.concat(preMsg, msg)));
     }
 

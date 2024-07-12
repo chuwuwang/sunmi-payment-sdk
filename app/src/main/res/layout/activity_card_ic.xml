@@ -34,7 +34,60 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:contentDescription="@null"
-                android:src="@drawable/card_nfc_ic" />
+                android:src="@drawable/card_ic" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/itemSize"
+                android:layout_marginTop="24dp">
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/mb_total"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/card_total"
+                    android:textAppearance="?android:attr/textAppearanceLargeInverse"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/transparent"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/colorLineColor"
+                    app:strokeWidth="1dp" />
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/mb_success"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/card_success"
+                    android:textAppearance="?android:attr/textAppearanceLargeInverse"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/transparent"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/colorLineColor"
+                    app:strokeWidth="1dp" />
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/mb_fail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/card_fail"
+                    android:textAppearance="?android:attr/textAppearanceLargeInverse"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/transparent"
+                    app:cornerRadius="0dp"
+                    app:strokeColor="@color/colorLineColor"
+                    app:strokeWidth="1dp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_depictor"
@@ -47,62 +100,10 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:id="@+id/lay_uuid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/card_uuid"
-                    android:textColor="@color/colorTextContent"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_uuid"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorTextContent"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lay_ats"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/card_ats"
-                    android:textColor="@color/colorTextContent"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_ats"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorTextContent"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lay_atr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"

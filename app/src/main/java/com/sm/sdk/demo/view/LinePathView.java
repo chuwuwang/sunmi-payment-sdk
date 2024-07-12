@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-
 /**
  * 绘制Path的View 用于签名
  */

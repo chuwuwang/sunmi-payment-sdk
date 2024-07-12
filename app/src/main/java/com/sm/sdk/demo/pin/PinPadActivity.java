@@ -29,7 +29,6 @@ import com.sunmi.pay.hardware.aidlv2.pinpad.PinPadListenerV2;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
 
 public class PinPadActivity extends BaseAppCompatActivity {
     private EditText txtConfirm;
@@ -116,6 +115,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
         chkModeList.put(R.id.chk_mode_silent, findViewById(R.id.chk_mode_silent));
         chkModeList.put(R.id.chk_mode_green_led, findViewById(R.id.chk_mode_green_led));
         chkModeList.put(R.id.chk_mode_monitor_clear_key, findViewById(R.id.chk_mode_monitor_clear_key));
+        chkModeList.put(R.id.chk_mode_cancel_to_clear, findViewById(R.id.chk_mode_cancel_to_clear));
         for (int i = 0, size = chkModeList.size(); i < size; i++) {
             chkModeList.valueAt(i).setOnClickListener(this);
         }
@@ -151,6 +151,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
             case R.id.chk_mode_long_press_to_clear:
             case R.id.chk_mode_silent:
             case R.id.chk_mode_green_led:
+            case R.id.chk_mode_cancel_to_clear:
                 onModeButtonClick(id);
                 break;
             case R.id.mb_set_mode:
@@ -169,14 +170,13 @@ public class PinPadActivity extends BaseAppCompatActivity {
     }
 
     private void onModeButtonClick(int id) {
-        CheckBox normal = chkModeList.get(R.id.chk_mode_normal);
-        if (id == R.id.chk_mode_normal && normal.isChecked()) {
+        if (id == R.id.chk_mode_normal) {
             for (int i = 0, size = chkModeList.size(); i < size; i++) {
                 if (chkModeList.keyAt(i) != id) {
                     chkModeList.valueAt(i).setChecked(false);
                 }
             }
-        } else if (chkModeList.get(R.id.chk_mode_normal).isChecked()) {
+        } else {
             chkModeList.get(R.id.chk_mode_normal).setChecked(false);
         }
     }
@@ -203,6 +203,9 @@ public class PinPadActivity extends BaseAppCompatActivity {
                 }
                 if (chkModeList.get(R.id.chk_mode_monitor_clear_key).isChecked()) {
                     bundle.putInt("monitorClearKey", 1);
+                }
+                if (chkModeList.get(R.id.chk_mode_cancel_to_clear).isChecked()) {
+                    bundle.putInt("cancelToClear", 1);
                 }
             }
             addStartTimeWithClear("setPinPadMode()");
@@ -284,12 +287,6 @@ public class PinPadActivity extends BaseAppCompatActivity {
         return true;
     }
 
-
-    /** check whether src is hex format */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
-    }
-
     /** start SDK built-in PinPad */
     private void initPinPad() {
         try {
@@ -297,7 +294,12 @@ public class PinPadActivity extends BaseAppCompatActivity {
             if (configV2 != null) {
                 // start input PIN
                 addStartTimeWithClear("initPinPad()");
-                MyApplication.app.pinPadOptV2.initPinPad(configV2, mPinPadListener);
+                String result = MyApplication.app.pinPadOptV2.initPinPad(configV2, mPinPadListener);
+                if (TextUtils.isEmpty(result)) {
+                    String msg = "initPinPad failed";
+                    LogUtil.e(TAG, msg);
+                    showToast(msg);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -313,7 +315,8 @@ public class PinPadActivity extends BaseAppCompatActivity {
         }
         int pinKeyIndex = Integer.parseInt(pikIndexStr);
         boolean isKeyDukpt = mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_dukpt;
-        if ((isKeyDukpt && (pinKeyIndex < 1100 || pinKeyIndex > 1199) && (pinKeyIndex < 0 || pinKeyIndex > 19))
+        if ((isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 19) && (pinKeyIndex < 1100 || pinKeyIndex > 1199)
+                && (pinKeyIndex < 2100 || pinKeyIndex > 2199))
                 || (!isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 19))) {
             showToast(R.string.pin_pad_key_index_hint);
             mEditKeyIndex.requestFocus();
@@ -356,9 +359,9 @@ public class PinPadActivity extends BaseAppCompatActivity {
                 pinBlockFormat = PinBlockFormat.SEC_PIN_BLK_ISO_FMT4;
             }
             // PinPadType: 0-SDK built-in PinPad, 1-Client customized PinPad
-            bundle.putInt("PinPadType", mRGKeyboardStyle.getCheckedRadioButtonId() == R.id.rb_preset_keyboard ? 0 : 1);
+            bundle.putInt("pinPadType", mRGKeyboardStyle.getCheckedRadioButtonId() == R.id.rb_preset_keyboard ? 0 : 1);
             // PinType: 0-online PIN, 1-offline PIN
-            bundle.putInt("PinType", mRGIsOnline.getCheckedRadioButtonId() == R.id.rb_online_pin ? 0 : 1);
+            bundle.putInt("pinType", mRGIsOnline.getCheckedRadioButtonId() == R.id.rb_online_pin ? 0 : 1);
             // isOrderNumberKey: true-order number PinPad, false-disorder number PinPad
             bundle.putInt("isOrderNumKey", mRGKeyboard.getCheckedRadioButtonId() == R.id.rb_orderly_keyboard ? 1 : 0);
             // PAN(Person Identify Number) ASCII格式转换成的byte 例如 “123456”.getBytes("us ascii")
@@ -383,7 +386,12 @@ public class PinPadActivity extends BaseAppCompatActivity {
             // PIK key system: 0-MKSK, 1-Dukpt
             bundle.putInt("keySystem", mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_mksk ? 0 : 1);
             addStartTimeWithClear("initPinPadEx()");
-            MyApplication.app.pinPadOptV2.initPinPadEx(bundle, mPinPadListener);
+            String result = MyApplication.app.pinPadOptV2.initPinPadEx(bundle, mPinPadListener);
+            if (TextUtils.isEmpty(result)) {
+                String msg = "initPinPad failed";
+                LogUtil.e(TAG, msg);
+                showToast(msg);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -413,7 +421,8 @@ public class PinPadActivity extends BaseAppCompatActivity {
         }
         int pinKeyIndex = Integer.parseInt(pikIndex);
         boolean isKeyDukpt = mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_dukpt;
-        if ((isKeyDukpt && (pinKeyIndex < 1100 || pinKeyIndex > 1199) && (pinKeyIndex < 0 || pinKeyIndex > 19))
+        if ((isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 19) && (pinKeyIndex < 1100 || pinKeyIndex > 1199)
+                && (pinKeyIndex < 2100 || pinKeyIndex > 2199))
                 || (!isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 199))) {
             showToast(R.string.pin_pad_key_index_hint);
             mEditKeyIndex.requestFocus();

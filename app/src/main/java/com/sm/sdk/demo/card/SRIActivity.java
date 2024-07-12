@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,10 +14,11 @@ import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
+import com.sm.sdk.demo.utils.Utility;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
 public class SRIActivity extends BaseAppCompatActivity {
 
@@ -63,9 +63,9 @@ public class SRIActivity extends BaseAppCompatActivity {
 
     private void checkCard() {
         try {
-            showSwingCardHintDialog();
+            showSwingCardHintDialog(0);
             addStartTimeWithClear("checkCard()");
-            MyApplication.app.readCardOptV2.checkCard(AidlConstantsV2.CardType.SRI.getValue(), mCheckCardCallback, 60);
+            MyApplication.app.readCardOptV2.checkCard(CardType.SRI.getValue(), mCheckCardCallback, 60);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,73 +82,57 @@ public class SRIActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void findICCard(String atr) throws RemoteException {
+        public void findICCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
-            LogUtil.e(TAG, "findICCard:" + atr);
+            LogUtil.e(TAG, "findICCard(), info:" + Utility.bundle2String(info));
             dismissSwingCardHintDialog();
             showSpendTime();
         }
 
         @Override
-        public void findRFCard(String uuid) throws RemoteException {
+        public void findRFCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
-            LogUtil.e(TAG, "findRFCard:" + uuid);
+            LogUtil.e(TAG, "findRFCard(), info:" + Utility.bundle2String(info));
             dismissSwingCardHintDialog();
             showSpendTime();
         }
 
         @Override
-        public void onError(int code, String message) throws RemoteException {
+        public void onErrorEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
             showSpendTime();
+            dismissSwingCardHintDialog();
+            int code = info.getInt("code");
+            String msg = info.getString("message");
+            String tip = "check card failed, code:" + code + ",msg:" + msg;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     };
 
-    /** Get uid and card type */
+    /** SRI4K Get uid */
     private void getUid() {
         try {
-            Bundle bundle = new Bundle();
-            addStartTimeWithClear("sriGetUid()");
-            int code = MyApplication.app.readCardOptV2.sriGetUid(bundle);
-            addEndTime("sriGetUid()");
-            Log.e(TAG, "sriGetUid() code:" + code);
+            //SRI Specific command format: SOF + GET_UID (cmd) + CRC_L + CRL_H + EOF
+            //SDK command format: GET_UID (cmd)
             TextView tvResult = findViewById(R.id.tv_get_uid_result);
-            if (code != 0) {
+            byte[] send = {0x0B}; // cmd
+            byte[] recv = new byte[256];
+            addStartTimeWithClear("transmitApdu()");
+            int len = MyApplication.app.readCardOptV2.transmitApduExx(CardType.SRI.getValue(), 0x00, send, recv);
+            addEndTime("transmitApdu()");
+            LogUtil.e(TAG, "transmitApdu code:" + len);
+            if (len < 0) {
                 tvResult.setText(null);
                 showSpendTime();
                 return;
             }
-            String uid = bundle.getString("uid");
-            String cardType = "Unknown";
-            int kindOfCard = bundle.getInt("kindOfCard");
-            switch (kindOfCard) {
-                case 0:
-                    cardType = "CARD_SR176";
-                    break;
-                case 1:
-                    cardType = "CARD_SRIX4K";
-                    break;
-                case 2:
-                    cardType = "CARD_SRIX512";
-                    break;
-                case 3:
-                    cardType = "CARD_SRI512";
-                    break;
-                case 4:
-                    cardType = "CARD_SRI4K";
-                    break;
-                case 5:
-                    cardType = "CARD_SRT512";
-                    break;
-                case 0xFF:
-                    cardType = "CARD_OTHER";
-                    break;
-            }
+            byte[] valid = Arrays.copyOf(recv, len);
+            LogUtil.e(TAG, "transmitApdu success,recv:" + ByteUtil.bytes2HexStr(valid));
+            byte[] uid = Arrays.copyOf(valid, valid.length - 2);
+            String uidStr = ByteUtil.bytes2HexStr(uid);
             StringBuilder sb = new StringBuilder("\nuid:");
-            sb.append(uid);
-            sb.append("\n");
-            sb.append("cardType:");
-            sb.append(cardType);
+            sb.append(uidStr);
             tvResult.setText(sb);
             LogUtil.e(TAG, "sriGetUid() result:" + sb);
             showSpendTime();
@@ -157,33 +141,40 @@ public class SRIActivity extends BaseAppCompatActivity {
         }
     }
 
-    /** Read 4 bytes data */
+    /** SRI4K Read 4 bytes data */
     private void readBlock32() {
         try {
+            //SRI Specific command format: SOF + READ_BLOCK (cmd)+ ADDRESS + CRC_L + CRL_H + EOF
+            //SDK command format: READ_BLOCK (cmd)+ ADDRESS
+            TextView tvResult = findViewById(R.id.tv_read_block32_result);
             EditText editText = findViewById(R.id.edt_read_block32_address);
             String addressStr = editText.getText().toString();
-            if (TextUtils.isEmpty(addressStr) || !checkHexValue(addressStr)) {
+            if (TextUtils.isEmpty(addressStr) || !Utility.checkHexValue(addressStr)) {
                 showToast("address should be hex characters");
                 editText.requestFocus();
                 return;
             }
             int address = Integer.parseInt(addressStr, 16);
-            byte[] dataOut = new byte[4];
-            addStartTimeWithClear("readBlock32()");
-            int code = MyApplication.app.readCardOptV2.sriReadBlock32(address, dataOut);
-            addEndTime("readBlock32()");
-            Log.e(TAG, "readBlock32() code:" + code);
-            if (code != 0) {
+            byte[] send = {0x08, (byte) address}; //cmd + address
+            byte[] recv = new byte[256];
+            addStartTimeWithClear("transmitApdu()");
+            int len = MyApplication.app.readCardOptV2.transmitApduExx(CardType.SRI.getValue(), 0x00, send, recv);
+            addEndTime("transmitApdu()");
+            LogUtil.e(TAG, "transmitApdu code:" + len);
+            if (len < 0) {
+                tvResult.setText(null);
                 showSpendTime();
                 return;
             }
-            TextView tvResult = findViewById(R.id.tv_read_block32_result);
+            byte[] valid = Arrays.copyOf(recv, len);
+            LogUtil.e(TAG, "transmitApdu success,recv:" + ByteUtil.bytes2HexStr(valid));
+            byte[] blockData = Arrays.copyOf(valid, valid.length - 2);
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < dataOut.length; i++) {
+            for (int i = 0; i < blockData.length; i++) {
                 sb.append("\nbyte");
                 sb.append(i + 1);
                 sb.append(":");
-                sb.append(ByteUtil.bytes2HexStr(dataOut[i]));
+                sb.append(ByteUtil.bytes2HexStr(blockData[i]));
             }
             tvResult.setText(sb);
             LogUtil.e(TAG, "readBlock32() result:" + sb);
@@ -193,30 +184,41 @@ public class SRIActivity extends BaseAppCompatActivity {
         }
     }
 
-    /** Write 4 bytes data */
+    /**
+     * SRI4K Write 4 bytes data.
+     * Due to write Block has no response，the transmitApduExx() will return -2520: Communication time out,
+     * client App should check whether write operation success or not by read the written data.
+     */
     private void writeBlock32() {
         try {
+            //SRI Specific command format: SOF + WRITE_BLOCK (cmd)+ ADDRESS + DATA1 + DATA2 + DATA3 + DATA4 + CRC_L + CRL_H + EOF
+            //SDK command format: WRITE_BLOCK (cmd)+ ADDRESS + DATA1 + DATA2 + DATA3 + DATA4
             EditText editText = findViewById(R.id.edt_write_block32_address);
             String addressStr = editText.getText().toString();
-            if (TextUtils.isEmpty(addressStr) || !checkHexValue(addressStr)) {
+            if (TextUtils.isEmpty(addressStr) || !Utility.checkHexValue(addressStr)) {
                 showToast("address should be hex characters");
                 editText.requestFocus();
                 return;
             }
             editText = findViewById(R.id.edt_write_block32_data);
             String dataInStr = editText.getText().toString();
-            if (TextUtils.isEmpty(dataInStr) || !checkHexValue(dataInStr) || dataInStr.length() != 8) {
+            if (TextUtils.isEmpty(dataInStr) || !Utility.checkHexValue(dataInStr) || dataInStr.length() != 8) {
                 showToast("Data to be written should be 8 hex characters");
                 editText.requestFocus();
                 return;
             }
             int address = Integer.parseInt(addressStr, 16);
-            byte[] dataIn = ByteUtil.hexStr2Bytes(dataInStr);
-            addStartTimeWithClear("writeBlock32()");
-            int code = MyApplication.app.readCardOptV2.sriWriteBlock32(address, dataIn);
-            addEndTime("writeBlock32()");
-            Log.e(TAG, "writeBlock32() code:" + code);
-            showToast("writeBlock32 " + (code == 0 ? "success" : "failed"));
+            byte[] cmd = {0x09, (byte) address}; //cmd + address
+            byte[] data = ByteUtil.hexStr2Bytes(dataInStr);
+            byte[] send = ByteUtil.concatByteArrays(cmd, data);
+            byte[] recv = new byte[256];
+            addStartTimeWithClear("transmitApdu()");
+            int code = MyApplication.app.readCardOptV2.transmitApduExx(CardType.SRI.getValue(), 0x00, send, recv);
+            addEndTime("transmitApdu()");
+            LogUtil.e(TAG, "transmitApdu code:" + code);
+            //有些操作，卡片是不会返回信息对结果确认的。比如写块操作，此时接口会报-12520（接收超时），因为卡片本身就无响应。
+            //写成功与否不能通过返回值判断，需重新读块数据对比
+            showToast("writeBlock32 code:" + code);
             showSpendTime();
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -231,24 +233,24 @@ public class SRIActivity extends BaseAppCompatActivity {
      * <br/>bit为0表示对应的block配置了写保护，不能做写操作；bit为1表示未做写保护
      */
     private void protectBlock() {
-        try {
-            EditText editText = findViewById(R.id.edt_protect_block_nlockReg);
-            String nLockRegStr = editText.getText().toString();
-            if (TextUtils.isEmpty(nLockRegStr) || !checkHexValue(nLockRegStr)) {
-                showToast("nLockReg should be 2 hex characters");
-                editText.requestFocus();
-                return;
-            }
-            int nLockReg = Integer.parseInt(nLockRegStr, 16);
-            addStartTimeWithClear("protectBlock()");
-            int code = MyApplication.app.readCardOptV2.sriProtectBlock((byte) nLockReg);
-            addEndTime("protectBlock()");
-            Log.e(TAG, "protectBlock() code:" + code);
-            showToast("protectBlock " + (code == 0 ? "success" : "failed"));
-            showSpendTime();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            EditText editText = findViewById(R.id.edt_protect_block_nlockReg);
+//            String nLockRegStr = editText.getText().toString();
+//            if (TextUtils.isEmpty(nLockRegStr) || !Utility.checkHexValue(nLockRegStr)) {
+//                showToast("nLockReg should be 2 hex characters");
+//                editText.requestFocus();
+//                return;
+//            }
+//            int nLockReg = Integer.parseInt(nLockRegStr, 16);
+//            addStartTimeWithClear("protectBlock()");
+//            int code = MyApplication.app.readCardOptV2.sriProtectBlock((byte) nLockReg);
+//            addEndTime("protectBlock()");
+//            Log.e(TAG, "protectBlock() code:" + code);
+//            showToast("protectBlock " + (code == 0 ? "success" : "failed"));
+//            showSpendTime();
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -259,32 +261,27 @@ public class SRIActivity extends BaseAppCompatActivity {
      * <br/>bit为0表示对应的block配置了写保护，不能做写操作；bit为1表示未做写保护
      */
     private void getBlockProtection() {
-        try {
-            byte[] dataOut = new byte[1];
-            addStartTimeWithClear("getBlockProtection()");
-            int code = MyApplication.app.readCardOptV2.sriGetBlockProtection(dataOut);
-            addEndTime("getBlockProtection()");
-            Log.e(TAG, "getBlockProtection() code:" + code);
-            TextView tvResult = findViewById(R.id.tv_block_protection_result);
-            if (code != 0) {
-                tvResult.setText(null);
-                showSpendTime();
-                return;
-            }
-            byte nLockReg = dataOut[0];
-            StringBuilder sb = new StringBuilder("nLockReg:\n");
-            sb.append(ByteUtil.bytes2HexStr(nLockReg));
-            tvResult.setText(sb);
-            LogUtil.e(TAG, "getBlockProtection() result:" + sb);
-            showSpendTime();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /** Check hex string */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
+//        try {
+//            byte[] dataOut = new byte[1];
+//            addStartTimeWithClear("getBlockProtection()");
+//            int code = MyApplication.app.readCardOptV2.sriGetBlockProtection(dataOut);
+//            addEndTime("getBlockProtection()");
+//            Log.e(TAG, "getBlockProtection() code:" + code);
+//            TextView tvResult = findViewById(R.id.tv_block_protection_result);
+//            if (code != 0) {
+//                tvResult.setText(null);
+//                showSpendTime();
+//                return;
+//            }
+//            byte nLockReg = dataOut[0];
+//            StringBuilder sb = new StringBuilder("nLockReg:\n");
+//            sb.append(ByteUtil.bytes2HexStr(nLockReg));
+//            tvResult.setText(sb);
+//            LogUtil.e(TAG, "getBlockProtection() result:" + sb);
+//            showSpendTime();
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
 
 }

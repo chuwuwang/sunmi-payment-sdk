@@ -34,6 +34,11 @@ public class CardActivity extends BaseAppCompatActivity {
         view.setOnClickListener(this);
         leftText.setText(R.string.card_test_ic);
 
+        view = findViewById(R.id.card_nfc);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_nfc);
+
         view = findViewById(R.id.card_sam);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
@@ -127,6 +132,9 @@ public class CardActivity extends BaseAppCompatActivity {
                 break;
             case R.id.card_ic:
                 openActivity(ICActivity.class);
+                break;
+            case R.id.card_nfc:
+                openActivity(NFCActivity.class);
                 break;
             case R.id.card_m1:
                 openActivity(M1Activity.class);

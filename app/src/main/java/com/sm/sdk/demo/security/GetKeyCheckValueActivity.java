@@ -58,7 +58,7 @@ public class GetKeyCheckValueActivity extends BaseAppCompatActivity {
                     return;
                 }
                 keyIndex = Integer.parseInt(keyIndexStr);
-                if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199)) {
+                if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
                     showToast(R.string.security_dukpt_key_index_hint);
                     return;
                 }

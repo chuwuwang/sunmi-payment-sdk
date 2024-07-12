@@ -11,6 +11,9 @@
     <uses-permission android:name="com.sunmi.perm.CONTACTLESS_CARD" />
 
     <uses-permission android:name="android.permission.SET_TIME" />
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:name=".MyApplication"
@@ -38,12 +41,15 @@
         <activity android:name=".basic.PinAntiExhaustiveMode" />
         <activity android:name=".basic.EMVCallbackTimeActivity" />
         <activity android:name=".basic.SysSetWakeupActivity" />
-
+        <activity android:name=".basic.KBBeepModeActivity" />
+        <activity android:name=".basic.TransmissionTestActivity" />
+        <activity android:name=".basic.SharedLibActivity" />
         <activity android:name=".card.CardActivity" />
         <activity android:name=".card.MagActivity" />
         <activity android:name=".card.MagPresetTrackActivity" />
         <activity android:name=".card.MagEncActivity" />
         <activity android:name=".card.ICActivity" />
+        <activity android:name=".card.NFCActivity" />
         <activity android:name=".card.M1Activity" />
         <activity
             android:name=".card.SAMActivity"
@@ -84,18 +90,27 @@
         <activity android:name=".security.DuKptDataDecryptActivity" />
         <activity android:name=".security.DuKptKSNOperateActivity" />
         <activity android:name=".security.RSATestActivity" />
+        <activity android:name=".security.RSARecoverActivity" />
         <activity android:name=".security.SaveTR31KeyActivity" />
         <activity android:name=".security.DeleteKeyActivity" />
         <activity android:name=".security.DuKptAesSaveKeyActivity" />
         <activity android:name=".security.SM2TestActivity" />
         <activity android:name=".security.CalcHashActivity" />
         <activity android:name=".security.DeviceCertificateTestActivity" />
-        <activity android:name=".security.HsmKeyShareTestActivity" />
-        <activity android:name=".security.HsmRsaTestActivity" />
-        <activity android:name=".security.RsaRecoverActivity" />
+        <activity android:name=".security.DeviceCertPvkTestActivity" />
+        <activity android:name=".security.InjectDeviceCertPvkActivity" />
         <activity android:name=".security.GetDeviceCertificateActivity" />
         <activity android:name=".security.DevicePvkRecoverActivity" />
+        <activity android:name=".security.DeviceCertManagerActivity" />
+        <activity android:name=".security.HsmKeyShareTestActivity" />
+        <activity android:name=".security.HsmRsaTestActivity" />
         <activity android:name=".security.GetKeyCheckValueActivity" />
+        <activity android:name=".security.APACSMacTestActivity" />
+        <activity android:name=".security.HsmSaveKeyUnderKEKActivity" />
+        <activity android:name=".security.HsmExportKeyUnderKEKActivity" />
+        <activity android:name=".security.SaveKeyCipherTextUnderRsaActivity" />
+        <activity android:name=".security.InjectCiphertextKeyUnderRsaActivity" />
+        <activity android:name=".security.InjectSymKeyActivity" />
 
         <activity android:name=".pin.PinPadActivity" />
         <activity android:name=".pin.CustomPinPadActivity" />
@@ -144,6 +159,7 @@
         <activity android:name=".other.SettingActivity" />
         <activity android:name=".other.DeviceCommActivity" />
         <activity android:name=".other.PCDParamActivity" />
+        <activity android:name=".other.CardPollIntervalTimeActivity" />
 
     </application>
 

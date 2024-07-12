@@ -17,9 +17,11 @@ import com.sunmi.pay.hardware.aidlv2.etc.ETCOptV2;
 import com.sunmi.pay.hardware.aidlv2.pinpad.PinPadOptV2;
 import com.sunmi.pay.hardware.aidlv2.print.PrinterOptV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.ReadCardOptV2;
+import com.sunmi.pay.hardware.aidlv2.security.DevCertManagerV2;
 import com.sunmi.pay.hardware.aidlv2.security.SecurityOptV2;
 import com.sunmi.pay.hardware.aidlv2.system.BasicOptV2;
 import com.sunmi.pay.hardware.aidlv2.tax.TaxOptV2;
+import com.sunmi.pay.hardware.aidlv2.test.TestOptV2;
 import com.sunmi.peripheral.printer.InnerPrinterCallback;
 import com.sunmi.peripheral.printer.InnerPrinterException;
 import com.sunmi.peripheral.printer.InnerPrinterManager;
@@ -41,6 +43,8 @@ public class MyApplication extends Application {
     public TaxOptV2 taxOptV2;               // 获取税控操作模块
     public ETCOptV2 etcOptV2;               // 获取ETC操作模块
     public PrinterOptV2 printerOptV2;       // 获取打印操作模块
+    public TestOptV2 testOptV2;             // 获取测试操作模块
+    public DevCertManagerV2 devCertManagerV2;//设备证书操作模块
     public SunmiPrinterService sunmiPrinterService;
     public IScanInterface scanInterface;
     private boolean connectPaySDK;//是否已连接PaySDK
@@ -101,6 +105,8 @@ public class MyApplication extends Application {
                 taxOptV2 = payKernel.mTaxOptV2;
                 etcOptV2 = payKernel.mETCOptV2;
                 printerOptV2 = payKernel.mPrinterOptV2;
+                testOptV2 = payKernel.mTestOptV2;
+                devCertManagerV2 = payKernel.mDevCertManagerV2;
                 connectPaySDK = true;
             }
 
@@ -116,6 +122,7 @@ public class MyApplication extends Application {
                 taxOptV2 = null;
                 etcOptV2 = null;
                 printerOptV2 = null;
+                devCertManagerV2 = null;
                 Utility.showToast(R.string.connect_fail);
             }
         });

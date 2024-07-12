@@ -24,7 +24,6 @@ import com.sunmi.pay.hardware.aidlv2.bean.ApduSendV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class FelicaActivity extends BaseAppCompatActivity {
     private static final String TAG = Constant.TAG;
@@ -154,12 +153,12 @@ public class FelicaActivity extends BaseAppCompatActivity {
         String indata = apduIndata.getText().toString();
         String le = apduLe.getText().toString();
 
-        if (command.length() != 8 || !checkHexValue(command)) {
+        if (command.length() != 8 || !Utility.checkHexValue(command)) {
             apduCmd.requestFocus();
             showToast("command should be 8 hex characters!");
             return false;
         }
-        if (lc.length() > limitLen || !checkHexValue(lc)) {
+        if (lc.length() > limitLen || !Utility.checkHexValue(lc)) {
             apduLc.requestFocus();
             showToast(formatStr("Lc should less than %d hex characters!", limitLen));
             return false;
@@ -170,12 +169,12 @@ public class FelicaActivity extends BaseAppCompatActivity {
             showToast("Lc value should in [0,0x0100]");
             return false;
         }
-        if (indata.length() != lcValue * 2 || (indata.length() > 0 && !checkHexValue(indata))) {
+        if (indata.length() != lcValue * 2 || (indata.length() > 0 && !Utility.checkHexValue(indata))) {
             apduIndata.requestFocus();
             showToast("indata value should lc*2 hex characters!");
             return false;
         }
-        if (le.length() > limitLen || !checkHexValue(le)) {
+        if (le.length() > limitLen || !Utility.checkHexValue(le)) {
             apduLe.requestFocus();
             showToast(formatStr("Le should less than %d hex characters!", limitLen));
             return false;
@@ -187,11 +186,6 @@ public class FelicaActivity extends BaseAppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    /** check whether src is hex format */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 
     private String formatStr(String format, Object... params) {

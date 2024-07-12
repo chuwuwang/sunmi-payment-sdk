@@ -5,11 +5,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.BitmapUtils;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.view.LinePathView;
 import com.sunmi.peripheral.printer.InnerResultCallbcak;
@@ -30,10 +32,23 @@ public class ESignatureActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
-        handWriteView = this.findViewById(R.id.hand_write_view);
+        handWriteView = findViewById(R.id.hand_write_view);
         handWriteView.clear();
-        this.findViewById(R.id.tv_clear).setOnClickListener(this);
-        this.findViewById(R.id.tv_ok).setOnClickListener(this);
+        findViewById(R.id.tv_clear).setOnClickListener(this);
+        findViewById(R.id.tv_ok).setOnClickListener(this);
+        if (DeviceUtil.isP2SmartPad()) {
+            handWriteView.post(() -> {
+                ViewGroup.LayoutParams params = handWriteView.getLayoutParams();
+                params.height = dp2px(110);
+                handWriteView.setLayoutParams(params);
+            });
+        }
+    }
+
+    /** dp转px */
+    private int dp2px(int dp) {
+        final float scale = getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
     }
 
     @Override
@@ -54,9 +69,9 @@ public class ESignatureActivity extends BaseAppCompatActivity {
                             cacheBitmap = BitmapUtils.scale(cacheBitmap, 384, newHeight);
                         }
                         sunmiPrinterService.enterPrinterBuffer(true);
-                        sunmiPrinterService.setAlignment(1,innerResultCallbcak);
+                        sunmiPrinterService.setAlignment(1, innerResultCallbcak);
                         sunmiPrinterService.printBitmap(cacheBitmap, innerResultCallbcak);
-                        sunmiPrinterService.setAlignment(0,innerResultCallbcak);
+                        sunmiPrinterService.setAlignment(0, innerResultCallbcak);
                         sunmiPrinterService.lineWrap(4, innerResultCallbcak);
                         sunmiPrinterService.exitPrinterBufferWithCallback(true, innerResultCallbcak);
                     } catch (Exception e) {

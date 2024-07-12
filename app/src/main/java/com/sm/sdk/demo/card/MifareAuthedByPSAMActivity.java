@@ -638,4 +638,18 @@ public class MifareAuthedByPSAMActivity extends BaseAppCompatActivity {
             result.setText(String.format(Locale.getDefault(), "%s\n(%d)%s", preMsg, step, msg));
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        cancelCheckCard();
+        super.onDestroy();
+    }
+
+    private void cancelCheckCard() {
+        try {
+            MyApplication.app.readCardOptV2.cancelCheckCard();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

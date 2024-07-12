@@ -14,10 +14,10 @@ import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidl.AidlConstants.Security;
 
 import java.util.Random;
-import java.util.regex.Pattern;
 
 /**
  * This page show how to save TR31 KBPK(key block protection key) and
@@ -127,13 +127,13 @@ public class SaveTR31KeyActivity extends BaseAppCompatActivity {
             String valueStr = edtKBPKValue.getText().toString();
             String checkValueStr = edtKBPKCheckValue.getText().toString();
             String keyIndexStr = edtKBPKIndex.getText().toString();
-            if (TextUtils.isEmpty(valueStr) || !checkHexValue(valueStr)) {
+            if (TextUtils.isEmpty(valueStr) || !Utility.checkHexValue(valueStr)) {
                 String msg = "illegal kbpk key value";
                 showToast(msg);
                 LogUtil.e(TAG, msg);
                 return;
             }
-            if (!TextUtils.isEmpty(checkValueStr) && !checkHexValue(checkValueStr)) {
+            if (!TextUtils.isEmpty(checkValueStr) && !Utility.checkHexValue(checkValueStr)) {
                 String msg = "illegal kbpk key checkValue";
                 showToast(msg);
                 LogUtil.e(TAG, msg);
@@ -199,11 +199,6 @@ public class SaveTR31KeyActivity extends BaseAppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /** check whether src is hex format */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 
     /** Test saved key by call dataEncryptDukpt() */

@@ -14,11 +14,11 @@ import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class MifarePlusActivity extends BaseAppCompatActivity {
     private EditText edtReadBlockNo;
@@ -72,7 +72,7 @@ public class MifarePlusActivity extends BaseAppCompatActivity {
 
     private void checkCard() {
         try {
-            showSwingCardHintDialog();
+            showSwingCardHintDialog(0);
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(AidlConstantsV2.CardType.MIFARE_PLUS.getValue(), mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -110,7 +110,10 @@ public class MifarePlusActivity extends BaseAppCompatActivity {
         public void onError(int code, String message) throws RemoteException {
             addEndTime("checkCard()");
             showSpendTime();
-            checkCard();
+            dismissSwingCardHintDialog();
+            String tip = "check card failed, code:" + code + ",msg:" + message;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     };
 
@@ -202,7 +205,7 @@ public class MifarePlusActivity extends BaseAppCompatActivity {
     private boolean checkInput(EditText block, EditText key1, EditText data, EditText key2) {
         if (block != null) {
             String blockNo = block.getText().toString();
-            if (TextUtils.isEmpty(blockNo) || !checkHexValue(blockNo)) {
+            if (TextUtils.isEmpty(blockNo) || !Utility.checkHexValue(blockNo)) {
                 showToast("blockNo should be 2 hex characters!");
                 block.requestFocus();
                 return false;
@@ -216,7 +219,7 @@ public class MifarePlusActivity extends BaseAppCompatActivity {
         }
         if (key1 != null) {
             String blockKey = key1.getText().toString();
-            if (TextUtils.isEmpty(blockKey) || !checkHexValue(blockKey) || blockKey.length() != 32) {
+            if (TextUtils.isEmpty(blockKey) || !Utility.checkHexValue(blockKey) || blockKey.length() != 32) {
                 showToast("blockKey should be 32 hex characters!");
                 key1.requestFocus();
                 return false;
@@ -224,7 +227,7 @@ public class MifarePlusActivity extends BaseAppCompatActivity {
         }
         if (data != null) {
             String blockData = data.getText().toString();
-            if (TextUtils.isEmpty(blockData) || !checkHexValue(blockData) || blockData.length() != 32) {
+            if (TextUtils.isEmpty(blockData) || !Utility.checkHexValue(blockData) || blockData.length() != 32) {
                 showToast("blockData should be 32 hex characters!");
                 data.requestFocus();
                 return false;
@@ -232,18 +235,13 @@ public class MifarePlusActivity extends BaseAppCompatActivity {
         }
         if (key2 != null) {
             String blockKey = key2.getText().toString();
-            if (TextUtils.isEmpty(blockKey) || !checkHexValue(blockKey) || blockKey.length() != 32) {
+            if (TextUtils.isEmpty(blockKey) || !Utility.checkHexValue(blockKey) || blockKey.length() != 32) {
                 showToast("blockKey should be 32 hex characters!");
                 key2.requestFocus();
                 return false;
             }
         }
         return true;
-    }
-
-    /** Check hex string */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 
     @Override

@@ -13,10 +13,10 @@ import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class CalcHashActivity extends BaseAppCompatActivity {
     private int hashAlgType = AidlConstantsV2.Security.HASH_SHA_TYPE_1;
@@ -70,7 +70,7 @@ public class CalcHashActivity extends BaseAppCompatActivity {
     private void calcHash() {
         try {
             String dataInStr = this.<EditText>findViewById(R.id.edt_data_in).getText().toString();
-            if (TextUtils.isEmpty(dataInStr) || !checkHexValue(dataInStr)) {
+            if (TextUtils.isEmpty(dataInStr) || !Utility.checkHexValue(dataInStr)) {
                 showToast("dataIn should not empty and should be hex string");
                 return;
             }
@@ -91,10 +91,5 @@ public class CalcHashActivity extends BaseAppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /** check whether src is hex format */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 }

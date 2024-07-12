@@ -39,6 +39,10 @@
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/card_nfc"
+                layout="@layout/common_item" />
+
+            <include
                 android:id="@+id/card_sam"
                 layout="@layout/common_item" />
 

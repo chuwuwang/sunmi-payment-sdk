@@ -1,6 +1,5 @@
 package com.sm.sdk.demo.security;
 
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import com.sm.sdk.demo.utils.LogUtil;
 import com.sunmi.pay.hardware.aidlv2.security.SecurityOptV2;
 
 import java.io.ByteArrayInputStream;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;

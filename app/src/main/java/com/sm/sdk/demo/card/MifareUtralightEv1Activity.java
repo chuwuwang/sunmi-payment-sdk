@@ -144,7 +144,9 @@ public class MifareUtralightEv1Activity extends BaseAppCompatActivity {
         public void onError(int code, String message) throws RemoteException {
             addEndTime("checkCard()");
             showSpendTime();
-            showToast(code);
+            String tip = "check card failed, code:" + code + ",msg:" + message;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     }
 

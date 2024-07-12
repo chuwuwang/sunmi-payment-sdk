@@ -27,37 +27,47 @@
             android:orientation="vertical">
 
             <include
-                android:id="@+id/hsm_get_device_cert"
+                android:id="@+id/device_cert_pvt_key_test"
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/inject_device_cert_pvt_key"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/hsm_get_device_cert"
+                layout="@layout/common_item"
+                android:visibility="gone" />
+
+            <include
                 android:id="@+id/hsm_device_pvk_recover"
+                layout="@layout/common_item"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/hsm_device_cert_manager"
                 layout="@layout/common_item" />
 
             <include
                 android:id="@+id/hsm_rsa_recover"
                 layout="@layout/common_item"
-                android:visibility="invisible" />
+                android:visibility="gone" />
 
             <include
                 android:id="@+id/hsm_key_share"
-                layout="@layout/common_item"
-                android:visibility="invisible" />
+                layout="@layout/common_item" />
 
             <include
                 android:id="@+id/hsm_rsa_keypair"
-                layout="@layout/common_item"
-                android:visibility="invisible" />
+                layout="@layout/common_item" />
 
             <include
                 android:id="@+id/hsm_save_key_under_kek"
-                layout="@layout/common_item"
-                android:visibility="invisible" />
+                layout="@layout/common_item" />
 
             <include
                 android:id="@+id/hsm_export_key_under_kek"
-                layout="@layout/common_item"
-                android:visibility="invisible" />
+                layout="@layout/common_item" />
 
         </LinearLayout>
 

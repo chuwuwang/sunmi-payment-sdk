@@ -154,6 +154,23 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:counterEnabled="true"
+                app:counterMaxLength="32">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/key_variant"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="key variant(HEX)"
+                    android:textColor="@color/colorTextContent"
+                    android:textColorHint="@color/colorTextHelp"
+                    android:textSize="14sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

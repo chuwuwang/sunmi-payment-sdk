@@ -12,10 +12,10 @@ import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidlv2.security.SecurityOptV2;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class SM2TestActivity extends BaseAppCompatActivity {
     private final SecurityOptV2 securityOptV2 = MyApplication.app.securityOptV2;
@@ -120,7 +120,7 @@ public class SM2TestActivity extends BaseAppCompatActivity {
                 showToast("key data should not be empty");
                 return;
             }
-            if (!checkHexValue(keyDataStr)) {
+            if (!Utility.checkHexValue(keyDataStr)) {
                 showToast("key data should be hex string");
                 return;
             }
@@ -174,12 +174,12 @@ public class SM2TestActivity extends BaseAppCompatActivity {
                 return;
             }
             String userIdStr = this.<EditText>findViewById(R.id.edt_sign_user_id).getText().toString();
-            if (TextUtils.isEmpty(userIdStr) || !checkHexValue(userIdStr)) {
+            if (TextUtils.isEmpty(userIdStr) || !Utility.checkHexValue(userIdStr)) {
                 showToast("userId should not empty and should be hex string");
                 return;
             }
             String dataInStr = this.<EditText>findViewById(R.id.edt_sign_data_in).getText().toString();
-            if (TextUtils.isEmpty(dataInStr) || !checkHexValue(dataInStr)) {
+            if (TextUtils.isEmpty(dataInStr) || !Utility.checkHexValue(dataInStr)) {
                 showToast("dataIn should not empty and should be hex string");
                 return;
             }
@@ -221,17 +221,17 @@ public class SM2TestActivity extends BaseAppCompatActivity {
                 return;
             }
             String userIdStr = this.<EditText>findViewById(R.id.edt_verify_user_id).getText().toString();
-            if (TextUtils.isEmpty(userIdStr) || !checkHexValue(userIdStr)) {
+            if (TextUtils.isEmpty(userIdStr) || !Utility.checkHexValue(userIdStr)) {
                 showToast("userId should not empty and should be hex string");
                 return;
             }
             String dataInStr = this.<EditText>findViewById(R.id.edt_verify_data_in).getText().toString();
-            if (TextUtils.isEmpty(dataInStr) || !checkHexValue(dataInStr)) {
+            if (TextUtils.isEmpty(dataInStr) || !Utility.checkHexValue(dataInStr)) {
                 showToast("dataIn should not empty and should be hex string");
                 return;
             }
             String signatureStr = this.<EditText>findViewById(R.id.edt_verify_signature_data).getText().toString();
-            if (TextUtils.isEmpty(signatureStr) || !checkHexValue(signatureStr)) {
+            if (TextUtils.isEmpty(signatureStr) || !Utility.checkHexValue(signatureStr)) {
                 showToast("signature should not empty and should be hex string");
                 return;
             }
@@ -271,7 +271,7 @@ public class SM2TestActivity extends BaseAppCompatActivity {
                 return;
             }
             String dataInStr = this.<EditText>findViewById(R.id.edt_enc_data_in).getText().toString();
-            if (TextUtils.isEmpty(dataInStr) || !checkHexValue(dataInStr)) {
+            if (TextUtils.isEmpty(dataInStr) || !Utility.checkHexValue(dataInStr)) {
                 showToast("dataIn should not empty and should be hex string");
                 return;
             }
@@ -311,7 +311,7 @@ public class SM2TestActivity extends BaseAppCompatActivity {
                 return;
             }
             String dataInStr = this.<EditText>findViewById(R.id.edt_dec_data_in).getText().toString();
-            if (TextUtils.isEmpty(dataInStr) || !checkHexValue(dataInStr)) {
+            if (TextUtils.isEmpty(dataInStr) || !Utility.checkHexValue(dataInStr)) {
                 showToast("dataIn should not empty and should be hex string");
                 return;
             }
@@ -335,8 +335,4 @@ public class SM2TestActivity extends BaseAppCompatActivity {
         }
     }
 
-    /** check whether src is hex format */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
-    }
 }

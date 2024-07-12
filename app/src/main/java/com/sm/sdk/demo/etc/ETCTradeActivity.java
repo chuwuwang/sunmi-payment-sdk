@@ -20,8 +20,6 @@ import com.sm.sdk.demo.utils.ThreadPoolUtil;
 import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidlv2.etc.ETCSearchTradeOBUListenerV2;
 
-import java.util.regex.Pattern;
-
 public class ETCTradeActivity extends BaseAppCompatActivity {
     private static final String TAG = Constant.TAG;
 
@@ -251,9 +249,9 @@ public class ETCTradeActivity extends BaseAppCompatActivity {
             byte[] cacheData = ByteUtil.hexStr2Bytes("AA290020170313113836A1A2A3A4A5A6A7A8000000000000000000000000000000000000000000000000B9");
             //终端脱机交易序列号（4B）
             String hexTradeNo = "00000001";
-            //交易日期（4B，格式yyyyMMdd）
+            //交易日期（4B，格式yyyyMMdd，服务端返回的日期）
             String hexTradeDate = "00000000";
-            //交易时间（3B，格式 HHmmss）
+            //交易时间（3B，格式 HHmmss，服务端返回的时间）
             String hexTradeTime = "000000";
             //MAC1（4B）
             String hexMac = "BB922A92";
@@ -314,7 +312,7 @@ public class ETCTradeActivity extends BaseAppCompatActivity {
     /** Check input data */
     private boolean checkInputData(EditText edtObuId) {
         String strObuId = edtObuId.getText().toString();
-        if (TextUtils.isEmpty(strObuId) || !checkHexValue(strObuId)) {
+        if (TextUtils.isEmpty(strObuId) || !Utility.checkHexValue(strObuId)) {
             showToast("OBU id should be hex characters");
             edtObuId.requestFocus();
             return false;
@@ -328,11 +326,6 @@ public class ETCTradeActivity extends BaseAppCompatActivity {
         } else {
             runOnUiThread(() -> button.setEnabled(enable));//非UI线程
         }
-    }
-
-    /** Check hex string */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 
     private static class HeartBeatTask implements Runnable {

@@ -15,11 +15,11 @@ import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class AT24CActivity extends BaseAppCompatActivity {
     private EditText edtReadStartAddr;
@@ -109,7 +109,7 @@ public class AT24CActivity extends BaseAppCompatActivity {
 
     private void checkCard() {
         try {
-            showSwingCardHintDialog();
+            showSwingCardHintDialog(1);
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(cardType, mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -147,7 +147,10 @@ public class AT24CActivity extends BaseAppCompatActivity {
         public void onError(int code, String message) throws RemoteException {
             addEndTime("checkCard()");
             showSpendTime();
-            checkCard();
+            dismissSwingCardHintDialog();
+            String tip = "check card failed, code:" + code + ",msg:" + message;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     };
 
@@ -216,7 +219,7 @@ public class AT24CActivity extends BaseAppCompatActivity {
     /** Check input start address */
     private boolean checkInputStartAddress(EditText edtStartAddress) {
         String startAddress = edtStartAddress.getText().toString();
-        if (TextUtils.isEmpty(startAddress) || !checkHexValue(startAddress)) {
+        if (TextUtils.isEmpty(startAddress) || !Utility.checkHexValue(startAddress)) {
             showToast("startAddress should be 1~3 hex characters");
             edtStartAddress.requestFocus();
             return false;
@@ -250,7 +253,7 @@ public class AT24CActivity extends BaseAppCompatActivity {
     /** Check input data */
     private boolean checkInputData(EditText edtData) {
         String data = edtData.getText().toString();
-        if (TextUtils.isEmpty(data) || !checkHexValue(data)) {
+        if (TextUtils.isEmpty(data) || !Utility.checkHexValue(data)) {
             showToast("input data should be hex characters");
             edtData.requestFocus();
             return false;
@@ -266,11 +269,6 @@ public class AT24CActivity extends BaseAppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    /** Check hex string */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 
     @Override

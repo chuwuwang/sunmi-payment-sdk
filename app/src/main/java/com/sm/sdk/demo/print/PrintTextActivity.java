@@ -12,7 +12,6 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
@@ -31,8 +30,6 @@ public class PrintTextActivity extends BaseAppCompatActivity {
     private EditText edtRepeatCount;
     private EditText edtWaitTime;
     private EditText edtIntervalTime;
-    private Button btnPrint;
-    private Button btnOffPrint;
     private ScreenOnOffReceiver receiver;
 
     @Override
@@ -45,8 +42,7 @@ public class PrintTextActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
-        btnPrint = findViewById(R.id.btn_print);
-        btnPrint.setOnClickListener(this);
+        findViewById(R.id.btn_print).setOnClickListener(this);
         etText = findViewById(R.id.et_text);
         etTextSize = findViewById(R.id.et_text_size);
         etTextSize.setText("30");
@@ -55,8 +51,7 @@ public class PrintTextActivity extends BaseAppCompatActivity {
         edtWaitTime = findViewById(R.id.edt_wait_time);
         edtIntervalTime = findViewById(R.id.edt_interval_time);
 //        etText.setText(R.string.text_mock);
-        btnOffPrint = findViewById(R.id.btn_screen_off_print);
-        btnOffPrint.setOnClickListener(this);
+        findViewById(R.id.btn_screen_off_print).setOnClickListener(this);
         checkPrint();
     }
 

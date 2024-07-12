@@ -118,7 +118,7 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
                 return;
             }
             int keyIndex = Integer.parseInt(keyIndexStr);
-            if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
+            if (!isDukpt3DesKey(keyIndex) && !isDukptAesKey(keyIndex)) {
                 showToast(R.string.security_dukpt_key_index_hint);
                 return;
             }
@@ -133,9 +133,9 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
             addEndTime("calcMacDukptEx()");
             String macHexStr = null;
             if (code == 0) {
-                if ((keyIndex >= 0 && keyIndex <= 9) || (keyIndex >= 1100 && keyIndex <= 1199)) {//dukpt-3DES
+                if (isDukpt3DesKey(keyIndex)) {//dukpt-3DES, 8 bytes Mac data
                     macHexStr = ByteUtil.bytes2HexStr(Arrays.copyOf(dataOut, 8));
-                } else if (keyIndex >= 10 && keyIndex <= 19) {//Dukpt-AES
+                } else if (isDukptAesKey(keyIndex)) {//Dukpt-AES, 16 bytes Mac data
                     macHexStr = ByteUtil.bytes2HexStr(dataOut);
                 }
                 mTvInfo.setText(macHexStr);
@@ -164,7 +164,7 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
                 return;
             }
             int keyIndex = Integer.parseInt(keyIndexStr);
-            if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
+            if (!isDukpt3DesKey(keyIndex) && !isDukptAesKey(keyIndex)) {
                 showToast(R.string.security_dukpt_key_index_hint);
                 return;
             }
@@ -181,5 +181,14 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
         }
     }
 
+    /** check dukpt-3DES key */
+    private boolean isDukpt3DesKey(int keyIndex) {
+        return (keyIndex >= 0 && keyIndex <= 9) || (keyIndex >= 1100 && keyIndex <= 1199);
+    }
+
+    /** check dukpt-AES key */
+    private boolean isDukptAesKey(int keyIndex) {
+        return (keyIndex >= 10 && keyIndex <= 19) || (keyIndex >= 2100 && keyIndex <= 2199);
+    }
 
 }

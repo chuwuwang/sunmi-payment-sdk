@@ -3,7 +3,6 @@ package com.sm.sdk.demo.emv;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.TextView;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
@@ -265,6 +264,17 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
             addEndTime("onPreFirstGenAC()");
             LogUtil.e(Constant.TAG, "onPreFirstGenAC");
             emvOptV2.importPreFirstGenACStatus(0);
+        }
+
+        @Override
+        public void onDataStorageProc(String[] containerID, String[] containerContent) throws RemoteException {
+            addEndTime("onDataStorageProc()");
+            LogUtil.e(Constant.TAG, "onDataStorageProc");
+            //此回调为Dpas2.0专用
+            //根据需求配置tag及values
+            String[] tags = new String[0];
+            String[] values = new String[0];
+            emvOptV2.importDataStorage(tags, values);
         }
     };
 

@@ -201,6 +201,24 @@
                     android:textColor="@color/colorTextContent"
                     android:textSize="14sp" />
 
+                <RadioButton
+                    android:id="@+id/rb_mac_type8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/security_mac_calc_type8"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/rb_mac_type9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/security_mac_calc_type9"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp" />
+
             </RadioGroup>
 
             <android.support.design.widget.TextInputLayout

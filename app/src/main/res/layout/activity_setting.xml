@@ -58,6 +58,12 @@
                 android:layout_height="wrap_content" />
 
             <include
+                android:id="@+id/card_poll_interval_time"
+                layout="@layout/setting_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include
                 android:id="@+id/device_shutdown"
                 layout="@layout/setting_item"
                 android:layout_width="match_parent"

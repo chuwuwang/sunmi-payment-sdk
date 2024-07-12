@@ -16,7 +16,8 @@ import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidl.AidlConstants;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
+import com.sunmi.pay.hardware.aidl.AidlConstants.Security;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Locale;
@@ -70,7 +71,7 @@ public class MagEncActivity extends BaseAppCompatActivity {
             byte[] tdkcv = ByteUtil.hexStr2Bytes("36821ADF5EB5513F");
             addStartTimeWithClear("savePlaintextKey()");
             int code = MyApplication.app.securityOptV2.savePlaintextKey(AidlConstants.Security.KEY_TYPE_TDK
-                    , tdk, tdkcv, AidlConstants.Security.KEY_ALG_TYPE_3DES, TDK_INDEX);
+                    , tdk, tdkcv, Security.KEY_ALG_TYPE_3DES, TDK_INDEX);
             addEndTime("savePlaintextKey()");
             LogUtil.e(TAG, "save TDK " + (code == 0 ? "success" : "failed"));
             showSpendTime();
@@ -84,17 +85,22 @@ public class MagEncActivity extends BaseAppCompatActivity {
      */
     private void checkCard() {
         Bundle bundle = new Bundle();
-        bundle.putInt("cardType", AidlConstantsV2.CardType.MAGNETIC.getValue());
+        bundle.putInt("cardType", CardType.MAGNETIC.getValue());
+        bundle.putInt("encKeySystem", Security.SEC_MKSK);
         bundle.putInt("encKeyIndex", TDK_INDEX);
-        bundle.putInt("encMode", AidlConstantsV2.Security.DATA_MODE_ECB);
+        bundle.putInt("encKeyAlgType", Security.KEY_ALG_TYPE_3DES);
+        bundle.putInt("encMode", Security.DATA_MODE_ECB);
         bundle.putByteArray("encIv", new byte[16]);
         bundle.putByte("encPaddingMode", (byte) 0);
         bundle.putInt("encMaskStart", 6);
         bundle.putInt("encMaskEnd", 4);
         bundle.putChar("encMaskWord", '*');
+        bundle.putInt("ctrCode", 0);
+        bundle.putInt("stopOnError", 0);
         try {
             addStartTimeWithClear("checkCard()");
-            MyApplication.app.readCardOptV2.checkCardEnc(bundle, mCheckCardCallback, 60);
+            int code = MyApplication.app.readCardOptV2.checkCardEnc(bundle, mCheckCardCallback, 60);
+            LogUtil.e(TAG, "checkCardEnc(), code:" + code);
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.d(TAG, e.getMessage());

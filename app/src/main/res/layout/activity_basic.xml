@@ -58,6 +58,18 @@
                 android:id="@+id/sys_set_wakeup"
                 layout="@layout/common_item" />
 
+            <include
+                android:id="@+id/kb_beep_mode"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/shard_lib"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/data_transmission"
+                layout="@layout/common_item" />
+
         </LinearLayout>
     </ScrollView>
 

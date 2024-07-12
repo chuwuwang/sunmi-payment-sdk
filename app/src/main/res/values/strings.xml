@@ -72,13 +72,19 @@
     <string name="basic_show_nav_all">Show all</string>
     <string name="basic_screen_model_hint">Screen exclusive\nPower key disabled\nVolume key disabled\nSystem status bar disabled\nSystem navigation bar disabled</string>
     <string name="basic_emv_callback_timeout_time">Set EMV callback timeout time</string>
-    <string name="basic_channel">channel</string>
+    <string name="basic_channel">channel(1-IC wakeup, 2-MagCard wakeup, 3-Physical key wakeup)</string>
     <string name="basic_mode">mode</string>
+    <string name="basic_kb_beep_mode">keyboard beep mode</string>
+    <string name="basic_shared_lib_test">Share lib test</string>
+    <string name="basic_install_shared_libs">Install shared libs</string>
+    <string name="basic_delete_shared_libs">Delete shared libs</string>
+    <string name="basic_shared_libs_dir">Shared lib directory</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="card_test_mag">Magnetic card test</string>
     <string name="card_test_mag_enc">Magnetic card test(Encrypt track data)</string>
     <string name="card_test_ic">IC card test</string>
+    <string name="card_test_nfc">NFC card test</string>
     <string name="card_test_m1">Mifare card test</string>
     <string name="card_test_m1_psame">Mifare card test(Authenticated by SAM AV2)</string>
     <string name="card_test_sam">SAM card test</string>
@@ -160,7 +166,7 @@
     <string name="card_hit_apdu_indata">indata(Hex,LEN B)</string>
     <string name="card_hit_apdu_le">Le(Hex,1~2B unsigned)</string>
 
-    <string name="card_read_trade_card">Start checking(trade card)</string>
+    <string name="card_read_trade_card">check card</string>
     <string name="card_clean_result">clear result</string>
     <string name="card_nfc_apdu">send apdu</string>
 
@@ -234,7 +240,7 @@
     <string name="pin_pad_key_index_hint">Please input correct key index</string>
     <string name="pin_pad_timeout_hint">Please input correct timeout</string>
     <string name="pin_pad_card_no_hint">Please input correct card No</string>
-    <string name="pin_pad_calculate_algorithm_type">计算PinBlock的算法类型</string>
+    <string name="pin_pad_calculate_algorithm_type">PinBlock algorithm type</string>
     <string name="pin_pad_des">3DES</string>
     <string name="pin_pad_sm4">SM4</string>
     <string name="pin_pad_pik_key_system">PIK key system</string>
@@ -254,6 +260,7 @@
     <string name="pin_pad_mode_silent">Silent</string>
     <string name="pin_pad_mode_green_led">Green LED</string>
     <string name="pin_pad_mode_monitor_clear_key">Monitor clear key</string>
+    <string name="pin_pad_mode_cancel_to_clear">Press cancel key to clear PIN</string>
     <string name="pin_pad_set_pin_pad_text">Set PinPad text</string>
     <string name="pin_pad_text_confirm">Confirm</string>
     <string name="pin_pad_text_input_pin">Input PIN</string>
@@ -282,20 +289,38 @@
     <string name="security_DuKpt_aes_save_key">DuKpt-AES save Key</string>
     <string name="security_save_tr31_key">Save TR31 key test</string>
     <string name="security_delete_key">Delete Key</string>
+    <string name="security_apacs_mac">APACS MAC</string>
+    <string name="security_save_ciphertext_key_under_rsa">Save ciphertext key under RSA key</string>
+    <string name="security_inject_ciphertext_key_under_rsa">Inject ciphertext key under RSA key</string>
+    <string name="security_inejct_symmetric_key">Inject symmetric key</string>
+    <string name="security_owf2_alg_test">OWF2 algorithm test</string>
+    <string name="security_owf3_alg_test">OWF3 algorithm test</string>
+    <string name="security_gowf_alg_test">GOWF algorithm test</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    <string name="hsm_key_share_test">Key share</string>
+    <string name="hsm_key_share_test">HSM key share</string>
     <string name="hsm_save_key_share_dukpt">Save DUKPT key share</string>
     <string name="hsm_combine_key_share">Combine key share</string>
-    <string name="hsm_rsa_keypair_test">generate rsa keypair</string>
+    <string name="hsm_rsa_keypair_test">HSM RSA keypair test</string>
     <string name="hsm_inject_rsa_keypair">inject rsa keypair</string>
-    <string name="hsm_save_key_under_kek">Save key under KEK</string>
-    <string name="hsm_export_key_under_kek">Export key under KEK</string>
+    <string name="hsm_save_key_under_kek">HSM save key under KEK</string>
+    <string name="hsm_export_key_under_kek">HSM Export key under KEK</string>
     <string name="hsm_export_tr31">Export TR31</string>
     <string name="hsm_destroy_key">Destroy key</string>
-    <string name="hsm_get_device_cert">Get device certificate</string>
-    <string name="hsm_device_pvk_recover">Recover data with device private key</string>
-    <string name="hsm_rsa_recover">Recover data</string>
+    <string name="hsm_device_cert_pvt_key_test">Device cert private key test</string>
+    <string name="hsm_store_device_cert_pvt_key">Store device cert private key</string>
+    <string name="hsm_get_device_cert">Get device cert data</string>
+    <string name="hsm_device_pvk_recover">Recover data with device cert private key</string>
+    <string name="hsm_inject_device_pvt_key">Inject device cert private key</string>
+    <string name="hsm_device_cert_manager">Device cert manager</string>
+    <string name="hsm_rsa_recover">RSA Recover data</string>
+    <string name="hsm_rsa_key_type_normal">Normal</string>
+    <string name="hsm_rsa_key_type_kpk">RSA_KPK</string>
+    <string name="hsm_rsa_key_type_kek">RSA_KEK</string>
+    <string name="hsm_gen_dev_cert">Generate device cert</string>
+    <string name="hsm_save_dev_cert">Save device cert</string>
+    <string name="hsm_get_dev_cert_state">Get device cert state</string>
+    <string name="hsm_delete_dev_cert">Delete device cert</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="emv_swing_card_mag">Please swipe card</string>
@@ -337,6 +362,9 @@
     <string name="setting_clear_aid">Clear Aid</string>
     <string name="setting_clear_capk">Clear Capk</string>
     <string name="setting_isolate_m1_cpu">IsolateM1AndCPU</string>
+    <string name="setting_card_poll_interval_time">Card poll interval time</string>
+    <string name="setting_get_card_polling_interval_time">Get card poll interval time</string>
+    <string name="setting_set_card_polling_interval_time">Set card poll interval time</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="security_kek">KEK</string>
@@ -404,7 +432,7 @@
     <string name="security_mac_alg_type">mac algorithm type</string>
     <string name="security_init_vector">initialization vector</string>
 
-    <string name="security_data_mode_ebc">DATA_MODE_ECB</string>
+    <string name="security_data_mode_ecb">DATA_MODE_ECB</string>
     <string name="security_data_mode_cbc">DATA_MODE_CBC</string>
     <string name="security_data_mode_ofb">DATA_MODE_OFB</string>
     <string name="security_data_mode_cfb">DATA_MODE_CFB</string>
@@ -436,24 +464,32 @@
     <string name="security_gen_sm2_key_pair">Generate SM2 keypair</string>
     <string name="security_inject_sm2_key">Inject SM2 key</string>
     <string name="security_hsm_gen_key_pair">Generate keypair</string>
-    <string name="security_hsm_inject_key_pair">Inject keypair</string>
+    <string name="security_hsm_inject_rsa_pvt_key">Inject rsa private key</string>
+    <string name="security_hsm_inject_rsa_pub_key">Inject rsa public key</string>
     <string name="security_sm2_sign">SM2 sign</string>
     <string name="security_sm2_verify">SM2 verify signature</string>
     <string name="security_sm2_encrypt">SM2 encrypt</string>
     <string name="security_sm2_decrypt">SM2 decrypt</string>
     <string name="security_calc_hash">Calc Hash</string>
-    <string name="security_device_cert_test">Device Certificate Test</string>
+    <string name="security_hsm_device_cert_test">HSM &amp; Device Certificate Test</string>
     <string name="security_hash_alg_type">Hash algorithm type</string>
 
     <string name="security_get_kcv">Get kcv</string>
 
     <string name="security_hash_type">Hash type</string>
-
+    <string name="security_hash_type_none">NO_HASH</string>
     <string name="security_hash_type_sha1">SHA1</string>
     <string name="security_hash_type_sha224">SHA224</string>
     <string name="security_hash_type_sha256">SHA256</string>
     <string name="security_hash_type_sha384">SHA384</string>
     <string name="security_hash_type_sha512">SHA512</string>
+    <string name="security_rsa_padding_mode">Padding mode</string>
+    <string name="security_rsa_padding_no_padding">NOTHING_PADDING</string>
+    <string name="security_rsa_padding_pkcs1">PKCS1_PADDING</string>
+    <string name="security_rsa_padding_pkcs7">PKCS7_PADDING</string>
+    <string name="security_rsa_padding_pkcs5">PKCS5_PADDING</string>
+    <string name="security_rsa_padding_pkcs1_oaep">PKCS1_OAEP_PADDING</string>
+    <string name="security_rsa_padding_pkcs1_v1_5_sha512">PKCS1_V1_5_SHA512</string>
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="tax_test_page">Tax test</string>
 
@@ -564,5 +600,18 @@
     <string name="etc_start_stress_test">Start stress test</string>
     <string name="etc_stop_stress_test">Stop stress test</string>
     <string name="etc_trade_test">Trade test</string>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    <string name="test_transmission_stress_test">Transmission stress test</string>
+    <string name="test_hint_input_data_len">input data len(range 1–2036)</string>
+    <string name="test_hint_test_time">test time(unit: min)</string>
+    <string name="test_hint_delay_time">delay time(unit: ms, range 0–200)</string>
+    <string name="test_total_count">total count:</string>
+    <string name="test_success_count">success count:</string>
+    <string name="test_failed_count">failed count：</string>
+    <string name="test_success_percent">success percentage:</string>
+    <string name="test_success_data_amount">success data amount:</string>
+    <string name="test_spent_time">total test time:</string>
+    <string name="test_data_exchange_speed">data exchange speed:</string>
 
 </resources>

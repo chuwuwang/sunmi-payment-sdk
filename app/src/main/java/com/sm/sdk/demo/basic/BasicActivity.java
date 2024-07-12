@@ -57,6 +57,21 @@ public class BasicActivity extends BaseAppCompatActivity {
         leftText = item.findViewById(R.id.left_text);
         leftText.setText(R.string.basic_sys_set_wakeup);
         item.setOnClickListener(this);
+
+        item = findViewById(R.id.kb_beep_mode);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_kb_beep_mode);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.shard_lib);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_shared_lib_test);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.data_transmission);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.test_transmission_stress_test);
+        item.setOnClickListener(this);
     }
 
     @Override
@@ -86,6 +101,15 @@ public class BasicActivity extends BaseAppCompatActivity {
                 break;
             case R.id.sys_set_wakeup:
                 openActivity(SysSetWakeupActivity.class);
+                break;
+            case R.id.kb_beep_mode:
+                openActivity(KBBeepModeActivity.class);
+                break;
+            case R.id.shard_lib:
+                openActivity(SharedLibActivity.class);
+                break;
+            case R.id.data_transmission:
+                openActivity(TransmissionTestActivity.class);
                 break;
         }
     }

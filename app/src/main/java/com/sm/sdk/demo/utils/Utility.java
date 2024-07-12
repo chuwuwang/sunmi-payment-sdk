@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public final class Utility {
     private Utility() {
@@ -38,12 +39,17 @@ public final class Utility {
         if (order == 1) { //升序
             Collections.sort(list, String::compareTo);
         } else if (order == 2) {//降序
-            Collections.sort(list, (o1, o2) -> o2.compareTo(o1));
+            Collections.sort(list, Collections.reverseOrder());
         }
         for (String key : list) {
             sb.append(key);
             sb.append(":");
-            sb.append(bundle.get(key));
+            Object value = bundle.get(key);
+            if (value instanceof byte[]) {
+                sb.append(ByteUtil.bytes2HexStr((byte[]) value));
+            } else {
+                sb.append(value);
+            }
             sb.append("\n");
         }
         if (sb.length() > 0) {
@@ -58,7 +64,12 @@ public final class Utility {
     }
 
     public static String formatStr(String format, Object... params) {
-        return String.format(Locale.getDefault(), format, params);
+        return String.format(Locale.ENGLISH, format, params);
+    }
+
+    /** check whether src is hex format */
+    public static boolean checkHexValue(String src) {
+        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 
     /** 显示Toast */

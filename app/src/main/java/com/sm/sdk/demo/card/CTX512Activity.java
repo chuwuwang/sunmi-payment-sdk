@@ -77,7 +77,7 @@ public class CTX512Activity extends BaseAppCompatActivity {
 
     private void checkCard() {
         try {
-            showSwingCardHintDialog();
+            showSwingCardHintDialog(0);
             // Now, card type is CTX512B
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(cardType, mCheckCardCallback, 60);
@@ -96,14 +96,6 @@ public class CTX512Activity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void onError(int code, String message) throws RemoteException {
-            addEndTime("checkCard()");
-            LogUtil.e(TAG, "检卡失败，code:" + code + ",msg:" + message);
-            showSpendTime();
-            checkCard();
-        }
-
-        @Override
         public void findICCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
             LogUtil.e(TAG, "findICCardEx:" + Utility.bundle2String(info));
@@ -117,6 +109,18 @@ public class CTX512Activity extends BaseAppCompatActivity {
             LogUtil.e(TAG, "findRFCardEx:" + Utility.bundle2String(info));
             showSpendTime();
             dismissSwingCardHintDialog();
+        }
+
+        @Override
+        public void onErrorEx(Bundle info) throws RemoteException {
+            addEndTime("checkCard()");
+            showSpendTime();
+            dismissSwingCardHintDialog();
+            int code = info.getInt("code");
+            String message = info.getString("message");
+            String tip = "check card failed, code:" + code + ",msg:" + message;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     };
 

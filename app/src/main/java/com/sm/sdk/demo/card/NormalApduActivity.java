@@ -21,6 +21,7 @@ import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidl.AidlConstants;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
@@ -29,7 +30,6 @@ import com.sunmi.pay.hardware.aidlv2.bean.ApduSendV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 import sunmi.sunmiui.utils.LogUtil;
 
@@ -158,7 +158,6 @@ public class NormalApduActivity extends BaseAppCompatActivity {
             sb.append(msg);
             sb.append("\n");
             result.setText(sb);
-            result.setTag(sb);
             sendApdu.setEnabled(true);
         });
     }
@@ -174,12 +173,12 @@ public class NormalApduActivity extends BaseAppCompatActivity {
         String indata = apduIndata.getText().toString();
         String le = apduLe.getText().toString();
 
-        if (command.length() != 8 || !checkHexValue(command)) {
+        if (command.length() != 8 || !Utility.checkHexValue(command)) {
             apduCmd.requestFocus();
             showToast("command should be 8 hex characters!");
             return false;
         }
-        if (lc.length() > limitLen || !checkHexValue(lc)) {
+        if (lc.length() > limitLen || !Utility.checkHexValue(lc)) {
             apduLc.requestFocus();
             showToast(formatStr("Lc should less than %d hex characters!", limitLen));
             return false;
@@ -190,12 +189,12 @@ public class NormalApduActivity extends BaseAppCompatActivity {
             showToast("Lc value should in [0,0x0100]");
             return false;
         }
-        if (indata.length() != lcValue * 2 || (indata.length() > 0 && !checkHexValue(indata))) {
+        if (indata.length() != lcValue * 2 || (indata.length() > 0 && !Utility.checkHexValue(indata))) {
             apduIndata.requestFocus();
             showToast("indata value should lc*2 hex characters!");
             return false;
         }
-        if (le.length() > limitLen || !checkHexValue(le)) {
+        if (le.length() > limitLen || !Utility.checkHexValue(le)) {
             apduLe.requestFocus();
             showToast(formatStr("Le should less than %d hex characters!", limitLen));
             return false;
@@ -207,10 +206,6 @@ public class NormalApduActivity extends BaseAppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
     }
 
     private String formatStr(String format, Object... params) {
@@ -306,7 +301,7 @@ public class NormalApduActivity extends BaseAppCompatActivity {
     }
 
     private void addText(CharSequence msg) {
-        String preMsg = result.getTag().toString();
+        CharSequence preMsg = result.getText();
         runOnUiThread(() -> result.setText(TextUtils.concat(preMsg, msg)));
     }
 

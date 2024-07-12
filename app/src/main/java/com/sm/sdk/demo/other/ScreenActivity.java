@@ -16,7 +16,7 @@ public class ScreenActivity extends BaseAppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int screen_orientation = getIntent().getIntExtra("SCREEN_ORIENTATION", ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        LogUtil.e("lxy","screen_orientation:"+screen_orientation);
+        LogUtil.e("lxy", "screen_orientation:" + screen_orientation);
         setRequestedOrientation(screen_orientation);
         setContentView(R.layout.activity_screen);
         initToolbarBringBack(R.string.screen_rotation);

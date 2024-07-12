@@ -6,15 +6,15 @@ android {
         applicationId "com.sm.sdk.demo"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 149
-        versionName "v2.2.76"
+        versionCode 200
+        versionName "v2.2.92"
     }
     signingConfigs {
         release {
             keyAlias 'sunmi'
             keyPassword 'SunmiPay'
             storePassword 'sunmipay'
-            storeFile file('../app/sunmi.jks')
+            storeFile file('sunmi.jks')
         }
     }
     buildTypes {
@@ -30,28 +30,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            // variant.packageApplicationProvider.get().outputDirectory = new File(project.rootDir.absolutePath + "/app/build/outputs/apk")
-            outputFileName = "sunmi-sdk-test-demo_" + defaultConfig.versionName + "_libbase_" + buildType.name + ".apk"
-            // variant.getAssembleProvider().configure() {
-            //     it.doLast {
-            //         delete { delete "build/outputs/apk/output.json" }
-            //     }
-            // }
-        }
-    }
     lintOptions {
         abortOnError false
-        disable 'GoogleAppIndexingWarning'
         disable 'NonConstantResourceId'
+        disable 'GoogleAppIndexingWarning'
     }
     sourceSets {
         main { jniLibs.srcDirs = ['libs'] }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "SunmiSDKTestDemo_${versionName}_libbase_${buildType.name}.apk"
+            // variant.packageApplicationProvider.get().outputDirectory = new File("${project.buildDir}/outputs/apk")
+            // variant.getAssembleProvider().configure() { it.doLast { delete { delete "build/outputs/apk/output.json" } } }
+        }
     }
 }
 

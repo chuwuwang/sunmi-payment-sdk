@@ -72,13 +72,19 @@
     <string name="basic_show_nav_all">全部显示</string>
     <string name="basic_screen_model_hint">屏幕独占\n电源键禁用\n音量键禁用\n系统状态栏禁用\n系统导航栏禁用</string>
     <string name="basic_emv_callback_timeout_time">设置EMV回调超时时间</string>
-    <string name="basic_channel">通道</string>
+    <string name="basic_channel">通道(1-IC卡唤醒, 2-磁卡唤醒, 3-按键唤醒)</string>
     <string name="basic_mode">模式</string>
+    <string name="basic_kb_beep_mode">键盘按键音模式</string>
+    <string name="basic_shared_lib_test">共享库测试</string>
+    <string name="basic_install_shared_libs">安装共享库</string>
+    <string name="basic_delete_shared_libs">删除共享库</string>
+    <string name="basic_shared_libs_dir">共享库目录</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="card_test_mag">磁卡测试</string>
     <string name="card_test_mag_enc">磁卡测试(磁道加密)</string>
     <string name="card_test_ic">IC卡测试</string>
+    <string name="card_test_nfc">NFC卡测试</string>
     <string name="card_test_m1">M1卡测试</string>
     <string name="card_test_m1_psame">M1卡测试(SAM AV2密钥认证)</string>
     <string name="card_test_sam">SAM卡测试</string>
@@ -160,7 +166,7 @@
     <string name="card_hit_apdu_indata">indata(Hex,LEN B)</string>
     <string name="card_hit_apdu_le">Le(Hex,1~2B unsigned)</string>
 
-    <string name="card_read_trade_card">开始检卡（行业卡）</string>
+    <string name="card_read_trade_card">检卡</string>
     <string name="card_nfc_apdu">发送APDU指令</string>
     <string name="card_clean_result">清除结果</string>
 
@@ -220,7 +226,7 @@
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="pin_pad_card_no">请输入卡号（13&#8211;19）</string>
-    <string name="pin_pad_key_index">请输入秘钥索引（0&#8211;19）</string>
+    <string name="pin_pad_key_index">请输入密钥索引（0&#8211;19）</string>
     <string name="pin_pad_timeout">请输入超时时间（1&#8211;60 s）</string>
     <string name="pin_pad_out_of_order_keyboard">乱序键盘</string>
     <string name="pin_pad_orderly_keyboard">顺序键盘</string>
@@ -234,7 +240,7 @@
     <string name="pin_pad_key_index_hint">请输入正确的密钥索引</string>
     <string name="pin_pad_timeout_hint">请输入正确的超时时间</string>
     <string name="pin_pad_card_no_hint">请输入正确的卡号</string>
-    <string name="pin_pad_calculate_algorithm_type">计算PinBlock的算法类型</string>
+    <string name="pin_pad_calculate_algorithm_type">PinBlock算法类型</string>
     <string name="pin_pad_des">3DES</string>
     <string name="pin_pad_sm4">SM4</string>
     <string name="pin_pad_pik_key_system">PIK密钥体系</string>
@@ -254,6 +260,7 @@
     <string name="pin_pad_mode_silent">输PIN时静音</string>
     <string name="pin_pad_mode_green_led">输PIN时LED绿灯亮</string>
     <string name="pin_pad_mode_monitor_clear_key">监视清除键</string>
+    <string name="pin_pad_mode_cancel_to_clear">按取消键清除输PIN</string>
     <string name="pin_pad_set_pin_pad_text">设置密码键盘文字</string>
     <string name="pin_pad_text_confirm">确认</string>
     <string name="pin_pad_text_input_pin">输入PIN</string>
@@ -282,20 +289,38 @@
     <string name="security_DuKpt_aes_save_key">DuKpt-AES保存密钥</string>
     <string name="security_save_tr31_key">保存TR31密钥</string>
     <string name="security_delete_key">删除密钥</string>
+    <string name="security_apacs_mac">APACS MAC</string>
+    <string name="security_save_ciphertext_key_under_rsa">依赖RSA密钥保存密钥</string>
+    <string name="security_inject_ciphertext_key_under_rsa">依赖RSA密钥注入密钥</string>
+    <string name="security_inejct_symmetric_key">注入对称密钥</string>
+    <string name="security_owf2_alg_test">OWF2算法测试</string>
+    <string name="security_owf3_alg_test">OWF3算法测试</string>
+    <string name="security_gowf_alg_test">GOWF算法测试</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    <string name="hsm_key_share_test">密钥分量测试</string>
+    <string name="hsm_key_share_test">HSM密钥分量测试</string>
     <string name="hsm_save_key_share_dukpt">保存DUKPT密钥分量</string>
     <string name="hsm_combine_key_share">密钥分量合成密钥</string>
-    <string name="hsm_rsa_keypair_test">RSA密钥测试</string>
+    <string name="hsm_rsa_keypair_test">HSM RSA密钥测试</string>
     <string name="hsm_inject_rsa_keypair">注入RSA密钥</string>
-    <string name="hsm_save_key_under_kek">依赖KEK保存密钥</string>
-    <string name="hsm_export_key_under_kek">依赖KEK导出密钥</string>
+    <string name="hsm_save_key_under_kek">HSM依赖KEK保存密钥</string>
+    <string name="hsm_export_key_under_kek">HSM依赖KEK导出密钥</string>
     <string name="hsm_export_tr31">导出TR31密钥块</string>
     <string name="hsm_destroy_key">销毁密钥</string>
-    <string name="hsm_get_device_cert">获取设备证书</string>
-    <string name="hsm_device_pvk_recover">设备私钥运算</string>
+    <string name="hsm_device_cert_pvt_key_test">设备证书私钥测试</string>
+    <string name="hsm_store_device_cert_pvt_key">保存设备证书私钥</string>
+    <string name="hsm_get_device_cert">获取设备证书数据</string>
+    <string name="hsm_device_pvk_recover">设备证书私钥运算</string>
+    <string name="hsm_inject_device_pvt_key">注入设备证书私钥</string>
+    <string name="hsm_device_cert_manager">设备证书管理</string>
     <string name="hsm_rsa_recover">RSA运算</string>
+    <string name="hsm_rsa_key_type_normal">普通</string>
+    <string name="hsm_rsa_key_type_kpk">RSA_KPK</string>
+    <string name="hsm_rsa_key_type_kek">RSA_KEK</string>
+    <string name="hsm_gen_dev_cert">生成设备证书</string>
+    <string name="hsm_save_dev_cert">保存设备证书</string>
+    <string name="hsm_get_dev_cert_state">获取设备证书状态</string>
+    <string name="hsm_delete_dev_cert">删除设备证书</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="emv_swing_card_mag">请刷卡</string>
@@ -337,6 +362,9 @@
     <string name="setting_clear_aid">清除Aid</string>
     <string name="setting_clear_capk">清除Capk</string>
     <string name="setting_isolate_m1_cpu">区分M1和CPU卡</string>
+    <string name="setting_card_poll_interval_time">询卡时间间隔</string>
+    <string name="setting_get_card_polling_interval_time">获取询卡时间间隔</string>
+    <string name="setting_set_card_polling_interval_time">设置询卡时间间隔</string>
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="security_kek">KEK</string>
@@ -345,36 +373,36 @@
     <string name="security_pik">PIK</string>
     <string name="security_mak">MAK</string>
     <string name="security_bdk">BDK</string>
-    <string name="security_key_type">秘钥类型</string>
-    <string name="security_key_index">秘钥索引</string>
-    <string name="security_key_value">秘钥数据</string>
-    <string name="security_key_component_1">秘钥分量1</string>
-    <string name="security_key_component_2">秘钥分量2</string>
-    <string name="security_key_component_3">秘钥分量3</string>
-    <string name="security_combine_key_component">合成秘钥分量</string>
-    <string name="security_ksn">秘钥序列号</string>
-    <string name="security_rec_key">保留秘钥类型</string>
-    <string name="security_check_value">秘钥校验值（可以为空）</string>
+    <string name="security_key_type">密钥类型</string>
+    <string name="security_key_index">密钥索引</string>
+    <string name="security_key_value">密钥数据</string>
+    <string name="security_key_component_1">密钥分量1</string>
+    <string name="security_key_component_2">密钥分量2</string>
+    <string name="security_key_component_3">密钥分量3</string>
+    <string name="security_combine_key_component">合成密钥分量</string>
+    <string name="security_ksn">密钥序列号</string>
+    <string name="security_rec_key">保留密钥类型</string>
+    <string name="security_check_value">密钥校验值（可以为空）</string>
     <string name="security_target_pkg_name">目标App包名</string>
 
-    <string name="security_mak_index">MAK秘钥索引</string>
-    <string name="security_key_alg_type">秘钥算法类型</string>
-    <string name="security_decrypt_index">解密秘钥索引</string>
+    <string name="security_mak_index">MAK密钥索引</string>
+    <string name="security_key_alg_type">密钥算法类型</string>
+    <string name="security_decrypt_index">解密密钥索引</string>
     <string name="security_alg_aes">AES</string>
     <string name="security_alg_sm4">SM4</string>
     <string name="security_alg_3des_or_des">3DES/DES</string>
 
     <string name="security_ksn_hint">请正确输入KSN</string>
-    <string name="security_key_value_hint">请正确输入秘钥数据</string>
-    <string name="security_check_value_hint">请正确输入秘钥校验值</string>
+    <string name="security_key_value_hint">请正确输入密钥数据</string>
+    <string name="security_check_value_hint">请正确输入密钥校验值</string>
     <string name="security_source_data_hint">请正确输入待计算的数据</string>
-    <string name="security_mksk_key_index_hint">请正确输入秘钥索引(0&#8211;199)</string>
-    <string name="security_dukpt_key_index_hint">请正确输入秘钥索引(0&#8211;19,1100&#8211;1199,2100&#8211;2199)</string>
-    <string name="security_duKpt_3des_key_hint">请正确输入秘钥索引(0&#8211;9,1100&#8211;1199)</string>
-    <string name="security_duKpt_aes_key_hint">请正确输入秘钥索引(10&#8211;19,2100&#8211;2199)</string>
-    <string name="security_rsa_key_hint">请正确输入秘钥索引(0&#8211;19)</string>
-    <string name="security_sm2_key_hint">请正确输入秘钥索引(0&#8211;9)</string>
-    <string name="security_device_pvk_index_hint">请正确输入秘钥索引(9001&#8211;9008)</string>
+    <string name="security_mksk_key_index_hint">请正确输入密钥索引(0&#8211;199)</string>
+    <string name="security_dukpt_key_index_hint">请正确输入密钥索引(0&#8211;19,1100&#8211;1199,2100&#8211;2199)</string>
+    <string name="security_duKpt_3des_key_hint">请正确输入密钥索引(0&#8211;9,1100&#8211;1199)</string>
+    <string name="security_duKpt_aes_key_hint">请正确输入密钥索引(10&#8211;19,2100&#8211;2199)</string>
+    <string name="security_rsa_key_hint">请正确输入密钥索引(0&#8211;19)</string>
+    <string name="security_sm2_key_hint">请正确输入密钥索引(0&#8211;9)</string>
+    <string name="security_device_pvk_index_hint">请正确输入密钥索引(9001&#8211;9008)</string>
     <string name="security_init_vector_hint">请正确输入初始向量（8 byte）</string>
     <string name="security_target_pkg_name_hint">目标App名称不能为空</string>
     <string name="security_initial_key_id_hint">请输入正确的初始化key Id</string>
@@ -404,7 +432,7 @@
     <string name="security_encrypt_type">加密模式</string>
     <string name="security_init_vector">初始向量</string>
 
-    <string name="security_data_mode_ebc">DATA_MODE_ECB</string>
+    <string name="security_data_mode_ecb">DATA_MODE_ECB</string>
     <string name="security_data_mode_cbc">DATA_MODE_CBC</string>
     <string name="security_data_mode_ofb">DATA_MODE_OFB</string>
     <string name="security_data_mode_cfb">DATA_MODE_CFB</string>
@@ -436,23 +464,32 @@
     <string name="security_gen_sm2_key_pair">生成SM2公私钥</string>
     <string name="security_inject_sm2_key">注入SM2密钥</string>
     <string name="security_hsm_gen_key_pair">生成公私钥</string>
-    <string name="security_hsm_inject_key_pair">注入公私钥</string>
+    <string name="security_hsm_inject_rsa_pvt_key">注入RSA私钥</string>
+    <string name="security_hsm_inject_rsa_pub_key">注入RSA公钥</string>
     <string name="security_sm2_sign">SM2签名</string>
     <string name="security_sm2_verify">SM2验签</string>
     <string name="security_sm2_encrypt">SM2加密</string>
     <string name="security_sm2_decrypt">SM2解密</string>
     <string name="security_calc_hash">计算Hash</string>
-    <string name="security_device_cert_test">设备证书接口测试</string>
+    <string name="security_hsm_device_cert_test">HSM &amp; 设备证书接口测试</string>
     <string name="security_hash_alg_type">Hash算法类型</string>
 
     <string name="security_get_kcv">获取KCV</string>
 
     <string name="security_hash_type">哈希类型</string>
+    <string name="security_hash_type_none">NO_HASH</string>
     <string name="security_hash_type_sha1">SHA1</string>
     <string name="security_hash_type_sha224">SHA224</string>
     <string name="security_hash_type_sha256">SHA256</string>
     <string name="security_hash_type_sha384">SHA384</string>
     <string name="security_hash_type_sha512">SHA512</string>
+    <string name="security_rsa_padding_mode">填充模式e</string>
+    <string name="security_rsa_padding_no_padding">NOTHING_PADDING</string>
+    <string name="security_rsa_padding_pkcs1">PKCS1_PADDING</string>
+    <string name="security_rsa_padding_pkcs7">PKCS7_PADDING</string>
+    <string name="security_rsa_padding_pkcs5">PKCS5_PADDING</string>
+    <string name="security_rsa_padding_pkcs1_oaep">PKCS1_OAEP_PADDING</string>
+    <string name="security_rsa_padding_pkcs1_v1_5_sha512">PKCS1_V1_5_SHA512</string>
     ////////////////////////////////////////////////////////////////////////////////////////////////
     <string name="tax_test_page">税控测试</string>
 
@@ -525,7 +562,7 @@
     <string name="etc_search_comm_channel">通信通道</string>
     <string name="etc_search_trans_power">发射功率</string>
     <string name="etc_search_buzzer">蜂鸣器</string>
-    <string name="etc_search_frag_timeout">帧超接收时时间(s)</string>
+    <string name="etc_search_frag_timeout">帧接收超时时间(s)</string>
     <string name="etc_search_search_device">搜索ETC设备</string>
     <string name="etc_search_max_device_num">最大ETC设备数量</string>
     <string name="etc_search_timeout_time">超时时间(ms)</string>
@@ -562,4 +599,18 @@
     <string name="etc_start_stress_test">开始压力测试</string>
     <string name="etc_stop_stress_test">停止压力测试</string>
     <string name="etc_trade_test">扣费测试</string>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    <string name="test_transmission_stress_test">通讯压力测试</string>
+    <string name="test_hint_input_data_len">输入数据长度(范围1–2036)</string>
+    <string name="test_hint_test_time">测试时间（单位：min）</string>
+    <string name="test_hint_delay_time">延时（单位：ms，范围0–200）</string>
+    <string name="test_total_count">总次数：</string>
+    <string name="test_success_count">成功次数：</string>
+    <string name="test_failed_count">失败次数：</string>
+    <string name="test_success_percent">成功率：</string>
+    <string name="test_success_data_amount">成功数据量：</string>
+    <string name="test_spent_time">测试总时长：</string>
+    <string name="test_data_exchange_speed">数据交互速率：</string>
+
 </resources>

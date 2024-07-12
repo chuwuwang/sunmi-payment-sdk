@@ -11,6 +11,7 @@ import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.LogUtil;
 import com.sunmi.pay.hardware.aidl.AidlConstants.Security;
 
 public class DuKptDataEncryptActivity extends BaseAppCompatActivity {
@@ -118,6 +119,7 @@ public class DuKptDataEncryptActivity extends BaseAppCompatActivity {
             addEndTime("dataDecryptDukptEx()");
             if (result == 0) {
                 String hexStr = ByteUtil.bytes2HexStr(dataOut);
+                LogUtil.e(TAG, "dataEncryptDukptEx output:" + hexStr);
                 mTvInfo.setText(hexStr);
             } else {
                 toastHint(result);

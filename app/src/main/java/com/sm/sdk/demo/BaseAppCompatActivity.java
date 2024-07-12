@@ -129,11 +129,16 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         );
     }
 
-    protected void showSwingCardHintDialog() {
+    /**
+     * 显示检卡dialog
+     *
+     * @param dlgType 0-NFC卡，1-IC卡，2-NFC和IC
+     */
+    protected void showSwingCardHintDialog(int dlgType) {
         runOnUiThread(
                 () -> {
                     if (swingCardHintDlg == null) {
-                        swingCardHintDlg = new SwingCardHintDialog(this);
+                        swingCardHintDlg = new SwingCardHintDialog(this, dlgType);
                         swingCardHintDlg.setOwnerActivity(this);
                     }
                     if (swingCardHintDlg.isShowing() || isDestroyed()) {
@@ -179,6 +184,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     protected void openActivityForResult(Intent intent, int requestCode) {
         startActivityForResult(intent, requestCode);
     }
+
 
     @Override
     public void onClick(View v) {

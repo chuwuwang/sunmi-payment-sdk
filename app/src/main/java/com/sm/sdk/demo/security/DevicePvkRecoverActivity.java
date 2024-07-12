@@ -1,7 +1,6 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -13,23 +12,16 @@ import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
-import com.sunmi.pay.hardware.aidlv2.security.SecurityOptV2;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class DevicePvkRecoverActivity extends BaseAppCompatActivity {
-
-    public static final int TYPE_SHA1 = 0;
-    public static final int TYPE_SHA224 = 1;
-    public static final int TYPE_SHA256 = 2;
-    public static final int TYPE_SHA384 = 3;
-    public static final int TYPE_SHA512 = 4;
-
     private EditText mEditData;
     private EditText mEditKeyIndex;
     private TextView mTvInfo;
+    private String hashAlg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,44 +31,42 @@ public class DevicePvkRecoverActivity extends BaseAppCompatActivity {
         initView();
     }
 
-    private int mHashType = TYPE_SHA256;
-
     private void initView() {
-        RadioGroup hashTypeRadioGroup = findViewById(R.id.hash_type_group);
-        hashTypeRadioGroup.setOnCheckedChangeListener(
+        RadioGroup rgHashType = findViewById(R.id.hash_type_group);
+        rgHashType.setOnCheckedChangeListener(
                 (group, checkedId) -> {
                     switch (checkedId) {
+                        case R.id.rb_hash_type0:
+                            hashAlg = "";
+                            break;
                         case R.id.rb_hash_type1:
-                            mHashType = TYPE_SHA1;
+                            hashAlg = "sha-1";
                             break;
                         case R.id.rb_hash_type2:
-                            mHashType = TYPE_SHA224;
+                            hashAlg = "sha-224";
                             break;
                         case R.id.rb_hash_type3:
-                            mHashType = TYPE_SHA256;
+                            hashAlg = "sha-256";
                             break;
                         case R.id.rb_hash_type4:
-                            mHashType = TYPE_SHA384;
+                            hashAlg = "sha-384";
                             break;
                         case R.id.rb_hash_type5:
-                            mHashType = TYPE_SHA512;
+                            hashAlg = "sha-512";
                             break;
                     }
                 }
         );
-
+        rgHashType.check(R.id.rb_hash_type0);
         mEditData = findViewById(R.id.source_data);
         mEditKeyIndex = findViewById(R.id.key_index);
-
         mTvInfo = findViewById(R.id.tv_info);
-
         findViewById(R.id.mb_ok).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        final int id = v.getId();
-        switch (id) {
+        switch (v.getId()) {
             case R.id.mb_ok:
                 rsaRecover();
                 break;
@@ -108,38 +98,33 @@ public class DevicePvkRecoverActivity extends BaseAppCompatActivity {
             return;
         }
         byte[] dataIn = ByteUtil.hexStr2Bytes(dataStr);
-        byte[] dataOut = signBySP(keyIndex, dataIn, mHashType);
+        byte[] dataOut = signBySP(keyIndex, dataIn, hashAlg);
         String hexStr = ByteUtil.bytes2HexStr(dataOut);
-        LogUtil.e(TAG, "dataDecrypt output:" + hexStr);
+        LogUtil.e(TAG, "rsaRecover() output:" + hexStr);
         mTvInfo.setText(hexStr);
     }
 
-    public byte[] signBySP(int keyIndex, byte[] dataIn, int type) {
+    public byte[] signBySP(int keyIndex, byte[] dataIn, String hashAlg) {
         if (dataIn == null || dataIn.length == 0) {
             return null;
         }
         try {
-            byte[] hash = new byte[128];
-            int ret = algASN1Sha(type, dataIn, dataIn.length, hash); //hash运算
-            if (ret < 0) { // ret ：长度（包括asn1格式数据）
+            byte[] buffer = new byte[2048];
+            int len = algASN1Sha(hashAlg, dataIn, buffer); //hash运算
+            if (len < 0) { // len ：长度（包括asn1格式数据）
                 return null;
             }
             byte[] dataOut = new byte[2048];
-            byte[] hashIn = Arrays.copyOf(hash, ret);
-            SecurityOptV2 securityOptV2 = MyApplication.app.securityOptV2;
-            if (securityOptV2 != null) {
-                addStartTimeWithClear("devicePrivateKeyRecover()");
-                int len = securityOptV2.devicePrivateKeyRecover(keyIndex, 0, 1, hashIn, dataOut); //sp签名
-                addEndTime("devicePrivateKeyRecover()");
-                showSpendTime();
-                if (len < 0) {
-                    toastHint(len);
-                    return null;
-                }
-                return Arrays.copyOf(dataOut, len);
+            byte[] hashIn = Arrays.copyOf(buffer, len);
+            addStartTimeWithClear("devicePrivateKeyRecover()");
+            len = MyApplication.app.securityOptV2.devicePrivateKeyRecover(keyIndex, 0, 1, hashIn, dataOut); //sp签名
+            addEndTime("devicePrivateKeyRecover()");
+            showSpendTime();
+            if (len < 0) {
+                toastHint(len);
+                return null;
             }
-        } catch (RemoteException e) {
-            e.printStackTrace();
+            return Arrays.copyOf(dataOut, len);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -149,93 +134,49 @@ public class DevicePvkRecoverActivity extends BaseAppCompatActivity {
     /**
      * 哈希运算
      *
-     * @param type      哈希算法类型 AlgorithmicType
-     * @param dataBytes 待运算数据缓冲区
-     * @param dataLen   待运算数据缓冲区长度
-     * @param hash      运算结果数据缓冲区
-     * @return
+     * @param hashAlg 哈希算法类型
+     * @param dataIn  待运算数据
+     * @param buffer  运算结果数据缓冲区
+     * @return >=0-buffer中有效数据的长度，<0-出错
      */
-    private int algASN1Sha(int type, byte[] dataBytes, int dataLen, byte[] hash) {
-        if (dataBytes == null || dataLen == 0 || dataLen != dataBytes.length || hash == null) {
+    private int algASN1Sha(String hashAlg, byte[] dataIn, byte[] buffer) {
+        if (dataIn == null || dataIn.length == 0 || buffer == null) {
             return -1;
         }
-        int hashLen;
-        byte[] asn1Byte;
-        SHAEncryptType shaType;
-        if (type == TYPE_SHA1) {
-            asn1Byte = ByteUtil.hexStr2Bytes("3021300906052B0E03021A05000414"); // ASN1: 1.3.14.3.2.26 sha1 (OIW)
-            shaType = SHAEncryptType.SHA1;
-            hashLen = 20;
-        } else if (type == TYPE_SHA224) {
-            asn1Byte = ByteUtil.hexStr2Bytes("3031300D06096086480165030402040500041C"); // ASN1: 1.3.14.3.2.26 sha1 (OIW)
-            shaType = SHAEncryptType.SHA224;
-            hashLen = 28;
-        } else if (type == TYPE_SHA256) {
-            asn1Byte = ByteUtil.hexStr2Bytes("3031300D060960864801650304020105000420"); // ASN1: 2.16.840.1.101.3.4.2.1 sha-256 (NIST Algorithm)
-            shaType = SHAEncryptType.SHA256;
-            hashLen = 32;
-        } else if (type == TYPE_SHA384) {
-            asn1Byte = ByteUtil.hexStr2Bytes("3031300D060960864801650304020205000430"); // ASN1: 2.16.840.1.101.3.4.2.2 sha-384 (NIST Algorithm)
-            shaType = SHAEncryptType.SHA384;
-            hashLen = 48;
-        } else if (type == TYPE_SHA512) {
-            asn1Byte = ByteUtil.hexStr2Bytes("3031300D060960864801650304020305000440"); // ASN1: 2.16.840.1.101.3.4.2.3 sha-512 (NIST Algorithm)
-            shaType = SHAEncryptType.SHA512;
-            hashLen = 64;
-        } else {
-            asn1Byte = ByteUtil.hexStr2Bytes("3031300D060960864801650304020105000420"); // ASN1: 2.16.840.1.101.3.4.2.1 sha-256 (NIST Algorithm)
-            shaType = SHAEncryptType.SHA256;
-            hashLen = 32;
+        byte[] asn1Byte = new byte[0];
+        switch (hashAlg) {
+            case "sha-1":
+                asn1Byte = ByteUtil.hexStr2Bytes("3021300906052B0E03021A05000414"); // ASN1: 1.3.14.3.2.26 sha1 (OIW)
+                break;
+            case "sha-224":
+                asn1Byte = ByteUtil.hexStr2Bytes("3031300D06096086480165030402040500041C"); // ASN1: 1.3.14.3.2.26 sha1 (OIW)
+                break;
+            case "sha-256":
+                asn1Byte = ByteUtil.hexStr2Bytes("3031300D060960864801650304020105000420"); // ASN1: 2.16.840.1.101.3.4.2.1 sha-256 (NIST Algorithm)
+                break;
+            case "sha-384":
+                asn1Byte = ByteUtil.hexStr2Bytes("3031300D060960864801650304020205000430"); // ASN1: 2.16.840.1.101.3.4.2.2 sha-384 (NIST Algorithm)
+                break;
+            case "sha-512":
+                asn1Byte = ByteUtil.hexStr2Bytes("3031300D060960864801650304020305000440"); // ASN1: 2.16.840.1.101.3.4.2.3 sha-512 (NIST Algorithm)
+                break;
         }
-        byte[] hashOut = ByteUtil.hexStr2Bytes(encrypt(ByteUtil.bytes2HexStr(dataBytes), shaType));
-        System.arraycopy(asn1Byte, 0, hash, 0, asn1Byte.length);
-        System.arraycopy(hashOut, 0, hash, asn1Byte.length, hashLen);
-        return asn1Byte.length + hashLen;
+        byte[] hashOut = hash(dataIn, hashAlg);
+        System.arraycopy(asn1Byte, 0, buffer, 0, asn1Byte.length);
+        System.arraycopy(hashOut, 0, buffer, asn1Byte.length, hashOut.length);
+        return asn1Byte.length + hashOut.length;
     }
 
-    enum SHAEncryptType {
-        SHA1("sha-1"),
-        SHA224("sha-224"),
-        SHA256("sha-256"),
-        SHA384("sha-384"),
-        SHA512("sha-512"),
-        ;
-
-        private String value;
-
-        SHAEncryptType(String str) {
-            value = str;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
-    public String encrypt(String data, SHAEncryptType type) {
-        if (TextUtils.isEmpty(data)) {
-            return "";
-        }
-        if (type == null) {
-            type = SHAEncryptType.SHA256;
-        }
-
+    public byte[] hash(byte[] dataIn, String algorithm) {
         try {
-            MessageDigest md5 = MessageDigest.getInstance(type.getValue());
-            byte[] bytes = md5.digest(ByteUtil.hexStr2Bytes(data));
-            StringBuilder result = new StringBuilder();
-            for (byte b : bytes) {
-                String temp = Integer.toHexString(b & 0xff);
-                if (temp.length() == 1) {
-                    temp = "0" + temp;
-                }
-                result.append(temp);
+            if (dataIn == null || dataIn.length == 0 || TextUtils.isEmpty(algorithm)) {//no hash
+                return dataIn;
             }
-            return result.toString().toUpperCase();
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            return md.digest(dataIn);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
-        return "";
+        return new byte[0];
     }
 }

@@ -24,6 +24,7 @@ public final class SettingUtil {
     private static final String KEY_MAX_DATA_EXCHANGE_TIME = "maxDataExchangeTime";
     private static final String KEY_MAX_TERM_RISK_TIME = "maxTermRiskTime";
     private static final String KEY_ISOLATE_M1_CPU = "isolateM1AndCPU";
+    private static final String KEY_CARD_POLL_INTERVAL_TIME = "cardPollIntervalTime";
     private static final int DEFAULT_CHANNEL_COUNT = 2;
 
     private SettingUtil() {
@@ -470,4 +471,50 @@ public final class SettingUtil {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Set card polling interval time
+     * SDK default interval time is 50ms
+     *
+     * @param time Interval time, unit:ms
+     */
+    public static void setCardPollIntervalTime(int time) {
+        try {
+            JSONObject jobj = new JSONObject();
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (!TextUtils.isEmpty(jsonStr)) {
+                jobj = new JSONObject(jsonStr);
+            }
+            jobj.put(KEY_CARD_POLL_INTERVAL_TIME, time);
+            MyApplication.app.basicOptV2.setSysParam(AidlConstantsV2.SysParam.RESERVED, jobj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get card polling interval time
+     *
+     * @return The interval time, unit:ms
+     */
+    public static int getCardPollIntervalTime() {
+        int defaultValue = 50;
+        try {
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (TextUtils.isEmpty(jsonStr)) {
+                return defaultValue;
+            }
+            JSONObject jobj = new JSONObject(jsonStr);
+            if (!jobj.has(KEY_CARD_POLL_INTERVAL_TIME)) {
+                return defaultValue;
+            }
+            int value = jobj.getInt(KEY_CARD_POLL_INTERVAL_TIME);
+            LogUtil.e(TAG, "cardPollIntervalTime:" + value);
+            return value;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return defaultValue;
+    }
+
 }

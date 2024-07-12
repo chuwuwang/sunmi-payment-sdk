@@ -652,6 +652,18 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             LogUtil.e(Constant.TAG, "onPreFirstGenAC");
             mEMVOptV2.importPreFirstGenACStatus(0);
         }
+
+        @Override
+        public void onDataStorageProc(String[] containerID, String[] containerContent) throws RemoteException {
+            addEndTime("onDataStorageProc()");
+            LogUtil.e(Constant.TAG, "onDataStorageProc,");
+            //此回调为Dpas2.0专用
+            //根据需求配置tag及values
+            String[] tags = new String[0];
+            String[] values = new String[0];
+            mEMVOptV2.importDataStorage(tags, values);
+        }
+
     };
 
     /** getCard number */

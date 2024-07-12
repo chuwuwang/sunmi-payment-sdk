@@ -7,7 +7,7 @@ import com.sm.sdk.demo.BaseAppCompatActivity;
 
 public class DeviceCommActivity extends BaseAppCompatActivity {
 
-//    private DeviceCommOptV2 mDeviceCommOptV2;
+    //    private DeviceCommOptV2 mDeviceCommOptV2;
     private int commType = 0;
     private TextView tvOutputLog;
     private EditText etData;

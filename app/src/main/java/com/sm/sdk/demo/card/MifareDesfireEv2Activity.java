@@ -58,15 +58,15 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
         List<byte[]> list = new ArrayList<>();
         byte[] cmd = {(byte) 0x90, 0x60, 0x00, 0x00, 0x00};
         byte[] recv = transmitApdu(cmd);
-        if (recv != null) {
+        if (recv.length >= 2) {
             list.add(Arrays.copyOf(recv, recv.length - 2));
         }
         while (true) {
             recv = transmitApdu(new byte[]{(byte) 0x90, (byte) 0xaf, 0x00, 0x00, 0x00});
-            if (recv != null) {
+            if (recv.length >= 2) {
                 list.add(Arrays.copyOf(recv, recv.length - 2));
             }
-            if (recv == null || (recv[recv.length - 1] & 0xff) != 0xaf) {
+            if (recv.length == 0 || (recv[recv.length - 1] & 0xff) != 0xaf) {
                 break;
             }
         }
@@ -76,7 +76,7 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
     }
 
     private byte[] transmitApdu(byte[] send) {
-        byte[] result = null;
+        byte[] result = new byte[0];
         try {
             byte[] recv = new byte[260];
             addStartTimeWithClear("transmitApdu()");
@@ -104,7 +104,7 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
 
     private void checkCard() {
         try {
-            showSwingCardHintDialog();
+            showSwingCardHintDialog(0);
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(CardType.MIFARE_DESFIRE.getValue(), mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -142,7 +142,24 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
         public void onError(int code, String message) throws RemoteException {
             addEndTime("checkCard()");
             showSpendTime();
-            checkCard();
+            dismissSwingCardHintDialog();
+            String tip = "check card failed, code:" + code + ",msg:" + message;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        cancelCheckCard();
+        super.onDestroy();
+    }
+
+    private void cancelCheckCard() {
+        try {
+            MyApplication.app.readCardOptV2.cancelCheckCard();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

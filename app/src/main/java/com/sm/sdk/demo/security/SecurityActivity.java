@@ -99,6 +99,11 @@ public class SecurityActivity extends BaseAppCompatActivity {
         view.setOnClickListener(this);
         leftText.setText(R.string.security_rsa_test);
 
+        view = findViewById(R.id.rsa_recover);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.hsm_rsa_recover);
+
         view = findViewById(R.id.save_tr31_key);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
@@ -122,7 +127,27 @@ public class SecurityActivity extends BaseAppCompatActivity {
         view = findViewById(R.id.device_cert_test);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
-        leftText.setText(R.string.security_device_cert_test);
+        leftText.setText(R.string.security_hsm_device_cert_test);
+
+        view = findViewById(R.id.apacs_mac_test);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.security_apacs_mac);
+
+        view = findViewById(R.id.security_save_cipher_text_key_under_rsa);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.security_save_ciphertext_key_under_rsa);
+
+        view = findViewById(R.id.security_inject_cipher_text_key_under_rsa);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.security_inject_ciphertext_key_under_rsa);
+
+        view = findViewById(R.id.security_inject_sym_key);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.security_inejct_symmetric_key);
     }
 
     @Override
@@ -177,6 +202,9 @@ public class SecurityActivity extends BaseAppCompatActivity {
             case R.id.rsa_test:
                 openActivity(RSATestActivity.class);
                 break;
+            case R.id.rsa_recover:
+                openActivity(RSARecoverActivity.class);
+                break;
             case R.id.save_tr31_key:
                 openActivity(SaveTR31KeyActivity.class);
                 break;
@@ -191,6 +219,18 @@ public class SecurityActivity extends BaseAppCompatActivity {
                 break;
             case R.id.device_cert_test:
                 openActivity(DeviceCertificateTestActivity.class);
+                break;
+            case R.id.apacs_mac_test:
+                openActivity(APACSMacTestActivity.class);
+                break;
+            case R.id.security_save_cipher_text_key_under_rsa:
+                openActivity(SaveKeyCipherTextUnderRsaActivity.class);
+                break;
+            case R.id.security_inject_cipher_text_key_under_rsa:
+                openActivity(InjectCiphertextKeyUnderRsaActivity.class);
+                break;
+            case R.id.security_inject_sym_key:
+                openActivity(InjectSymKeyActivity.class);
                 break;
         }
     }

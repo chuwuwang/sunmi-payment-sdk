@@ -14,6 +14,7 @@ import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
@@ -141,7 +142,7 @@ public class M1Activity extends BaseAppCompatActivity {
 
     private void checkCard() {
         try {
-            showSwingCardHintDialog();
+            showSwingCardHintDialog(0);
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(AidlConstantsV2.CardType.MIFARE.getValue(), mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -160,26 +161,32 @@ public class M1Activity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void findICCard(String atr) throws RemoteException {
+        public void findICCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
-            LogUtil.e(Constant.TAG, "findICCard:" + atr);
+            LogUtil.e(Constant.TAG, "findICCardEx:" + Utility.bundle2String(info));
             dismissSwingCardHintDialog();
             showSpendTime();
         }
 
         @Override
-        public void findRFCard(String uuid) throws RemoteException {
+        public void findRFCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
-            LogUtil.e(Constant.TAG, "findRFCard:" + uuid);
+            LogUtil.e(Constant.TAG, "findRFCardEx:" + Utility.bundle2String(info));
             dismissSwingCardHintDialog();
             showSpendTime();
+            showToast("findRFCardEx:" + Utility.bundle2String(info));
         }
 
         @Override
-        public void onError(int code, String message) throws RemoteException {
+        public void onErrorEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
             showSpendTime();
-            checkCard();
+            dismissSwingCardHintDialog();
+            int code = info.getInt("code");
+            String message = info.getString("message");
+            String tip = "check card failed, code:" + code + ",msg:" + message;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     };
 

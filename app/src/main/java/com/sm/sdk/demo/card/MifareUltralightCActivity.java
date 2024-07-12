@@ -13,13 +13,13 @@ import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sm.sdk.demo.view.SwingCardHintDialog;
 import com.sunmi.pay.hardware.aidl.AidlConstants;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * This page show how to Read/Write MifareUtralightC/MifareUtraLightEv1/MifareUtralightNano card.
@@ -53,7 +53,7 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
         edtBlockData = findViewById(R.id.edit_block_data);
         findViewById(R.id.mb_read).setOnClickListener(this);
         findViewById(R.id.mb_write).setOnClickListener(this);
-        mHintDialog = new SwingCardHintDialog(this);
+        mHintDialog = new SwingCardHintDialog(this, 0);
         mHintDialog.setOwnerActivity(this);
         edtKey.setText("0000000000000000");
         edtBlockNo.setText("4");
@@ -88,6 +88,7 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
             addEndTime("checkCard()");
             LogUtil.e(TAG, "findMagCard,bundle:" + bundle);
             showSpendTime();
+            dismissHintDialog();
         }
 
         @Override
@@ -95,6 +96,7 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
             addEndTime("checkCard()");
             LogUtil.e(TAG, "findICCard, atr:" + atr);
             showSpendTime();
+            dismissHintDialog();
         }
 
         @Override
@@ -106,11 +108,13 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void onError(final int code, final String msg) throws RemoteException {
+        public void onError(final int code, final String message) throws RemoteException {
             addEndTime("checkCard()");
-            LogUtil.e(TAG, "check card error,code:" + code + "message:" + msg);
-            checkCard();
             showSpendTime();
+            dismissHintDialog();
+            String tip = "check card failed, code:" + code + ",msg:" + message;
+            LogUtil.e(TAG, tip);
+            showToast(tip);
         }
     };
 
@@ -183,7 +187,7 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
 //        String keyStr = edtKey.getText().toString();
 //        int keyLen = keyStr.length();
 //        //密钥长度8/16/24字节
-//        if (!checkHexValue(keyStr) || (keyLen != 8 && keyLen != 16 && keyLen != 24)) {
+//        if (!Utility.checkHexValue(keyStr) || (keyLen != 8 && keyLen != 16 && keyLen != 24)) {
 //            showToast("Key should be 8 or 16 or 24 characters!");
 //            edtKey.requestFocus();
 //            return false;
@@ -203,7 +207,7 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
         if (write) {
             String data = edtBlockData.getText().toString();
             //数据块长度4字节
-            if (!checkHexValue(data)) {
+            if (!Utility.checkHexValue(data)) {
                 showToast("Block data should be 8 hex characters!");
                 edtBlockData.requestFocus();
                 return false;
@@ -230,10 +234,6 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
         return inputKey;
     }
 
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
-    }
-
     private String formatStr(String format, Object... params) {
         return String.format(Locale.getDefault(), format, params);
     }
@@ -252,5 +252,19 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
                 mHintDialog.dismiss();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        cancelCheckCard();
+        super.onDestroy();
+    }
+
+    private void cancelCheckCard() {
+        try {
+            MyApplication.app.readCardOptV2.cancelCheckCard();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

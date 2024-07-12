@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
@@ -19,14 +19,15 @@ import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 public class ICActivity extends BaseAppCompatActivity {
-    private TextView mTvDepictor;
-    private TextView mTvUUID;
-    private TextView mTvATR;
-    private TextView mTvATS;
-    private View mLayUUID;
-    private View mLayATS;
-    private View mLayATR;
-    private final Handler mHandler = new Handler();
+    private TextView tvDepictor;
+    private TextView tvAtr;
+    private Button tvTotal;
+    private Button tvSuccess;
+    private Button tvFail;
+    private int totalCount;
+    private int successCount;
+    private int failCount;
+    private final Handler handler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,18 +40,16 @@ public class ICActivity extends BaseAppCompatActivity {
     private void initView() {
         SettingUtil.setBuzzerEnable(true);
         initToolbarBringBack(R.string.card_test_ic);
-        mTvDepictor = findViewById(R.id.tv_depictor);
-        mTvUUID = findViewById(R.id.tv_uuid);
-        mTvATS = findViewById(R.id.tv_ats);
-        mTvATR = findViewById(R.id.tv_atr);
-        mLayUUID = findViewById(R.id.lay_uuid);
-        mLayATS = findViewById(R.id.lay_ats);
-        mLayATR = findViewById(R.id.lay_atr);
+        tvTotal = findViewById(R.id.mb_total);
+        tvSuccess = findViewById(R.id.mb_success);
+        tvFail = findViewById(R.id.mb_fail);
+        tvDepictor = findViewById(R.id.tv_depictor);
+        tvAtr = findViewById(R.id.tv_atr);
     }
 
     private void checkCard() {
         try {
-            int cardType = AidlConstantsV2.CardType.NFC.getValue() | AidlConstantsV2.CardType.IC.getValue();
+            int cardType = AidlConstantsV2.CardType.IC.getValue();
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(cardType, mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -78,7 +77,7 @@ public class ICActivity extends BaseAppCompatActivity {
         public void findICCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
             LogUtil.e(Constant.TAG, "findICCard:" + Utility.bundle2String(info));
-            handleResult(0, info);
+            handleResult(true, info);
             showSpendTime();
         }
 
@@ -97,7 +96,6 @@ public class ICActivity extends BaseAppCompatActivity {
         public void findRFCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
             LogUtil.e(Constant.TAG, "findRFCard:" + Utility.bundle2String(info));
-            handleResult(1, info);
             showSpendTime();
         }
 
@@ -117,7 +115,7 @@ public class ICActivity extends BaseAppCompatActivity {
             String error = "onError:" + msg + " -- " + code;
             LogUtil.e(Constant.TAG, error);
             showToast(error);
-            handleResult(-1, info);
+            handleResult(false, info);
             showSpendTime();
         }
     };
@@ -125,50 +123,43 @@ public class ICActivity extends BaseAppCompatActivity {
     /**
      * Show check card result
      *
-     * @param type 0-find IC, 1-find NFC, <0-check card error
-     * @param info The info returned by check card
+     * @param success true-成功，false-失败
+     * @param info    The info returned by check card
      */
-    private void handleResult(int type, Bundle info) {
+    private void handleResult(boolean success, Bundle info) {
         if (isFinishing()) {
             return;
         }
-        mHandler.post(() -> {
-            if (type == 0) {// find IC
-                mLayATR.setVisibility(View.VISIBLE);
-                mLayUUID.setVisibility(View.GONE);
-                mLayATS.setVisibility(View.GONE);
-                mTvDepictor.setText(getString(R.string.card_check_ic_card));
-                mTvATR.setText(info.getString("atr"));
-            } else if (type == 1) {//find NFC
-                mLayATR.setVisibility(View.GONE);
-                mLayUUID.setVisibility(View.VISIBLE);
-                mLayATS.setVisibility(View.VISIBLE);
-                mTvDepictor.setText(getString(R.string.card_check_rf_card));
-                mTvUUID.setText(info.getString("uuid"));
-                mTvATS.setText(info.getString("ats"));
+        handler.post(() -> {
+            totalCount++;
+            if (success) {// find IC
+                successCount++;
+                tvDepictor.setText(getString(R.string.card_check_ic_card));
+                tvAtr.setText(info.getString("atr"));
             } else {//on Error
-                mTvDepictor.setText(getString(R.string.card_check_card_error));
-                mLayATR.setVisibility(View.GONE);
-                mLayUUID.setVisibility(View.GONE);
-                mLayATS.setVisibility(View.GONE);
+                failCount++;
+                tvDepictor.setText(getString(R.string.card_check_card_error));
             }
+            tvTotal.setText(Utility.formatStr("%s %d", getString(R.string.card_total), totalCount));
+            tvSuccess.setText(Utility.formatStr("%s %d", getString(R.string.card_success), successCount));
+            tvFail.setText(Utility.formatStr("%s %d", getString(R.string.card_fail), failCount));
             // 继续检卡
             if (!isFinishing()) {
-                mHandler.postDelayed(this::checkCard, 500);
+                handler.postDelayed(this::checkCard, 500);
             }
         });
     }
 
     @Override
     protected void onDestroy() {
-        mHandler.removeCallbacksAndMessages(null);
+        handler.removeCallbacksAndMessages(null);
         cancelCheckCard();
         super.onDestroy();
     }
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
+            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.IC.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
         } catch (Exception e) {
             e.printStackTrace();

@@ -44,16 +44,34 @@ public final class DeviceUtil {
         return model.matches("p2mini(-.+)?");
     }
 
-    /** 是否是Banjul */
-    public static boolean isBanjul() {
+    /** 是否是p2_smartpad(Banjul改名为p2_retail，再改名为p2_smartpad) */
+    public static boolean isP2SmartPad() {
         String model = getModel();
-        return model.matches("(pinpad|qcm2150)(-.+)?");
+        return model.matches("(p2_smartpad|p2_retail|pinpad|qcm2150|t6a10)(-.+)?");
     }
 
-    /** 是否是P2H */
-    public static boolean isP2H() {
+    /** 是否是P2_Xpro(P2H改名为P2_Xpro) */
+    public static boolean isP2XPro() {
         String model = getModel();
-        return model.matches("(p2h|uis8581e5h10_natv)(-.+)?");
+        return model.matches("(p2_xpro|p2h|uis8581e5h10_natv)(-.+)?");
+    }
+
+    /** 是否是FT2 */
+    public static boolean isFT2() {
+        String model = getModel();
+        return model.matches("ft2(-.+)?");
+    }
+
+    /** 是否是FT2Mini */
+    public static boolean isFT2Mini() {
+        String model = getModel();
+        return model.matches("ft2mini(-.+)?");
+    }
+
+    /** 是否是V2_SE */
+    public static boolean isV2SE() {
+        String model = getModel();
+        return model.matches("(v2_se|xqt530)(-.+)?");
     }
 
     /** 获取model */

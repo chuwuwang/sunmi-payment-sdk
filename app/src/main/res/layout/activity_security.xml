@@ -92,6 +92,10 @@
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/rsa_recover"
+                layout="@layout/common_item" />
+
+            <include
                 android:id="@+id/save_tr31_key"
                 layout="@layout/common_item" />
 
@@ -109,6 +113,22 @@
 
             <include
                 android:id="@+id/device_cert_test"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/apacs_mac_test"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/security_save_cipher_text_key_under_rsa"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/security_inject_cipher_text_key_under_rsa"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/security_inject_sym_key"
                 layout="@layout/common_item" />
 
         </LinearLayout>

@@ -42,41 +42,27 @@ public class FixPasswordKeyboard extends LinearLayout {
     }
 
     public void setKeyBoard(String keys) {
-        if (keys == null || keys.length() != 10) return;
-
-        String temp = keys.substring(0, 1);
-        key_0.setText(temp);
-
-        temp = keys.substring(1, 2);
-        key_1.setText(temp);
-
-        temp = keys.substring(2, 3);
-        key_2.setText(temp);
-
-        temp = keys.substring(3, 4);
-        key_3.setText(temp);
-
-        temp = keys.substring(4, 5);
-        key_4.setText(temp);
-
-        temp = keys.substring(5, 6);
-        key_5.setText(temp);
-
-        temp = keys.substring(6, 7);
-        key_6.setText(temp);
-
-        temp = keys.substring(7, 8);
-        key_7.setText(temp);
-
-        temp = keys.substring(8, 9);
-        key_8.setText(temp);
-
-        temp = keys.substring(9, 10);
-        key_9.setText(temp);
+        if (keys == null || keys.length() != 10) {
+            return;
+        }
+        key_0.setText(keys.substring(0, 1));
+        key_1.setText(keys.substring(1, 2));
+        key_2.setText(keys.substring(2, 3));
+        key_3.setText(keys.substring(3, 4));
+        key_4.setText(keys.substring(4, 5));
+        key_5.setText(keys.substring(5, 6));
+        key_6.setText(keys.substring(6, 7));
+        key_7.setText(keys.substring(7, 8));
+        key_8.setText(keys.substring(8, 9));
+        key_9.setText(keys.substring(9, 10));
     }
 
     public TextView getKey_0() {
         return key_0;
+    }
+
+    public TextView getKey_2() {
+        return key_2;
     }
 
 }

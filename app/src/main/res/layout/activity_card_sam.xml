@@ -202,14 +202,28 @@
                 app:strokeColor="@color/colorAccent"
                 app:strokeWidth="1dp">
 
-                <TextView
-                    android:id="@+id/tv_info"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:lineSpacingExtra="4dp"
-                    android:textColor="@color/colorTextContent"
-                    android:textSize="14sp" />
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:id="@+id/tv_atr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_apdu_result"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
             </android.support.design.card.MaterialCardView>
 

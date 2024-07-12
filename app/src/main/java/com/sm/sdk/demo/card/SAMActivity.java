@@ -17,6 +17,7 @@ import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidl.AidlConstants;
 import com.sunmi.pay.hardware.aidlv2.bean.ApduRecvV2;
 import com.sunmi.pay.hardware.aidlv2.bean.ApduSendV2;
@@ -25,14 +26,14 @@ import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class SAMActivity extends BaseAppCompatActivity {
     private EditText apduCmd;
     private EditText apduLc;
     private EditText apduIndata;
     private EditText apduLe;
-    private TextView mTvResultInfo;
+    private TextView tvATR;
+    private TextView mTvApduResult;
     private int cardType = AidlConstants.CardType.PSAM0.getValue();
 
     @Override
@@ -70,7 +71,8 @@ public class SAMActivity extends BaseAppCompatActivity {
         apduLc = findViewById(R.id.edit_lc_length);
         apduIndata = findViewById(R.id.edit_data);
         apduLe = findViewById(R.id.edit_le_length);
-        mTvResultInfo = findViewById(R.id.tv_info);
+        tvATR = findViewById(R.id.tv_atr);
+        mTvApduResult = findViewById(R.id.tv_apdu_result);
         findViewById(R.id.mb_ok).setOnClickListener(this);
         rdoButton.setChecked(true);
 
@@ -121,6 +123,7 @@ public class SAMActivity extends BaseAppCompatActivity {
             addEndTime("checkCard()");
             LogUtil.e(Constant.TAG, "findICCard:" + atr);
             showSpendTime();
+            updateATR(atr);
         }
 
         @Override
@@ -148,57 +151,61 @@ public class SAMActivity extends BaseAppCompatActivity {
      *             2-send by ApduCommand
      */
     private boolean checkInputData(int type) {
-        int limitLen = type == 2 ? 4 : 2;
+        int limitLen = 0;
+        if (type == 0) {//support long APDU
+            limitLen = 6;
+        } else if (type == 1) {
+            limitLen = 2;
+        } else if (type == 2) {
+            limitLen = 4;
+        }
         String command = apduCmd.getText().toString();
         String lc = apduLc.getText().toString();
         String indata = apduIndata.getText().toString();
         String le = apduLe.getText().toString();
 
-        if (command.length() != 8 || !checkHexValue(command)) {
+        if (command.length() != 8 || !Utility.checkHexValue(command)) {
             apduCmd.requestFocus();
             showToast("command should be 8 hex characters!");
             return false;
         }
-        if (lc.length() > limitLen || !checkHexValue(lc)) {
-            apduLc.requestFocus();
-            showToast(formatStr("Lc should less than %d hex characters!", limitLen));
-            return false;
+        if (type != 0 || !TextUtils.isEmpty(lc)) {//exist Lc
+            if (lc.length() > limitLen || !Utility.checkHexValue(lc)) {
+                apduLc.requestFocus();
+                showToast(Utility.formatStr("Lc should less than %d hex characters!", limitLen));
+                return false;
+            }
+            int lcValue = Integer.parseInt(lc, 16);
+            if (lcValue < 0 || lcValue > 256) {
+                apduLc.requestFocus();
+                showToast("Lc value should in [0,0x0100]");
+                return false;
+            }
+            if (indata.length() != lcValue * 2 || (indata.length() > 0 && !Utility.checkHexValue(indata))) {
+                apduIndata.requestFocus();
+                showToast("indata value should lc*2 hex characters!");
+                return false;
+            }
         }
-        int lcValue = Integer.parseInt(lc, 16);
-        if (lcValue < 0 || lcValue > 256) {
-            apduLc.requestFocus();
-            showToast("Lc value should in [0,0x0100]");
-            return false;
-        }
-        if (indata.length() != lcValue * 2 || (indata.length() > 0 && !checkHexValue(indata))) {
-            apduIndata.requestFocus();
-            showToast("indata value should lc*2 hex characters!");
-            return false;
-        }
-        if (type == 0 && TextUtils.isEmpty(le)) {//transmitApdu() le can be empty
-            return true;
-        }
-        if (le.length() > limitLen || !checkHexValue(le)) {
-            apduLe.requestFocus();
-            showToast(formatStr("Le should less than %d hex characters!", limitLen));
-            return false;
-        }
-        int leValue = Integer.parseInt(le, 16);
-        if (leValue < 0 || leValue > 256) {
-            apduLe.requestFocus();
-            showToast("Le value should in [0,0x0100]");
-            return false;
+        if (type != 0 || !TextUtils.isEmpty(le)) {//exist Le
+            if (le.length() > limitLen || !Utility.checkHexValue(le)) {
+                apduLe.requestFocus();
+                showToast(Utility.formatStr("Le should less than %d hex characters!", limitLen));
+                return false;
+            }
+            int leValue = Integer.parseInt(le, 16);
+            if (leValue < 0 || leValue > 256) {
+                apduLe.requestFocus();
+                showToast("Le value should in [0,0x0100]");
+                return false;
+            }
         }
         return true;
     }
 
-    /** check whether src is hex format */
-    private boolean checkHexValue(String src) {
-        return Pattern.matches("[0-9a-fA-F]+", src);
-    }
-
-    private String formatStr(String format, Object... params) {
-        return String.format(format, params);
+    /** 更新ATR */
+    private void updateATR(String atr) {
+        tvATR.post(() -> tvATR.setText("ATR:" + atr));
     }
 
     /** Send Apdu by transmitApdu */
@@ -208,17 +215,17 @@ public class SAMActivity extends BaseAppCompatActivity {
             String lc = apduLc.getText().toString();
             String indata = apduIndata.getText().toString();
             String le = apduLe.getText().toString();
-            int lcValue = Integer.parseInt(lc, 16);
-            int leValue = Integer.parseInt(le, 16);
+
             List<byte[]> sendList = new ArrayList<>();
             sendList.add(ByteUtil.hexStr2Bytes(command));
-            if (lcValue > 0) {//exist Lc and dataIn
-                sendList.add(ByteUtil.hexStr2Bytes(lc));
-                sendList.add(ByteUtil.hexStr2Bytes(indata));
+            if (!TextUtils.isEmpty(lc)) {//exist Lc
+                int lcValue = Integer.parseInt(lc, 16);
+                if (lcValue > 0) {//exist Lc and dataIn
+                    sendList.add(ByteUtil.hexStr2Bytes(lc));
+                    sendList.add(ByteUtil.hexStr2Bytes(indata));
+                }
             }
-            if (leValue == 0) {//not exist Lc, exist Le
-                sendList.add(ByteUtil.hexStr2Bytes(le));
-            } else if (leValue > 0) {//exist Lc and Le
+            if (!TextUtils.isEmpty(le)) {//exist Le
                 sendList.add(ByteUtil.hexStr2Bytes(le));
             }
             byte[] send = ByteUtil.concatByteArrays(sendList);
@@ -317,7 +324,7 @@ public class SAMActivity extends BaseAppCompatActivity {
         String swbStr = ByteUtil.bytes2HexStr(swb);
         String outDataStr = ByteUtil.bytes2HexStr(outData);
         String temp = String.format("SWA:%s\nSWB:%s\noutData:%s", swaStr, swbStr, outDataStr);
-        mTvResultInfo.setText(temp);
+        mTvApduResult.setText(temp);
     }
 
     @Override

@@ -7,7 +7,6 @@ import android.widget.RadioGroup;
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.ThreadPoolUtil;
 
 public class BuzzerActivity extends BaseAppCompatActivity {

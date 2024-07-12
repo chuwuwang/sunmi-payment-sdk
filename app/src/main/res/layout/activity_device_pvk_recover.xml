@@ -46,82 +46,84 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/security_hash_type"
+                android:textColor="@color/colorTextHelp"
+                android:textSize="14sp" />
+
+            <RadioGroup
+                android:id="@+id/hash_type_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:orientation="vertical">
 
-                <TextView
+                <RadioButton
+                    android:id="@+id/rb_hash_type0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/security_hash_type"
-                    android:textColor="@color/colorTextHelp"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/security_hash_type_none"
+                    android:textColor="@color/colorTextContent"
                     android:textSize="14sp" />
 
-                <RadioGroup
-                    android:id="@+id/hash_type_group"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/rb_hash_type1"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:orientation="vertical">
+                    android:text="@string/security_hash_type_sha1"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp" />
 
-                    <RadioButton
-                        android:id="@+id/rb_hash_type1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:checked="true"
-                        android:text="@string/security_hash_type_sha1"
-                        android:textColor="@color/colorTextContent"
-                        android:textSize="14sp" />
+                <RadioButton
+                    android:id="@+id/rb_hash_type2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/security_hash_type_sha224"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp" />
 
-                    <RadioButton
-                        android:id="@+id/rb_hash_type2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/security_hash_type_sha224"
-                        android:textColor="@color/colorTextContent"
-                        android:textSize="14sp" />
+                <RadioButton
+                    android:id="@+id/rb_hash_type3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/security_hash_type_sha256"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp" />
 
-                    <RadioButton
-                        android:id="@+id/rb_hash_type3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/security_hash_type_sha256"
-                        android:textColor="@color/colorTextContent"
-                        android:textSize="14sp" />
+                <RadioButton
+                    android:id="@+id/rb_hash_type4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/security_hash_type_sha384"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp"
+                    android:visibility="visible" />
 
-                    <RadioButton
-                        android:id="@+id/rb_hash_type4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/security_hash_type_sha384"
-                        android:textColor="@color/colorTextContent"
-                        android:textSize="14sp"
-                        android:visibility="visible" />
-
-                    <RadioButton
-                        android:id="@+id/rb_hash_type5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/security_hash_type_sha512"
-                        android:textColor="@color/colorTextContent"
-                        android:textSize="14sp"
-                        android:visibility="visible" />
-
-                </RadioGroup>
-            </LinearLayout>
+                <RadioButton
+                    android:id="@+id/rb_hash_type5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/security_hash_type_sha512"
+                    android:textColor="@color/colorTextContent"
+                    android:textSize="14sp"
+                    android:visibility="visible" />
+            </RadioGroup>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:counterEnabled="true">
+                app:counterEnabled="true"
+                app:counterMaxLength="4096">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/source_data"

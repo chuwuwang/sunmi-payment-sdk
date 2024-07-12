@@ -94,6 +94,17 @@ public class SettingActivity extends BaseAppCompatActivity {
             openActivity(PCDParamActivity.class);
         });
 
+        //Card poll interval time
+        view = findViewById(R.id.card_poll_interval_time);
+        txtName = view.findViewById(R.id.name);
+        txtName.setText(R.string.setting_card_poll_interval_time);
+        view.findViewById(R.id.value).setVisibility(View.INVISIBLE);
+        btnSwitch = view.findViewById(R.id.mb_switch);
+        btnSwitch.setText(R.string.setting);
+        btnSwitch.setOnClickListener(v -> {
+            openActivity(CardPollIntervalTimeActivity.class);
+        });
+
         //device shutdown
         view = findViewById(R.id.device_shutdown);
         txtName = view.findViewById(R.id.name);

@@ -2,12 +2,10 @@ package com.sm.sdk.demo.pin;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.RemoteException;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -28,27 +26,17 @@ import com.sunmi.pay.hardware.aidlv2.pinpad.PinPadListenerV2;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-
+import java.util.Arrays;
 
 public class CustomPinPadActivity extends BaseAppCompatActivity {
-
-    private int mWidth = 239;                       // 密码键盘单个item宽度
-    private int mHeight = 130;                      // 密码键盘单个item高度
-    private int mInterval = 1;                      // 线间隔
-    private int[] mKeyboardCoordinate = {0, 661};   // 密码键盘第一个button左顶点位置（绝对位置）
-    private int mCancelWidth = 112;                 // 取消键宽度
-    private int mCancelHeight = 112;                // 取消键高度
-    private int[] mCancelCoordinate = {0, 48};      // 取消键左顶点位置（绝对位置）
+    private final int[] mKeyboardCoordinate = {0, 0};  // 密码键盘第一个button左顶点位置（绝对位置）
+    private final int[] mCancelCoordinate = {0, 0};    // 取消键左顶点位置（绝对位置）
 
     private ImageView mBackView;
-    private TextView tv_money;
-    private TextView tv_card_num;
     private PasswordEditText mPasswordEditText;
     private FixPasswordKeyboard mFixPasswordKeyboard;
 
-    public long amount = 1;
     public String cardNo = "";
-    public String pinCipher = "";
     public PinPadConfigV2 customPinPadConfigV2;
 
 
@@ -57,6 +45,7 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_pad_custom);
         initView();
+        getKeyboardCoordinate();
     }
 
     private void initView() {
@@ -68,19 +57,15 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
         mTvTitle.setText(getString(R.string.pin_pad_custom_keyboard));
         mBackView = titleView.getLeftImageView();
         mBackView.setOnClickListener(v -> onBackPressed());
-
-        tv_money = findViewById(R.id.tv_money);
-        tv_money.setText(longCent2DoubleMoneyStr(amount));
-
-        tv_card_num = findViewById(R.id.tv_card_num);
-        tv_card_num.setText(cardNo);
-
+        TextView tvMoney = findViewById(R.id.tv_money);
+        tvMoney.setText(longCent2DoubleMoneyStr(1));
+        TextView tvCardNum = findViewById(R.id.tv_card_num);
+        tvCardNum.setText(cardNo);
         mPasswordEditText = findViewById(R.id.passwordEditText);
         mFixPasswordKeyboard = findViewById(R.id.fixPasswordKeyboard);
-
-        mHandler.sendEmptyMessage(EMV_SHOW_PIN_PAD);
     }
 
+    @Override
     public void initToolbarBringBack(String title) {
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(title);
@@ -94,71 +79,43 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        screenFinancialModel();
+        Log.e(TAG, "onResume()...");
+        screenMonopoly(getApplicationInfo().uid);
     }
 
     @Override
     protected void onDestroy() {
         screenMonopoly(-1);
-        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        importPinInputStatus(1);
         finish();
     }
 
-
-    private static final int PIN_CLICK_CANCEL = 1;
-    private static final int PIN_CLICK_NUMBER = 2;
-    private static final int PIN_CLICK_CONFIRM = 3;
-    private static final int PIN_ERROR = 4;
-    private static final int EMV_SHOW_PIN_PAD = 10;
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case PIN_CLICK_NUMBER:
-                    showPasswordView(msg.arg1);
-                    break;
-                case PIN_CLICK_CONFIRM:
-
-                    if (pinCipher != null && pinCipher.length() > 0) {
-                        importPinInputStatus(0);
-                    } else {
-                        importPinInputStatus(2);
+    private void getKeyboardCoordinate() {
+        Log.e(TAG, "getKeyboardCoordinate()...");
+        mFixPasswordKeyboard.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Log.e(TAG, "onGlobalLayout()...");
+                        mFixPasswordKeyboard.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        String keyNumber = initPinPad();
+                        if (!TextUtils.isEmpty(keyNumber)) {
+                            importPinPadData(keyNumber);
+                        } else {
+                            showToast("init PinPad failed..");
+                        }
                     }
+                }
+        );
+    }
 
-                    showToast("CONFIRM");
-                    Intent mIntent = getIntent();
-                    mIntent.putExtra("pinCipher", pinCipher);
-                    setResult(0, mIntent);
-                    finish();
-
-                    break;
-                case PIN_CLICK_CANCEL:
-                    showToast("CANCEL");
-                    importPinInputStatus(1);
-                    finish();
-                    break;
-                case PIN_ERROR:
-                    importPinInputStatus(3);
-                    showToast("ERROR");
-                    finish();
-                    break;
-                case EMV_SHOW_PIN_PAD:
-                    initPinPad();
-                    break;
-            }
-        }
-
-    };
-
-    private void initPinPad() {
+    /** init PinPad */
+    private String initPinPad() {
+        String keyNumber = null;
         try {
             PinPadConfigV2 config = new PinPadConfigV2();
             config.setMaxInput(12);
@@ -171,63 +128,66 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
             config.setPinblockFormat(customPinPadConfigV2.getPinblockFormat());
             config.setKeySystem(customPinPadConfigV2.getKeySystem());
             config.setPinKeyIndex(customPinPadConfigV2.getPinKeyIndex());
-
             int length = cardNo.length();
             byte[] panBlock = cardNo.substring(length - 13, length - 1).getBytes("US-ASCII");
             config.setPan(panBlock);
 
             addStartTimeWithClear("initPinPad()");
-            String result = MyApplication.app.pinPadOptV2.initPinPad(config, mPinPadListener);
-            getKeyboardCoordinate(result);
-
-            mPasswordEditText.clearText();
-            mFixPasswordKeyboard.setKeepScreenOn(true);
-            mFixPasswordKeyboard.setKeyBoard(result);
-
-            mPasswordEditText.setVisibility(View.VISIBLE);
-            mFixPasswordKeyboard.setVisibility(View.VISIBLE);
+            keyNumber = MyApplication.app.pinPadOptV2.initPinPad(config, mPinPadListener);
+            if (TextUtils.isEmpty(keyNumber)) {
+                String msg = "initPinPad failed";
+                LogUtil.e(TAG, msg);
+                showToast(msg);
+            } else {
+                mPasswordEditText.clearText();
+                mFixPasswordKeyboard.setKeepScreenOn(true);
+                mFixPasswordKeyboard.setKeyBoard(keyNumber);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return keyNumber;
     }
 
-    private void getKeyboardCoordinate(final String keyBoardText) {
-        mFixPasswordKeyboard.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
+    /** Import PinPad data to sdk */
+    private void importPinPadData(String keyNumber) {
+        //1.get key view location
+        TextView key_0 = mFixPasswordKeyboard.getKey_0();
+        if (isRTL()) {
+            key_0 = mFixPasswordKeyboard.getKey_2();
+        }
+        key_0.getLocationOnScreen(mKeyboardCoordinate);
+        // key view item width
+        int keyWidth = key_0.getWidth();
+        // key view item height
+        int keyHeight = key_0.getHeight();
+        // width of divider line
+        int mInterval = 1;
+        mBackView.getLocationOnScreen(mCancelCoordinate);
+        // cancel key width
+        int cancelKeyWidth = mBackView.getWidth();
+        // cancel key height
+        int cancelKeyHeight = mBackView.getHeight();
 
-                    @Override
-                    public void onGlobalLayout() {
-                        mFixPasswordKeyboard.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        TextView textView = mFixPasswordKeyboard.getKey_0();
-                        textView.getLocationOnScreen(mKeyboardCoordinate);
-                        mWidth = textView.getWidth();
-                        mHeight = textView.getHeight();
-                        mInterval = 1;
-                        mBackView.getLocationOnScreen(mCancelCoordinate);
-                        mCancelWidth = mBackView.getWidth();
-                        mCancelHeight = mBackView.getHeight();
-                        importPinPadData(keyBoardText);
-                    }
-
-                }
-        );
-    }
-
-    private void importPinPadData(String text) {
+        //2.import key view data to sdk
         PinPadDataV2 pinPadData = new PinPadDataV2();
         pinPadData.numX = mKeyboardCoordinate[0];
         pinPadData.numY = mKeyboardCoordinate[1];
-        pinPadData.numW = mWidth;
-        pinPadData.numH = mHeight;
+        pinPadData.numW = keyWidth;
+        pinPadData.numH = keyHeight;
         pinPadData.lineW = mInterval;
         pinPadData.cancelX = mCancelCoordinate[0];
         pinPadData.cancelY = mCancelCoordinate[1];
-        pinPadData.cancelW = mCancelWidth;
-        pinPadData.cancelH = mCancelHeight;
+        pinPadData.cancelW = cancelKeyWidth;
+        pinPadData.cancelH = cancelKeyHeight;
         pinPadData.lineW = 0;
         pinPadData.rows = 5;
         pinPadData.clos = 3;
-        keyMap(text, pinPadData);
+        if (isRTL()) {
+            keyMapRTL(keyNumber, pinPadData);
+        } else {
+            keyMapLTR(keyNumber, pinPadData);
+        }
         try {
             addStartTimeWithClear("importPinPadData()");
             MyApplication.app.pinPadOptV2.importPinPadData(pinPadData);
@@ -243,25 +203,20 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
         @Override
         public void onPinLength(int len) throws RemoteException {
             LogUtil.e(Constant.TAG, "onPinLength len:" + len);
-            mHandler.obtainMessage(PIN_CLICK_NUMBER, len, 0).sendToTarget();
+            updatePasswordView(len);
         }
 
         @Override
-        public void onConfirm(int status, byte[] pinBlock) throws RemoteException {
+        public void onConfirm(int type, byte[] pinBlock) throws RemoteException {
             addEndTime("initPinPad()");
-            LogUtil.e(Constant.TAG, "onConfirm status:" + status);
-            if (pinBlock != null) {
-                String hexStr = ByteUtil.bytes2HexStr(pinBlock);
-                LogUtil.e(Constant.TAG, "hexStr:" + hexStr);
-                boolean equals = TextUtils.equals("00", hexStr);
-                if (equals) {
-                    pinCipher = "";
-                } else {
-                    pinCipher = hexStr;
-                }
+            LogUtil.e(Constant.TAG, "onConfirm pinType:" + type);
+            String pinBlockStr = ByteUtil.bytes2HexStr(pinBlock);
+            LogUtil.e(Constant.TAG, "pinBlock:" + pinBlockStr);
+            if (TextUtils.equals("00", pinBlockStr)) {
+                handleOnConfirm("");
+            } else {
+                handleOnConfirm(pinBlockStr);
             }
-
-            mHandler.sendEmptyMessage(PIN_CLICK_CONFIRM);
             showSpendTime();
         }
 
@@ -269,7 +224,7 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
         public void onCancel() throws RemoteException {
             addEndTime("initPinPad()");
             LogUtil.e(Constant.TAG, "onCancel");
-            mHandler.sendEmptyMessage(PIN_CLICK_CANCEL);
+            handleOnCancel();
             showSpendTime();
         }
 
@@ -277,37 +232,39 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
         public void onError(int code) throws RemoteException {
             addEndTime("initPinPad()");
             LogUtil.e(Constant.TAG, "onError code:" + code);
-            mHandler.obtainMessage(PIN_ERROR, code, 0).sendToTarget();
+            handleOnError();
             showSpendTime();
         }
-
     };
 
-    private void showPasswordView(int len) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < len; i++) {
-            sb.append("*");
-        }
-        mPasswordEditText.setText(sb);
+    private void updatePasswordView(int len) {
+        runOnUiThread(() -> {
+            char[] stars = new char[len];
+            Arrays.fill(stars, '*');
+            mPasswordEditText.setText(new String(stars));
+        });
     }
 
-    /**
-     * pinTyp PIN类型：0 联机PIN 1 脱机PIN
-     * inputResult PIN输入结果 0:处理成功 1:PIN取消 2:PIN跳过 3:PIN故障
-     */
-    private void importPinInputStatus(int inputResult) {
-        LogUtil.e(Constant.TAG, "importPinInputStatus:" + inputResult);
-        try {
-            addStartTimeWithClear("importPinInputStatus()");
-            MyApplication.app.emvOptV2.importPinInputStatus(customPinPadConfigV2.getPinType(), inputResult);
-            addEndTime("importPinInputStatus()");
-            showSpendTime();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void handleOnConfirm(String pinBlock) {
+        showToast("CONFIRM");
+        Intent intent = getIntent();
+        intent.putExtra("pinCipher", pinBlock);
+        setResult(0, intent);
+        finish();
     }
 
-    private void keyMap(String str, PinPadDataV2 data) {
+    private void handleOnCancel() {
+        showToast("CANCEL");
+        finish();
+    }
+
+    private void handleOnError() {
+        showToast("ERROR");
+        finish();
+    }
+
+    /** LTR（Left-to-right）layout direction */
+    private void keyMapLTR(String keyNumber, PinPadDataV2 data) {
         data.keyMap = new byte[64];
         for (int i = 0, j = 0; i < 15; i++, j++) {
             if (i == 9 || i == 12) {
@@ -320,14 +277,28 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
                 data.keyMap[i] = 0x0D;//confirm
                 j--;
             } else {
-                data.keyMap[i] = (byte) str.charAt(j);
+                data.keyMap[i] = (byte) keyNumber.charAt(j);
             }
         }
     }
 
-    /**
-     * 将Long类型的钱（单位：分）转化成String类型的钱（单位：元）
-     */
+    /** RTL（Right-to-left）layout direction */
+    private void keyMapRTL(String keyNumber, PinPadDataV2 data) {
+        data.keyMap = new byte[64];
+        for (int i = 0; i < 9; i += 3) {
+            for (int j = 0; j < 3; j++) {
+                data.keyMap[i + j] = (byte) keyNumber.charAt(i + 2 - j);
+            }
+        }
+        data.keyMap[9] = 0x0D;//confirm
+        data.keyMap[10] = (byte) keyNumber.charAt(9);
+        data.keyMap[11] = 0x1B;//cancel
+        data.keyMap[12] = 0x0D;//confirm
+        data.keyMap[13] = 0x0C;//clear
+        data.keyMap[14] = 0x1B;//cancel
+    }
+
+    /** 将Long类型的钱（单位：分）转化成String类型的钱（单位：元） */
     public static String longCent2DoubleMoneyStr(long amount) {
         BigDecimal bd = new BigDecimal(amount);
         double doubleValue = bd.divide(new BigDecimal("100")).doubleValue();
@@ -335,21 +306,8 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
         return df.format(doubleValue);
     }
 
-    /** 屏幕独占金融模式 */
-    public void screenFinancialModel() {
-        int uid = getApplicationInfo().uid;
-        try {
-            addStartTimeWithClear("setScreenMode()");
-            MyApplication.app.basicOptV2.setScreenMode(uid);
-            addEndTime("setScreenMode()");
-            showSpendTime();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /** 屏幕独占 */
-    public void screenMonopoly(int mode) {
+    private void screenMonopoly(int mode) {
         try {
             addStartTimeWithClear("setScreenMode()");
             MyApplication.app.basicOptV2.setScreenMode(mode);
@@ -358,5 +316,10 @@ public class CustomPinPadActivity extends BaseAppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /** 是否是RTL（Right-to-left）语系 */
+    private boolean isRTL() {
+        return mFixPasswordKeyboard.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
     }
 }
