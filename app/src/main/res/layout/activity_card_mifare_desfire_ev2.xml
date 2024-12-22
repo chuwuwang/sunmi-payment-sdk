@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_get_app_id"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -38,8 +38,7 @@
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 
-
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_select_app"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -51,29 +50,37 @@
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_read_data_file"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center"
-                android:text="Select Application"
+                android:text="Read data file"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_write_data_file"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center"
-                android:text="Select Application"
+                android:text="Write data file"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
+
+            <TextView
+                android:id="@+id/tv_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp" />
 
         </LinearLayout>
 

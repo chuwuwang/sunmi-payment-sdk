@@ -28,9 +28,24 @@ public class EMVActivity extends BaseAppCompatActivity {
         leftText.setText(R.string.emv_mag_process);
         item.setOnClickListener(this);
 
+        item = findViewById(R.id.item_blind);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.emv_visual_impairment_process);
+        item.setOnClickListener(this);
+
         item = findViewById(R.id.item_rupay);
         leftText = item.findViewById(R.id.left_text);
         leftText.setText(R.string.emv_read_rupay_card);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.item_toss);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.emv_toss_emv);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.item_sred);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.emv_sred_test);
         item.setOnClickListener(this);
 
         item = findViewById(R.id.item_other);
@@ -49,8 +64,17 @@ public class EMVActivity extends BaseAppCompatActivity {
             case R.id.item_mag:
                 openActivity(MagProcessActivity.class);
                 break;
+            case R.id.item_blind:
+                openActivity(VisualImpairmentProcessActivity.class);
+                break;
             case R.id.item_rupay:
                 openActivity(RuPayCardActivity.class);
+                break;
+            case R.id.item_toss:
+                openActivity(TossEmvActivity.class);
+                break;
+            case R.id.item_sred:
+                openActivity(SredActivity.class);
                 break;
             case R.id.item_other:
                 openActivity(EmvOtherActivity.class);

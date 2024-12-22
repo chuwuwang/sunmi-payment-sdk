@@ -1,8 +1,9 @@
 package com.sm.sdk.demo.other;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.widget.Button;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
@@ -38,7 +39,7 @@ public class MultiThreadTestActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
-        initToolbarBringBack(R.string.card_test_MIFARE_Ultralight_ev1);
+        initToolbarBringBack(R.string.card_test_mifare_ultralight_ev1);
 
         Button btn = findViewById(R.id.init_task);
         btn.setOnClickListener(

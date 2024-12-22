@@ -2,14 +2,17 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
@@ -20,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
-    private static final String TAG = Constant.TAG;
+    private TextView tvResult;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
         findViewById(R.id.mb_select_app).setOnClickListener(this);
         findViewById(R.id.mb_read_data_file).setOnClickListener(this);
         findViewById(R.id.mb_write_data_file).setOnClickListener(this);
+        tvResult = findViewById(R.id.tv_result);
     }
 
     @Override
@@ -45,28 +49,27 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
                 getApplicationIds();
                 break;
             case R.id.mb_select_app:
-                getCardId();
+                selectApplication();
                 break;
             case R.id.mb_read_data_file:
                 break;
             case R.id.mb_write_data_file:
-
         }
     }
 
     private void getApplicationIds() {
         List<byte[]> list = new ArrayList<>();
-        byte[] cmd = {(byte) 0x90, 0x60, 0x00, 0x00, 0x00};
+        byte[] cmd = ByteUtil.hexStr2Bytes("9060000000");
         byte[] recv = transmitApdu(cmd);
-        if (recv.length >= 2) {
-            list.add(Arrays.copyOf(recv, recv.length - 2));
+        if (recv.length > 0) {
+            list.add(recv);
         }
         while (true) {
-            recv = transmitApdu(new byte[]{(byte) 0x90, (byte) 0xaf, 0x00, 0x00, 0x00});
-            if (recv.length >= 2) {
-                list.add(Arrays.copyOf(recv, recv.length - 2));
+            recv = transmitApdu(ByteUtil.hexStr2Bytes("90AF000000"));
+            if (recv.length > 0) {
+                list.add(recv);
             }
-            if (recv.length == 0 || (recv[recv.length - 1] & 0xff) != 0xaf) {
+            if (recv.length == 0 || (recv[recv.length - 1] & 0xff) != 0XAF) {
                 break;
             }
         }
@@ -75,31 +78,39 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
         }
     }
 
+    private void selectApplication() {
+        //MIFARE DESFire SelectApplication with AID equal to 000000h
+        byte[] cmd = ByteUtil.hexStr2Bytes("905A00000300000000");
+        byte[] recv = transmitApdu(cmd);
+        LogUtil.e(TAG, "applicationId:" + ByteUtil.bytes2HexStr(recv));
+    }
+
+    /** Mifare desfire response APDU not contains SWA SWB */
     private byte[] transmitApdu(byte[] send) {
         byte[] result = new byte[0];
         try {
-            byte[] recv = new byte[260];
+            byte[] buffer = new byte[260];
             addStartTimeWithClear("transmitApdu()");
-            int len = MyApplication.app.readCardOptV2.transmitApdu(CardType.MIFARE_DESFIRE.getValue(), send, recv);
+            String msg = "transmitApdu() send:" + ByteUtil.bytes2HexStr(send);
+            addText(msg);
+            LogUtil.e(TAG, msg);
+            int len = MyApplication.app.readCardOptV2.transmitApdu(CardType.MIFARE_DESFIRE.getValue(), send, buffer);
             addEndTime("transmitApdu()");
             if (len < 0) {
-                LogUtil.e(TAG, "transmitApdu failed,code:" + len);
+                msg = "transmitApdu() failed,code:" + len;
+                addText(msg);
+                LogUtil.e(TAG, msg);
             } else {
-                LogUtil.e(TAG, "transmitApdu success,recv:" + ByteUtil.bytes2HexStr(recv));
-                result = Arrays.copyOf(recv, len);
+                result = Arrays.copyOf(buffer, len);
+                msg = "transmitApdu() recv:" + ByteUtil.bytes2HexStr(result);
+                addText(msg);
+                LogUtil.e(TAG, msg);
             }
             showSpendTime();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
-    }
-
-
-    private void getCardId() {
-        byte[] cmd = {(byte) 0x90, 0x51, 0x00, 0x00, 0x00};
-        byte[] recv = transmitApdu(cmd);
-        LogUtil.e(TAG, "cardId:" + ByteUtil.bytes2HexStr(recv));
     }
 
     private void checkCard() {
@@ -149,6 +160,11 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
         }
     };
 
+    private void addText(CharSequence msg) {
+        CharSequence preMsg = tvResult.getText();
+        runOnUiThread(() -> tvResult.setText(TextUtils.concat(preMsg, "\n", msg)));
+    }
+
     @Override
     protected void onDestroy() {
         cancelCheckCard();
@@ -158,6 +174,7 @@ public class MifareDesfireEv2Activity extends BaseAppCompatActivity {
     private void cancelCheckCard() {
         try {
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.MIFARE_DESFIRE.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }

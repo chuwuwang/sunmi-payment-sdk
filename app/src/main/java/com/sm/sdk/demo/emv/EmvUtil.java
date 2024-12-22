@@ -57,52 +57,57 @@ public final class EmvUtil {
      */
     public static void initKey() {
         try {
-            SecurityOptV2 mSecurityOptV2 = MyApplication.app.securityOptV2;
-
-            byte[] cvByte = ByteUtil.hexStr2Bytes("82E13665B4624DF5");
-
-            // save KEK
-            byte[] dataByte = ByteUtil.hexStr2Bytes("11111111111111111111111111111111");
-            int result = mSecurityOptV2.savePlaintextKey(AidlConstantsV2.Security.KEY_TYPE_KEK, dataByte, cvByte, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, 10);
+            SecurityOptV2 securityOptV2 = MyApplication.app.securityOptV2;
+            // 1.save KEK
+            byte[] kekValue = ByteUtil.hexStr2Bytes("A8164307793B0B1CC27F68FEBCF2DF5B");
+            byte[] kekKcv = ByteUtil.hexStr2Bytes("0568B93DFCA00FB6");
+            final int KEK_INDEX = 10;
+            int result = securityOptV2.savePlaintextKey(AidlConstantsV2.Security.KEY_TYPE_KEK, kekValue, kekKcv, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, KEK_INDEX);
             LogUtil.e(Constant.TAG, "save KEK result:" + result);
             if (result != 0) {
                 LogUtil.e(Constant.TAG, "save KEK fail");
                 return;
             }
-
-            // save TMK
-            dataByte = ByteUtil.hexStr2Bytes("F40379AB9E0EC533F40379AB9E0EC533");
-            result = mSecurityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_TMK, dataByte, cvByte, 10, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, 11);
+            // 2.save TMK
+            byte[] tmkValue = ByteUtil.hexStr2Bytes("11111111222222222222222222222222");
+            byte[] tmkKcv = ByteUtil.hexStr2Bytes("DD850F2E2066F266");
+            final int TMK_INDEX = 11;
+            result = securityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_TMK, tmkValue, tmkKcv, KEK_INDEX, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, TMK_INDEX);
             LogUtil.e(Constant.TAG, "save TMK result:" + result);
             if (result != 0) {
                 LogUtil.e(Constant.TAG, "save TMK fail");
                 return;
             }
-
-            // save PIK
-            result = mSecurityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_PIK, dataByte, cvByte, 11, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, 12);
+            // 3.save PIK
+            byte[] pikValue = ByteUtil.hexStr2Bytes("22222222222222222222222211111111");
+            byte[] pikKcv = ByteUtil.hexStr2Bytes("28DBDB489D28BC92");
+            final int PIK_INDEX = 12;
+            result = securityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_PIK, pikValue, pikKcv, TMK_INDEX, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, PIK_INDEX);
             LogUtil.e(Constant.TAG, "save PIK result:" + result);
             if (result != 0) {
                 LogUtil.e(Constant.TAG, "save PIK fail");
                 return;
             }
-
-            // save MAK
-            result = mSecurityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_MAK, dataByte, cvByte, 11, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, 13);
+            // 4.save MAK
+            byte[] makValue = ByteUtil.hexStr2Bytes("22222222222222221111111122222222");
+            byte[] makKcv = ByteUtil.hexStr2Bytes("F530B6319A9AC062");
+            final int MAK_INDEX = 13;
+            result = securityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_MAK, makValue, makKcv, TMK_INDEX, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, MAK_INDEX);
             LogUtil.e(Constant.TAG, "save MAK result:" + result);
             if (result != 0) {
                 LogUtil.e(Constant.TAG, "save MAK fail");
                 return;
             }
-
-            // save TDK
-            result = mSecurityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_TDK, dataByte, cvByte, 11, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, 14);
+            // 5.save TDK
+            byte[] tdkValue = ByteUtil.hexStr2Bytes("22222222111111112222222222222222");
+            byte[] tdkKcv = ByteUtil.hexStr2Bytes("36821ADF5EB5513F");
+            final int TDK_INDEX = 14;
+            result = securityOptV2.saveCiphertextKey(AidlConstantsV2.Security.KEY_TYPE_TDK, tdkValue, tdkKcv, TMK_INDEX, AidlConstantsV2.Security.KEY_ALG_TYPE_3DES, TDK_INDEX);
             LogUtil.e(Constant.TAG, "save TDK result:" + result);
             if (result != 0) {
                 LogUtil.e(Constant.TAG, "save TDK fail");
                 return;
             }
-
             LogUtil.e(Constant.TAG, "init key success");
         } catch (Exception e) {
             e.printStackTrace();

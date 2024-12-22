@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -29,12 +29,12 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/key_index"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -45,7 +45,27 @@
                     android:textColorHint="@color/colorTextHelp"
                     android:textSize="14sp" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="2">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/mac_key_len"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/security_key_len"
+                    android:inputType="number"
+                    android:text="16"
+                    android:textColor="@color/colorTextContent"
+                    android:textColorHint="@color/colorTextHelp"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -182,17 +202,44 @@
                         android:textColor="@color/colorTextContent"
                         android:textSize="14sp" />
 
+                    <RadioButton
+                        android:id="@+id/rb_mac_type4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/security_mac_calc_type10"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/rb_mac_type5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/security_mac_calc_type11"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/rb_mac_type6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/security_mac_calc_type12"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="14sp" />
+
                 </RadioGroup>
             </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="2048">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/source_data"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -202,9 +249,9 @@
                     android:textColorHint="@color/colorTextHelp"
                     android:textSize="14sp" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/mac_data_lay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -212,7 +259,7 @@
                 app:counterEnabled="true"
                 app:counterMaxLength="64">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/mac_data"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -221,7 +268,7 @@
                     android:textColorHint="@color/colorTextHelp"
                     android:textSize="14sp" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/tv_info"
@@ -232,7 +279,7 @@
                 android:textColor="@color/colorTextTitle"
                 android:textSize="14sp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_ok"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"

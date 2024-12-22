@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -28,11 +28,19 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/security_key_system"
+                android:textColor="@color/colorTextHelp"
+                android:textSize="14sp" />
+
             <RadioGroup
                 android:id="@+id/key_system_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp">
+                android:layout_marginTop="10dp">
 
                 <RadioButton
                     android:id="@+id/rdo_sys_mksk"
@@ -47,12 +55,95 @@
                     android:text="@string/security_key_system_dukpt" />
             </RadioGroup>
 
-            <android.support.design.widget.TextInputLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/security_kcv_mode"
+                android:textColor="@color/colorTextHelp"
+                android:textSize="14sp" />
+
+            <RadioGroup
+                android:id="@+id/kcv_mode_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_nochk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_NOCHK" />
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_chk0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_CHK0" />
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_chkfix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_CHKFIX" />
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_chkmac"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_CHKMAC" />
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_chkcmac"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_CHKCMAC" />
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_chkfix_16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_CHKFIX_16"
+                    android:visibility="gone" />
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_chkbuf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_CHK_BUF"
+                    android:visibility="gone" />
+
+                <RadioButton
+                    android:id="@+id/kcv_mode_chkcmac_buf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KCV_MODE_CHKCMAC_BUF"
+                    android:visibility="gone" />
+            </RadioGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_target_pkg_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/security_target_pkg_name"
+                    android:inputType="text"
+                    android:textColor="@color/colorTextContent"
+                    android:textColorHint="@color/colorTextHelp"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/key_index"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -62,7 +153,7 @@
                     android:textColorHint="@color/colorTextHelp"
                     android:textSize="14sp" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/tv_info"
@@ -73,7 +164,7 @@
                 android:textColor="@color/colorTextHelp"
                 android:textSize="14sp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_get_kcv"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"

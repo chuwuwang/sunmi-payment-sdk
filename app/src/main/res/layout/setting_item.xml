@@ -23,7 +23,7 @@
         android:textColor="@color/colorTextContent"
         android:textSize="14sp" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/mb_switch"
         android:layout_width="80dp"
         android:layout_height="@dimen/itemSize"

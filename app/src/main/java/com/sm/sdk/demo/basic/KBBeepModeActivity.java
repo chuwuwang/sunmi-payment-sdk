@@ -1,8 +1,9 @@
 package com.sm.sdk.demo.basic;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;

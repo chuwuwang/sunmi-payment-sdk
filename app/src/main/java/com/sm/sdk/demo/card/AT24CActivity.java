@@ -2,17 +2,18 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
@@ -279,8 +280,8 @@ public class AT24CActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(cardType);
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(cardType);
         } catch (Exception e) {
             e.printStackTrace();
         }

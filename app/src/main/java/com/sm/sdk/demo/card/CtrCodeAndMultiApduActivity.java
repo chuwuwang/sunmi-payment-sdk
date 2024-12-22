@@ -2,22 +2,22 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sm.sdk.demo.utils.LogUtil;
-import com.sunmi.pay.hardware.aidl.AidlConstants;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
@@ -98,10 +98,10 @@ public class CtrCodeAndMultiApduActivity extends BaseAppCompatActivity {
                 return;
             }
             //支持M1卡
-            int allType = AidlConstants.CardType.NFC.getValue()
-                    | AidlConstants.CardType.IC.getValue()
-                    | AidlConstants.CardType.PSAM0.getValue()
-                    | AidlConstants.CardType.SAM1.getValue();
+            int allType = CardType.NFC.getValue() | CardType.IC.getValue() | CardType.PSAM0.getValue() | CardType.SAM1.getValue();
+            if (!DeviceUtil.isTossTerminal()) {//TOSS terminal无NFC功能
+                allType &= ~CardType.NFC.getValue();
+            }
             int ctrCode = Integer.parseInt(activeCtr.getText().toString(), 16);
             addStartTimeWithClear("checkCardEx()");
             MyApplication.app.readCardOptV2.checkCardEx(allType, ctrCode, 0, mReadCardCallback, 60);
@@ -138,7 +138,7 @@ public class CtrCodeAndMultiApduActivity extends BaseAppCompatActivity {
             showSpendTime();
             //If want to transmit apdu to Mifare or Felica card,
             //change cardType to corresponding value, eg:
-            //cardType = AidlConstantsV2.CardType.MIFARE.getValue()
+            //cardType = CardType.MIFARE.getValue()
         }
 
         @Override
@@ -172,7 +172,7 @@ public class CtrCodeAndMultiApduActivity extends BaseAppCompatActivity {
             showToast("数据交互配置不能为空");
             return false;
         }
-        if (cardType != AidlConstantsV2.CardType.NFC.getValue()
+        if (cardType != CardType.NFC.getValue()
                 && cardType != CardType.IC.getValue()
                 && cardType != CardType.PSAM0.getValue()
                 && cardType != CardType.SAM1.getValue()) {
@@ -309,8 +309,8 @@ public class CtrCodeAndMultiApduActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.NFC.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }

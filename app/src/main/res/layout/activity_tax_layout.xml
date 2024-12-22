@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -28,7 +28,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/write_data"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"
@@ -43,7 +43,7 @@
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/read_data"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"

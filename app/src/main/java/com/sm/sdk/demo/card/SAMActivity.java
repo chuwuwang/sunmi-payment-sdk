@@ -2,7 +2,6 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -10,15 +9,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sunmi.pay.hardware.aidl.AidlConstants;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
 import com.sunmi.pay.hardware.aidlv2.bean.ApduRecvV2;
 import com.sunmi.pay.hardware.aidlv2.bean.ApduSendV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
@@ -63,6 +65,14 @@ public class SAMActivity extends BaseAppCompatActivity {
                     break;
                 case R.id.rdo_sam3:
                     cardType = AidlConstants.CardType.SAM3.getValue();
+                    checkCard();
+                    break;
+                case R.id.rdo_sam4:
+                    cardType = AidlConstants.CardType.SAM4.getValue();
+                    checkCard();
+                    break;
+                case R.id.rdo_sam5:
+                    cardType = AidlConstants.CardType.SAM5.getValue();
                     checkCard();
                     break;
             }
@@ -335,8 +345,11 @@ public class SAMActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(cardType);
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            CardType[] samTypes = {CardType.PSAM0, CardType.SAM1, CardType.SAM2, CardType.SAM3, CardType.SAM4, CardType.SAM5};
+            for (CardType type : samTypes) {
+                MyApplication.app.readCardOptV2.cardOff(type.getValue());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

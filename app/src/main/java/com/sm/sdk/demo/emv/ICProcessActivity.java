@@ -5,25 +5,31 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.SettingUtil;
 import com.sm.sdk.demo.utils.ThreadPoolUtil;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.PinPadListenerV2Wrapper;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardExistStatus;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
+import com.sunmi.pay.hardware.aidl.AidlConstants.EMV.FlowType;
+import com.sunmi.pay.hardware.aidl.AidlConstants.EMV.TLVOpCode;
 import com.sunmi.pay.hardware.aidl.bean.CardInfo;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
 import com.sunmi.pay.hardware.aidlv2.bean.EMVCandidateV2;
 import com.sunmi.pay.hardware.aidlv2.bean.PinPadConfigV2;
@@ -170,6 +176,8 @@ public class ICProcessActivity extends BaseAppCompatActivity {
         }
     };
 
+    private long start0, end0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,7 +200,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
         mEditAmount = findViewById(R.id.edit_amount);
         mTvShowInfo = findViewById(R.id.tv_info);
         mBtnOperate = findViewById(R.id.mb_ok);
-        findViewById(R.id.mb_ok).setOnClickListener(this);
+        mBtnOperate.setOnClickListener(this);
     }
 
     /**
@@ -243,6 +251,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
         switch (id) {
             case R.id.mb_ok:
                 if (mProcessStep == 0) {
+                    start0 = System.currentTimeMillis();
                     LogUtil.e(Constant.TAG, "***************************************************************");
                     LogUtil.e(Constant.TAG, "****************************Start Process**********************");
                     LogUtil.e(Constant.TAG, "***************************************************************");
@@ -290,16 +299,16 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             String[] valuesPayPass = {"E0", "F8", "F8", "E8", "00", "00",
                     "000000000000", "000000100000", "999999999999", "000000100000",
                     "30", "02", "0000000000", "000000000000", "000000000000"};
-            mEMVOptV2.setTlvList(AidlConstantsV2.EMV.TLVOpCode.OP_PAYPASS, tagsPayPass, valuesPayPass);
+            mEMVOptV2.setTlvList(TLVOpCode.OP_PAYPASS, tagsPayPass, valuesPayPass);
 
             // set AMEX(AmericanExpress) tlv data
             String[] tagsAE = {"9F6D", "9F6E", "9F33", "9F35", "DF8168", "DF8167", "DF8169", "DF8170"};
             String[] valuesAE = {"C0", "D8E00000", "E0E888", "22", "00", "00", "00", "60"};
-            mEMVOptV2.setTlvList(AidlConstantsV2.EMV.TLVOpCode.OP_AE, tagsAE, valuesAE);
+            mEMVOptV2.setTlvList(TLVOpCode.OP_AE, tagsAE, valuesAE);
 
             String[] tagsJCB = {"9F53", "DF8161"};
             String[] valuesJCB = {"708000", "7F00"};
-            mEMVOptV2.setTlvList(AidlConstantsV2.EMV.TLVOpCode.OP_JCB, tagsJCB, valuesJCB);
+            mEMVOptV2.setTlvList(TLVOpCode.OP_JCB, tagsJCB, valuesJCB);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -311,9 +320,10 @@ public class ICProcessActivity extends BaseAppCompatActivity {
     private void checkCard() {
         try {
             showLoadingDialog(R.string.emv_swing_card_ic);
-            int cardType = AidlConstantsV2.CardType.NFC.getValue() | AidlConstantsV2.CardType.IC.getValue();
+            int cardType = CardType.NFC.getValue() | CardType.IC.getValue();
             addStartTime("checkCard()");
             mReadCardOptV2.checkCard(cardType, mCheckCardCallback, 60);
+            // mReadCardOptV2.checkCardEx(cardType, 0, 1, mCheckCardCallback, 60);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -336,7 +346,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             LogUtil.e(Constant.TAG, "findICCard:" + atr);
             //IC card Beep buzzer when check card success
             MyApplication.app.basicOptV2.buzzerOnDevice(1, 2750, 200, 0);
-            mCardType = AidlConstantsV2.CardType.IC.getValue();
+            mCardType = CardType.IC.getValue();
             transactProcess();
         }
 
@@ -344,7 +354,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
         public void findRFCard(String uuid) throws RemoteException {
             addEndTime("checkCard()");
             LogUtil.e(Constant.TAG, "findRFCard:" + uuid);
-            mCardType = AidlConstantsV2.CardType.NFC.getValue();
+            mCardType = CardType.NFC.getValue();
             transactProcess();
         }
 
@@ -371,10 +381,10 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             //Note:(1) flowType=0x04 only valid for QPBOC,PayPass,PayWave contactless transaction
             //     (2) set fowType=0x04, only EMVListenerV2.onRequestShowPinPad(),
             //         EMVListenerV2.onCardDataExchangeComplete() and EMVListenerV2.onTransResult() may will be called.
-            if (mCardType == AidlConstantsV2.CardType.NFC.getValue()) {
-                bundle.putInt("flowType", AidlConstantsV2.EMV.FlowType.TYPE_NFC_SPEEDUP);
+            if (mCardType == CardType.NFC.getValue()) {
+                bundle.putInt("flowType", FlowType.TYPE_NFC_SPEEDUP);
             } else {
-                bundle.putInt("flowType", AidlConstantsV2.EMV.FlowType.TYPE_EMV_STANDARD);
+                bundle.putInt("flowType", FlowType.TYPE_EMV_STANDARD);
             }
             bundle.putInt("cardType", mCardType);
 //            bundle.putBoolean("preProcessCompleted", false);
@@ -555,7 +565,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
         public void onCardDataExchangeComplete() throws RemoteException {
             addEndTime("onCardDataExchangeComplete()");
             LogUtil.e(Constant.TAG, "onCardDataExchangeComplete");
-            if (mCardType == AidlConstantsV2.CardType.NFC.getValue()) {
+            if (mCardType == CardType.NFC.getValue()) {
                 //NFC card Beep buzzer to notify remove card
                 addStartTime("buzzerOnDevice()");
                 MyApplication.app.basicOptV2.buzzerOnDevice(1, 2750, 200, 0);
@@ -588,6 +598,8 @@ public class ICProcessActivity extends BaseAppCompatActivity {
                 mHandler.obtainMessage(EMV_TRANS_FAIL, code, code, desc).sendToTarget();
             }
             showSpendTime();
+            end0 = System.currentTimeMillis();
+            Log.e(TAG, "emv transaction time(ms):" + (end0 - start0));
         }
 
         /**
@@ -600,7 +612,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             LogUtil.e(Constant.TAG, "onConfirmationCodeVerified");
 
             byte[] outData = new byte[512];
-            int len = mEMVOptV2.getTlv(AidlConstantsV2.EMV.TLVOpCode.OP_PAYPASS, "DF8129", outData);
+            int len = mEMVOptV2.getTlv(TLVOpCode.OP_PAYPASS, "DF8129", outData);
             if (len > 0) {
                 byte[] data = new byte[len];
                 System.arraycopy(outData, 0, data, 0, len);
@@ -673,7 +685,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             String[] tagList = {"57", "5A"};
             byte[] outData = new byte[256];
             addStartTime("getCardNo()");
-            int len = mEMVOptV2.getTlvList(AidlConstantsV2.EMV.TLVOpCode.OP_NORMAL, tagList, outData);
+            int len = mEMVOptV2.getTlvList(TLVOpCode.OP_NORMAL, tagList, outData);
             addEndTime("getCardNo()");
             if (len <= 0) {
                 LogUtil.e(Constant.TAG, "getCardNo error,code:" + len);
@@ -760,13 +772,14 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             mPinPadOptV2.initPinPad(pinPadConfig, mPinPadListener);
         } catch (Exception e) {
             e.printStackTrace();
+            mHandler.obtainMessage(PIN_ERROR, Integer.MIN_VALUE, Integer.MIN_VALUE, "initPinPad() failure").sendToTarget();
         }
     }
 
     /**
      * Input pin callback
      */
-    private final PinPadListenerV2 mPinPadListener = new PinPadListenerV2.Stub() {
+    private final PinPadListenerV2 mPinPadListener = new PinPadListenerV2Wrapper() {
 
         @Override
         public void onPinLength(int len) {
@@ -919,7 +932,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
         new Thread(() -> {
             try {
                 showLoadingDialog(R.string.requesting);
-                if (AidlConstantsV2.CardType.MAGNETIC.getValue() != mCardType) {
+                if (CardType.MAGNETIC.getValue() != mCardType) {
                     getTlvData();
                 }
                 Thread.sleep(1000);
@@ -948,17 +961,18 @@ public class ICProcessActivity extends BaseAppCompatActivity {
             byte[] outData = new byte[2048];
             Map<String, TLV> map = new TreeMap<>();
             int tlvOpCode;
-            if (AidlConstantsV2.CardType.NFC.getValue() == mCardType) {
+            if (CardType.NFC.getValue() == mCardType) {
                 if (mAppSelect == 2) {
-                    tlvOpCode = AidlConstantsV2.EMV.TLVOpCode.OP_PAYPASS;
+                    tlvOpCode = TLVOpCode.OP_PAYPASS;
                 } else if (mAppSelect == 1) {
-                    tlvOpCode = AidlConstantsV2.EMV.TLVOpCode.OP_PAYWAVE;
+                    tlvOpCode = TLVOpCode.OP_PAYWAVE;
                 } else {
-                    tlvOpCode = AidlConstantsV2.EMV.TLVOpCode.OP_NORMAL;
+                    tlvOpCode = TLVOpCode.OP_NORMAL;
                 }
             } else {
-                tlvOpCode = AidlConstantsV2.EMV.TLVOpCode.OP_NORMAL;
+                tlvOpCode = TLVOpCode.OP_NORMAL;
             }
+//            testGetTlv(tlvOpCode, tagList);
             int len = mEMVOptV2.getTlvList(tlvOpCode, tagList, outData);
             if (len > 0) {
                 byte[] bytes = Arrays.copyOf(outData, len);
@@ -973,7 +987,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
                     "DF8125", "9F6D", "DF811B", "9F53", "DF810C", "9F1D", "DF8130", "DF812D",
                     "DF811C", "DF811D", "9F7C",
             };
-            len = mEMVOptV2.getTlvList(AidlConstantsV2.EMV.TLVOpCode.OP_PAYPASS, payPassTags, outData);
+            len = mEMVOptV2.getTlvList(TLVOpCode.OP_PAYPASS, payPassTags, outData);
             if (len > 0) {
                 byte[] bytes = Arrays.copyOf(outData, len);
                 String hexStr = ByteUtil.bytes2HexStr(bytes);
@@ -1031,7 +1045,7 @@ public class ICProcessActivity extends BaseAppCompatActivity {
      * Create Candidate names
      */
     private String[] getCandidateNames(List<EMVCandidateV2> candiList) {
-        if (candiList == null || candiList.size() == 0) return new String[0];
+        if (candiList == null || candiList.isEmpty()) return new String[0];
         String[] result = new String[candiList.size()];
         for (int i = 0; i < candiList.size(); i++) {
             EMVCandidateV2 candi = candiList.get(i);
@@ -1049,13 +1063,13 @@ public class ICProcessActivity extends BaseAppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         cancelCheckCard();
-        SettingUtil.setBuzzerEnable(true);
     }
 
     private void cancelCheckCard() {
         try {
-            mReadCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
             mReadCardOptV2.cancelCheckCard();
+            mReadCardOptV2.cardOff(CardType.NFC.getValue());
+            mReadCardOptV2.cardOff(CardType.IC.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1090,9 +1104,9 @@ public class ICProcessActivity extends BaseAppCompatActivity {
                 dismissLoadingDialog();
                 return;
             }
-            if (status == AidlConstantsV2.CardExistStatus.CARD_ABSENT) {
+            if (status == CardExistStatus.CARD_ABSENT) {
                 dismissLoadingDialog();
-            } else if (status == AidlConstantsV2.CardExistStatus.CARD_PRESENT) {
+            } else if (status == CardExistStatus.CARD_PRESENT) {
                 showLoadingDialog(R.string.emv_remove_card);
                 addStartTimeWithClear("buzzerOnDevice()");
                 MyApplication.app.basicOptV2.buzzerOnDevice(1, 2750, 200, 0);
@@ -1101,6 +1115,24 @@ public class ICProcessActivity extends BaseAppCompatActivity {
                 mHandler.sendEmptyMessageDelayed(REMOVE_CARD, 1000);
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void testGetTlv(int opCode, String[] tagList) {
+        try {
+            byte[] buffer = new byte[256];
+            long start0 = System.currentTimeMillis();
+            long roundStart, roundEnd;
+            for (String tag : tagList) {
+                roundStart = System.currentTimeMillis();
+                MyApplication.app.emvOptV2.getTlv(opCode, tag, buffer);
+                roundEnd = System.currentTimeMillis();
+                Log.e(TAG, "roundTime(ms):" + (roundEnd - roundStart));
+            }
+            long end0 = System.currentTimeMillis();
+            Log.e(TAG, "testGetTlv()---->get " + tagList.length + " tlv, total time(ms):" + (end0 - start0) + "<----");
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }

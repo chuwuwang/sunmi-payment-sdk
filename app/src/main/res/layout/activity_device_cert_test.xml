@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -35,6 +35,10 @@
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/get_set_device_cert"
+                layout="@layout/common_item" />
+
+            <include
                 android:id="@+id/hsm_get_device_cert"
                 layout="@layout/common_item"
                 android:visibility="gone" />
@@ -49,16 +53,16 @@
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/hsm_rsa_keypair"
+                layout="@layout/common_item" />
+
+            <include
                 android:id="@+id/hsm_rsa_recover"
                 layout="@layout/common_item"
                 android:visibility="gone" />
 
             <include
                 android:id="@+id/hsm_key_share"
-                layout="@layout/common_item" />
-
-            <include
-                android:id="@+id/hsm_rsa_keypair"
                 layout="@layout/common_item" />
 
             <include

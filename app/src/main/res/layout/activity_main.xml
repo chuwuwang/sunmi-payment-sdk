@@ -9,7 +9,8 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -33,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_basic"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -50,9 +51,9 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_card"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -70,7 +71,7 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <LinearLayout
@@ -78,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_security"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -95,9 +96,9 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_pin_pad"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -115,7 +116,7 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <LinearLayout
@@ -123,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_emv"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -140,9 +141,9 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_scan"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -160,7 +161,7 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
@@ -169,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_print"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -186,9 +187,9 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_etc"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -206,7 +207,7 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
@@ -215,7 +216,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_other"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -232,9 +233,103 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <android.support.design.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_biometric"
+                    android:layout_width="0dp"
+                    android:layout_height="112dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:elevation="4dp"
+                    app:cardBackgroundColor="#609B8B"
+                    app:cardCornerRadius="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/biometric"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_hce"
+                    android:layout_width="0dp"
+                    android:layout_height="112dp"
+                    android:layout_weight="1"
+                    android:elevation="4dp"
+                    android:visibility="visible"
+                    app:cardBackgroundColor="#882178"
+                    app:cardCornerRadius="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/hce"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_m112"
+                    android:layout_width="0dp"
+                    android:layout_height="112dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:elevation="4dp"
+                    app:cardBackgroundColor="#FF6600"
+                    app:cardCornerRadius="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/m112"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_view_tax"
+                    android:layout_width="0dp"
+                    android:layout_height="112dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:elevation="4dp"
+                    android:visibility="invisible"
+                    app:cardBackgroundColor="#FF6600"
+                    app:cardCornerRadius="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/tax_test_page"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_view_comm"
                     android:layout_width="0dp"
                     android:layout_height="112dp"
@@ -254,28 +349,7 @@
                         android:textSize="16sp"
                         android:visibility="invisible" />
 
-                </android.support.design.card.MaterialCardView>
-
-                <android.support.design.card.MaterialCardView
-                    android:id="@+id/card_view_tax"
-                    android:layout_width="0dp"
-                    android:layout_height="112dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:elevation="4dp"
-                    android:visibility="invisible"
-                    app:cardBackgroundColor="#FF6600"
-                    app:cardCornerRadius="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/tax_test_page"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-
-                </android.support.design.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 

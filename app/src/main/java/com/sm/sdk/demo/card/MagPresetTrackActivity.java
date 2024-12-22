@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.widget.EditText;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;

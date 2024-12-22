@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -27,7 +27,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -48,7 +48,7 @@
                         android:gravity="center_horizontal"
                         android:text="@string/setting_get_card_polling_interval_time" />
 
-                    <android.support.design.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/mb_get_interval_time"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/titleSize"
@@ -68,9 +68,9 @@
                         android:layout_marginTop="10dp"
                         android:textSize="14sp" />
                 </LinearLayout>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -91,13 +91,13 @@
                         android:layout_height="wrap_content"
                         android:text="@string/setting_set_card_polling_interval_time" />
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="4">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edt_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -106,9 +106,9 @@
                             android:textColor="@color/colorTextContent"
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/mb_set_interval_time"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/titleSize"
@@ -123,7 +123,7 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>

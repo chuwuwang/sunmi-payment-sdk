@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -81,9 +81,9 @@
                     </RadioGroup>
 
                 </LinearLayout>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -114,6 +114,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/pin_pad_mode_normal"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/rdo_mode_vi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="visualImpairment"
                         android:textColor="@color/colorTextContent"
                         android:textSize="14sp" />
 
@@ -157,7 +165,53 @@
                         android:textColor="@color/colorTextContent"
                         android:textSize="14sp" />
 
-                    <android.support.design.button.MaterialButton
+                    <CheckBox
+                        android:id="@+id/chk_mode_long_timeout_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pin_pad_mode_long_timeout_time"
+                        android:textColor="@color/colorTextContent"
+                        android:textSize="14sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_rnib_select_mode"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:digits="0,1"
+                            android:hint="RNIBSelectMode(0-DoubleClickConfirm, 1-LongPressConfirm)"
+                            android:inputType="number"
+                            android:singleLine="true"
+                            android:text="0"
+                            android:textColor="@color/colorTextContent"
+                            android:textColorHint="@color/colorTextHelp"
+                            android:textSize="14sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edit_rnib_hold_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="rnibHoldTime(range:(0,100],default:30,unit:100ms)"
+                            android:inputType="number"
+                            android:singleLine="true"
+                            android:text="30"
+                            android:textColor="@color/colorTextContent"
+                            android:textColorHint="@color/colorTextHelp"
+                            android:textSize="14sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/mb_set_mode"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/titleSize"
@@ -174,9 +228,9 @@
                         app:cornerRadius="8dp" />
 
                 </LinearLayout>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -202,11 +256,11 @@
                         android:gravity="center"
                         android:text="@string/pin_pad_set_pin_pad_text" />
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_txt_confirm"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -217,13 +271,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_txt_input_pin"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -234,13 +288,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_txt_input_offline_pin"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -251,13 +305,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_txt_reinput_offline_pin_fmt"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -268,9 +322,9 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/mb_set_text"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/titleSize"
@@ -288,9 +342,9 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -310,11 +364,11 @@
                     android:paddingEnd="16dp"
                     android:paddingBottom="8dp">
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_key_index"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -326,13 +380,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_timeout"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -344,13 +398,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_card_no"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -362,16 +416,16 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/input_step_lay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="2">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_input_step"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -384,16 +438,16 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/input_diversify_lay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="32">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_diversify"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -405,13 +459,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -449,9 +503,9 @@
                         android:textSize="14sp" />
 
                 </RadioGroup>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -490,9 +544,9 @@
 
                 </RadioGroup>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -529,7 +583,7 @@
                             android:id="@+id/rb_custom_keyboard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/pin_pad_custom_keyboard"
+                            android:text="@string/pin_pad_customized_keyboard"
                             android:textColor="@color/colorTextContent"
                             android:textSize="14sp"
                             android:visibility="gone" />
@@ -609,7 +663,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:checked="true"
-                            android:text="@string/pin_pad_sec_normal"
+                            android:text="@string/pin_pad_sec_mksk"
                             android:textColor="@color/colorTextContent"
                             android:textSize="14sp" />
 
@@ -618,7 +672,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:text="@string/pin_pad_sec_duk"
+                            android:text="@string/pin_pad_sec_dukpt"
                             android:textColor="@color/colorTextContent"
                             android:textSize="14sp" />
 
@@ -626,10 +680,10 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                android:id="@+id/tv_info"
+                android:id="@+id/tv_pinblock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -639,7 +693,18 @@
                 android:textColor="@color/colorTextTitle"
                 android:textSize="14sp" />
 
-            <android.support.design.button.MaterialButton
+            <TextView
+                android:id="@+id/tv_dukpt_ksn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="KSN:"
+                android:textColor="@color/colorTextTitle"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_ok"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"
@@ -655,7 +720,7 @@
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/call_custom_keyboard"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"

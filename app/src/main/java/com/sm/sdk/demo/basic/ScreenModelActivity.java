@@ -1,8 +1,9 @@
 package com.sm.sdk.demo.basic;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
@@ -21,6 +22,7 @@ public class ScreenModelActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
+        getWindow().getDecorView().setKeepScreenOn(true);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.basic_screen_mode);
         toolbar.setNavigationIcon(R.drawable.ic_back_white);

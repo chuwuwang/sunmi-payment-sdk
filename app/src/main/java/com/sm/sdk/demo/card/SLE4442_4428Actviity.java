@@ -2,21 +2,22 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
@@ -232,7 +233,7 @@ public class SLE4442_4428Actviity extends BaseAppCompatActivity {
             String length = edtReadLen.getText().toString();
             int startAddr = Integer.parseInt(startAddress, 16);
             int len = Integer.parseInt(length);
-            byte[] out = new byte[260];
+            byte[] out = new byte[2048];
             addStartTimeWithClear("sleReadData()");
             int retLen = MyApplication.app.readCardOptV2.sleReadData(startAddr, len, out);
             addEndTime("sleReadData()");
@@ -439,11 +440,6 @@ public class SLE4442_4428Actviity extends BaseAppCompatActivity {
             edtData.requestFocus();
             return false;
         }
-        if (data.length() > 253) {
-            showToast("input data should less than 253 bytes");
-            edtData.requestFocus();
-            return false;
-        }
         return true;
     }
 
@@ -455,8 +451,8 @@ public class SLE4442_4428Actviity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(cardType);
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(cardType);
         } catch (Exception e) {
             e.printStackTrace();
         }

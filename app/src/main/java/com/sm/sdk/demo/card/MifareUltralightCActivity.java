@@ -2,15 +2,16 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
@@ -47,7 +48,7 @@ public class MifareUltralightCActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
-        initToolbarBringBack(R.string.card_test_MIFARE_Ultralight);
+        initToolbarBringBack(R.string.card_test_mifare_ultralight);
         edtKey = findViewById(R.id.edit_key);
         edtBlockNo = findViewById(R.id.edit_block_no);
         edtBlockData = findViewById(R.id.edit_block_data);

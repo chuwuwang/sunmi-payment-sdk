@@ -1,12 +1,14 @@
 package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.R;
+import com.sm.sdk.demo.hce.HCETestActivity;
 
 public class CardActivity extends BaseAppCompatActivity {
 
@@ -29,6 +31,11 @@ public class CardActivity extends BaseAppCompatActivity {
         view.setOnClickListener(this);
         leftText.setText(R.string.card_test_mag_enc);
 
+        view = findViewById(R.id.card_mag_enc_pan);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_mag_track2_enc);
+
         view = findViewById(R.id.card_ic);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
@@ -39,10 +46,20 @@ public class CardActivity extends BaseAppCompatActivity {
         view.setOnClickListener(this);
         leftText.setText(R.string.card_test_nfc);
 
+        view = findViewById(R.id.card_composite);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_mag_ic_nfc);
+
         view = findViewById(R.id.card_sam);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.card_test_sam);
+
+        view = findViewById(R.id.card_sam_multi);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_sam_multi);
 
         view = findViewById(R.id.card_m1);
         leftText = view.findViewById(R.id.left_text);
@@ -54,20 +71,30 @@ public class CardActivity extends BaseAppCompatActivity {
         view.setOnClickListener(this);
         leftText.setText(R.string.card_test_m1_psame);
 
-        view = findViewById(R.id.card_MIFARE_Ultralight);
+        view = findViewById(R.id.card_mifare_ultralight);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
-        leftText.setText(R.string.card_test_MIFARE_Ultralight);
+        leftText.setText(R.string.card_test_mifare_ultralight);
 
-        view = findViewById(R.id.card_MIFARE_Ultralight_ev1);
+        view = findViewById(R.id.card_mifare_ultralight_ev1);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
-        leftText.setText(R.string.card_test_MIFARE_Ultralight_ev1);
+        leftText.setText(R.string.card_test_mifare_ultralight_ev1);
 
         view = findViewById(R.id.card_mifare_desfire_ev2);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.card_test_mifare_desfire_ev2);
+
+        view = findViewById(R.id.card_mifare_plus);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_mifare_plus);
+
+        view = findViewById(R.id.card_mifare_plus_transmit_apdu);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_mifare_plus_transmit_apdu);
 
         view = findViewById(R.id.card_FELICA);
         leftText = view.findViewById(R.id.left_text);
@@ -84,10 +111,15 @@ public class CardActivity extends BaseAppCompatActivity {
         view.setOnClickListener(this);
         leftText.setText(R.string.card_test_transmit_apdu);
 
-        view = findViewById(R.id.card_mifare_plus);
+        view = findViewById(R.id.card_extended_apdu);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
-        leftText.setText(R.string.card_test_mifare_plus);
+        leftText.setText(R.string.card_test_extended_apdu);
+
+        view = findViewById(R.id.card_pass_apdu);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_pass_apdu);
 
         view = findViewById(R.id.card_sle4442);
         leftText = view.findViewById(R.id.left_text);
@@ -118,6 +150,21 @@ public class CardActivity extends BaseAppCompatActivity {
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.card_ctr_code_multi_apdu_test);
+
+        view = findViewById(R.id.card_exist_status);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_get_card_exist_status);
+
+        view = findViewById(R.id.card_ping_test);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_test_ping);
+
+        view = findViewById(R.id.card_innovatron_test);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.card_innovatron_test);
     }
 
     @Override
@@ -130,11 +177,17 @@ public class CardActivity extends BaseAppCompatActivity {
             case R.id.card_mag_enc:
                 openActivity(MagEncActivity.class);
                 break;
+            case R.id.card_mag_enc_pan:
+                openActivity(MagTrack2EncActivity.class);
+                break;
             case R.id.card_ic:
                 openActivity(ICActivity.class);
                 break;
             case R.id.card_nfc:
                 openActivity(NFCActivity.class);
+                break;
+            case R.id.card_composite:
+                openActivity(CompositeActivity.class);
                 break;
             case R.id.card_m1:
                 openActivity(M1Activity.class);
@@ -145,14 +198,23 @@ public class CardActivity extends BaseAppCompatActivity {
             case R.id.card_sam:
                 openActivity(SAMActivity.class);
                 break;
-            case R.id.card_MIFARE_Ultralight:
+            case R.id.card_sam_multi:
+                openActivity(SAMMultiActivity.class);
+                break;
+            case R.id.card_mifare_ultralight:
                 openActivity(MifareUltralightCActivity.class);
                 break;
-            case R.id.card_MIFARE_Ultralight_ev1:
+            case R.id.card_mifare_ultralight_ev1:
                 openActivity(MifareUtralightEv1Activity.class);
                 break;
             case R.id.card_mifare_desfire_ev2:
                 openActivity(MifareDesfireEv2Activity.class);
+                break;
+            case R.id.card_mifare_plus:
+                openActivity(MifarePlusActivity.class);
+                break;
+            case R.id.card_mifare_plus_transmit_apdu:
+                openActivity(MifarePlusTransmitApduActivity.class);
                 break;
             case R.id.card_FELICA:
                 openActivity(FelicaActivity.class);
@@ -163,8 +225,11 @@ public class CardActivity extends BaseAppCompatActivity {
             case R.id.card_transmit_apdu:
                 openActivity(TransmitApduActivity.class);
                 break;
-            case R.id.card_mifare_plus:
-                openActivity(MifarePlusActivity.class);
+            case R.id.card_extended_apdu:
+                openActivity(ExtendedApduActivity.class);
+                break;
+            case R.id.card_pass_apdu:
+                openActivity(PassApduActivity.class);
                 break;
             case R.id.card_sle4442:
                 openActivity(SLE4442_4428Actviity.class);
@@ -184,8 +249,16 @@ public class CardActivity extends BaseAppCompatActivity {
             case R.id.card_ctr_code_test:
                 openActivity(CtrCodeAndMultiApduActivity.class);
                 break;
+            case R.id.card_exist_status:
+                openActivity(GetCardExistStatusActivity.class);
+                break;
+            case R.id.card_ping_test:
+                openActivity(PingActivity.class);
+                break;
+            case R.id.card_innovatron_test:
+                openActivity(InnovatronActivity.class);
+                break;
         }
     }
-
 
 }

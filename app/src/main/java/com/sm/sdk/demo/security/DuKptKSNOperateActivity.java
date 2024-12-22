@@ -1,18 +1,24 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.RemoteException;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
+import com.sm.sdk.demo.utils.LogUtil;
 import com.sunmi.pay.hardware.aidlv2.security.SecurityOptV2;
 
-public class DuKptKSNOperateActivity extends BaseAppCompatActivity {
+import java.util.Arrays;
+
+public class DukptKSNOperateActivity extends BaseAppCompatActivity {
     private TextView mTvInfo;
     private EditText mEditKeyIndex;
 
@@ -29,6 +35,7 @@ public class DuKptKSNOperateActivity extends BaseAppCompatActivity {
         mTvInfo = findViewById(R.id.tv_info);
         findViewById(R.id.mb_get_ksn).setOnClickListener(this);
         findViewById(R.id.mb_ksn_increased).setOnClickListener(this);
+        findViewById(R.id.mb_get_init_ksn).setOnClickListener(this);
     }
 
     @Override
@@ -41,6 +48,9 @@ public class DuKptKSNOperateActivity extends BaseAppCompatActivity {
             case R.id.mb_get_ksn:
                 getKsn();
                 break;
+            case R.id.mb_get_init_ksn:
+                getInitKSN();
+                break;
         }
     }
 
@@ -51,13 +61,13 @@ public class DuKptKSNOperateActivity extends BaseAppCompatActivity {
             int keyIndex;
             try {
                 keyIndex = Integer.parseInt(keyIndexStr);
-                if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
-                    showToast(R.string.security_dukpt_key_index_hint);
+                if (!KeyIndexUtil.checkDukptKeyIndex(keyIndex)) {
+                    showKeyIndexToast();
                     return;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                showToast(R.string.security_dukpt_key_index_hint);
+                showKeyIndexToast();
                 return;
             }
             addStartTimeWithClear("dukptIncreaseKSN()");
@@ -79,17 +89,19 @@ public class DuKptKSNOperateActivity extends BaseAppCompatActivity {
             int keyIndex;
             try {
                 keyIndex = Integer.parseInt(keyIndexStr);
-                if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
-                    showToast(R.string.security_dukpt_key_index_hint);
+                if (!KeyIndexUtil.checkDukptKeyIndex(keyIndex)) {
+                    showKeyIndexToast();
                     return;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                showToast(R.string.security_dukpt_key_index_hint);
+                showKeyIndexToast();
                 return;
             }
-            int len = 10;//Nornmal dukpt KSN length is 10
-            if ((keyIndex >= 10 && keyIndex <= 19) || (keyIndex >= 2100 && keyIndex <= 2199)) {//Dukpt-AES KSN length is 12
+            int len = 0;
+            if (KeyIndexUtil.checkDukpt3DesKeyIndex(keyIndex)) {//Dukpt-3DES key
+                len = 10;
+            } else {//Dukpt-AES
                 len = 12;
             }
             byte[] dataOut = new byte[len];
@@ -108,4 +120,27 @@ public class DuKptKSNOperateActivity extends BaseAppCompatActivity {
         }
     }
 
+    private void getInitKSN() {
+        try {
+            byte[] buffer = new byte[12];
+            int len = MyApplication.app.securityOptV2.dukptGetInitKSN(buffer);
+            if (len < 0) {
+                showToast("get init kSN failed, code:" + len);
+                return;
+            }
+            String ksn = ByteUtil.bytes2HexStr(Arrays.copyOf(buffer, len));
+            LogUtil.e(TAG, "dukptGetInitKSN() retValue:" + ksn);
+            mTvInfo.setText(ksn);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showKeyIndexToast() {
+        if (DeviceUtil.isBrazilCKD()) {
+            showToast(R.string.security_duKpt_key_index_hint);
+        } else {
+            showToast(R.string.security_dukpt_key_index_hint);
+        }
+    }
 }

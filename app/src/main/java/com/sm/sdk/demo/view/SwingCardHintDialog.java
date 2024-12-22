@@ -2,9 +2,10 @@ package com.sm.sdk.demo.view;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
 
 import com.sm.sdk.demo.R;
 

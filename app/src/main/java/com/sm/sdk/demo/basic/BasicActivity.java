@@ -1,5 +1,6 @@
 package com.sm.sdk.demo.basic;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -38,9 +39,44 @@ public class BasicActivity extends BaseAppCompatActivity {
         leftText.setText(R.string.basic_led);
         item.setOnClickListener(this);
 
+        item = findViewById(R.id.led_additional);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_led_additional);
+        item.setOnClickListener(this);
+
         item = findViewById(R.id.screen_mode);
         leftText = item.findViewById(R.id.left_text);
         leftText.setText(R.string.basic_screen_mode);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.dynamic_perm_wifi_proxy);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_dynamic_perm_wifi_proxy);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.ca_cert_manager);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_ca_cert_manager);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.cpu_info);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_cpu_info);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.schedule_reboot);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_schedule_reboot);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.customize_function_key);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_customize_function_key);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.lmk_package);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_lmk_package);
         item.setOnClickListener(this);
 
         item = findViewById(R.id.emv_callback_time);
@@ -63,6 +99,11 @@ public class BasicActivity extends BaseAppCompatActivity {
         leftText.setText(R.string.basic_kb_beep_mode);
         item.setOnClickListener(this);
 
+        item = findViewById(R.id.basic_kb_backlight);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_kb_backlight);
+        item.setOnClickListener(this);
+
         item = findViewById(R.id.shard_lib);
         leftText = item.findViewById(R.id.left_text);
         leftText.setText(R.string.basic_shared_lib_test);
@@ -72,9 +113,50 @@ public class BasicActivity extends BaseAppCompatActivity {
         leftText = item.findViewById(R.id.left_text);
         leftText.setText(R.string.test_transmission_stress_test);
         item.setOnClickListener(this);
+
+        item = findViewById(R.id.liteso);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_liteso_test);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.network_manage);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_network_manage);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.phone_call_manage);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_phone_manage);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.device_manage);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_device_manager);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.ped_test);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_ped_test);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.rtc_info);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_rtc_battery_info);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.log_control);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_log_control);
+        item.setOnClickListener(this);
+
+        item = findViewById(R.id.tamper_log);
+        leftText = item.findViewById(R.id.left_text);
+        leftText.setText(R.string.basic_get_tamper_log);
+        item.setOnClickListener(this);
     }
 
     @Override
+    @SuppressLint("NonConstantResourceId")
     public void onClick(View v) {
         final int id = v.getId();
         switch (id) {
@@ -90,8 +172,29 @@ public class BasicActivity extends BaseAppCompatActivity {
             case R.id.led:
                 openActivity(LedActivity.class);
                 break;
+            case R.id.led_additional:
+                openActivity(LedAdditionalActivity.class);
+                break;
             case R.id.screen_mode:
                 openActivity(ScreenModelActivity.class);
+                break;
+            case R.id.dynamic_perm_wifi_proxy:
+                openActivity(DynamicPermissionAndWifiProxyActivity.class);
+                break;
+            case R.id.ca_cert_manager:
+                openActivity(CACertManageActivity.class);
+                break;
+            case R.id.cpu_info:
+                openActivity(CPUInfoActivity.class);
+                break;
+            case R.id.schedule_reboot:
+                openActivity(ScheduleRebootActivity.class);
+                break;
+            case R.id.customize_function_key:
+                openActivity(CustomizeFunctionKeyActivity.class);
+                break;
+            case R.id.lmk_package:
+                openActivity(LowMemoryKillerActivity.class);
                 break;
             case R.id.emv_callback_time:
                 openActivity(EMVCallbackTimeActivity.class);
@@ -105,11 +208,38 @@ public class BasicActivity extends BaseAppCompatActivity {
             case R.id.kb_beep_mode:
                 openActivity(KBBeepModeActivity.class);
                 break;
+            case R.id.basic_kb_backlight:
+                openActivity(KBBacklightActivity.class);
+                break;
             case R.id.shard_lib:
                 openActivity(SharedLibActivity.class);
                 break;
             case R.id.data_transmission:
                 openActivity(TransmissionTestActivity.class);
+                break;
+            case R.id.liteso:
+                openActivity(LitesoActivity.class);
+                break;
+            case R.id.network_manage:
+                openActivity(NetworkManageActivity.class);
+                break;
+            case R.id.phone_call_manage:
+                openActivity(PhoneManageActivity.class);
+                break;
+            case R.id.device_manage:
+                openActivity(DeviceManageActivity.class);
+                break;
+            case R.id.ped_test:
+                openActivity(PedActivity.class);
+                break;
+            case R.id.rtc_info:
+                openActivity(RTCBatterVolActivity.class);
+                break;
+            case R.id.log_control:
+                openActivity(LogControlActivity.class);
+                break;
+            case R.id.tamper_log:
+                openActivity(GetTamperLogActivity.class);
                 break;
         }
     }

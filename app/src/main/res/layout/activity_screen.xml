@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -33,7 +33,7 @@
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:textAllCaps="false"
                 app:backgroundTint="@color/colorOrange"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse"
@@ -51,7 +51,7 @@
                 android:background="@color/colorOrange"
                 android:onClick="up" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:textAllCaps="false"
                 app:backgroundTint="@color/colorOrange"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse"
@@ -69,7 +69,7 @@
                 android:background="@color/colorOrange"
                 android:onClick="down" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:textAllCaps="false"
                 app:backgroundTint="@color/colorOrange"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse"
@@ -87,7 +87,7 @@
                 android:background="@color/colorOrange"
                 android:onClick="left" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:textAllCaps="false"
                 app:backgroundTint="@color/colorOrange"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse"

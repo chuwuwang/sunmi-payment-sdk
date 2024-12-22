@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -35,7 +35,19 @@
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/item_blind"
+                layout="@layout/common_item" />
+
+            <include
                 android:id="@+id/item_rupay"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/item_toss"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/item_sred"
                 layout="@layout/common_item" />
 
             <include

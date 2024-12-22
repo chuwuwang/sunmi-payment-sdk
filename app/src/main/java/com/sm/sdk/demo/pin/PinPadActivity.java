@@ -1,26 +1,29 @@
 package com.sm.sdk.demo.pin;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.emv.EmvUtil;
+import com.sm.sdk.demo.security.KeyIndexUtil;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
+import com.sm.sdk.demo.wrapper.PinPadListenerV2Wrapper;
 import com.sunmi.pay.hardware.aidl.AidlConstants.PinBlockFormat;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
 import com.sunmi.pay.hardware.aidlv2.bean.PinPadConfigV2;
@@ -41,7 +44,8 @@ public class PinPadActivity extends BaseAppCompatActivity {
     private EditText mEditTimeout;
     private EditText mEditKeyIndex;
 
-    private TextView mTvInfo;
+    private TextView mTvPinBlock;
+    private TextView mTvKSN;
 
     private RadioGroup mRGKeyboard;
     private RadioGroup mRGIsOnline;
@@ -50,47 +54,12 @@ public class PinPadActivity extends BaseAppCompatActivity {
     private RadioGroup mRGPinAlgorithmType;
     private SparseArray<CheckBox> chkModeList;
 
-    private static final int HANDLER_WHAT_INIT_PIN_PAD = 661;
-    private static final int HANDLER_PIN_LENGTH = 662;
-    private static final int HANDLER_CONFIRM = 663;
-    private static final int HANDLER_WHAT_CANCEL = 664;
-    private static final int HANDLER_ERROR = 665;
-
-    private final Handler mHandler = new Handler(msg -> {
-        switch (msg.what) {
-            case HANDLER_WHAT_INIT_PIN_PAD:
-                RadioGroup rdoGroup = findViewById(R.id.rg_pin_style);
-                int checkedId = rdoGroup.getCheckedRadioButtonId();
-                if (checkedId == R.id.rb_pin_style_normal) {
-                    initPinPad();
-                } else if (checkedId == R.id.rb_pin_style_normal_extend) {
-                    initPinPadEx();
-                }
-                break;
-            case HANDLER_WHAT_CANCEL:
-                showToast("user cancel");
-                break;
-            case HANDLER_PIN_LENGTH:
-                showToast("inputting");
-                break;
-            case HANDLER_CONFIRM:
-                mTvInfo.setText("PinBlock:" + msg.obj);
-                showToast("click ok");
-                break;
-            case HANDLER_ERROR:
-                showToast("error:" + msg.obj + " -- " + msg.arg1);
-                break;
-        }
-        return true;
-    });
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_pad);
-        initToolbarBringBack(R.string.pin_pad);
+        initToolbarBringBack(R.string.pin_pad_whole);
         initView();
-        EmvUtil.setTerminalParam(EmvUtil.getConfig(EmvUtil.COUNTRY_CHINA));
     }
 
     private void initView() {
@@ -111,11 +80,13 @@ public class PinPadActivity extends BaseAppCompatActivity {
         rdoGroup.check(R.id.rb_pin_style_normal);
         chkModeList = new SparseArray<>();
         chkModeList.put(R.id.chk_mode_normal, findViewById(R.id.chk_mode_normal));
+        chkModeList.put(R.id.rdo_mode_vi, findViewById(R.id.rdo_mode_vi));
         chkModeList.put(R.id.chk_mode_long_press_to_clear, findViewById(R.id.chk_mode_long_press_to_clear));
         chkModeList.put(R.id.chk_mode_silent, findViewById(R.id.chk_mode_silent));
         chkModeList.put(R.id.chk_mode_green_led, findViewById(R.id.chk_mode_green_led));
         chkModeList.put(R.id.chk_mode_monitor_clear_key, findViewById(R.id.chk_mode_monitor_clear_key));
         chkModeList.put(R.id.chk_mode_cancel_to_clear, findViewById(R.id.chk_mode_cancel_to_clear));
+        chkModeList.put(R.id.chk_mode_long_timeout_time, findViewById(R.id.chk_mode_long_timeout_time));
         for (int i = 0, size = chkModeList.size(); i < size; i++) {
             chkModeList.valueAt(i).setOnClickListener(this);
         }
@@ -127,7 +98,8 @@ public class PinPadActivity extends BaseAppCompatActivity {
         mEditTimeout = findViewById(R.id.edit_timeout);
         mEditKeyIndex = findViewById(R.id.edit_key_index);
 
-        mTvInfo = findViewById(R.id.tv_info);
+        mTvPinBlock = findViewById(R.id.tv_pinblock);
+        mTvKSN = findViewById(R.id.tv_dukpt_ksn);
 
         mRGKeyboard = findViewById(R.id.rg_keyboard);
         mRGIsOnline = findViewById(R.id.rg_is_online);
@@ -148,24 +120,44 @@ public class PinPadActivity extends BaseAppCompatActivity {
         final int id = v.getId();
         switch (id) {
             case R.id.chk_mode_normal:
+            case R.id.rdo_mode_vi:
             case R.id.chk_mode_long_press_to_clear:
             case R.id.chk_mode_silent:
             case R.id.chk_mode_green_led:
             case R.id.chk_mode_cancel_to_clear:
+            case R.id.chk_mode_long_timeout_time:
                 onModeButtonClick(id);
                 break;
             case R.id.mb_set_mode:
                 onSetPinPadModeClick();
+                setVisualImpairmentParam();
+                getVisualImpairmentModeParam();
                 break;
             case R.id.mb_set_text:
                 initPinPadText();
                 break;
             case R.id.mb_ok:
-                mHandler.sendEmptyMessage(HANDLER_WHAT_INIT_PIN_PAD);
+                onOKButtonClick();
                 break;
             case R.id.call_custom_keyboard:
                 initCustomPinPad();
                 break;
+        }
+    }
+
+    private void hideSoftInputKeyboard() {
+        InputMethodManager img = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        img.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+    }
+
+    private void onOKButtonClick() {
+        hideSoftInputKeyboard();
+        RadioGroup rdoGroup = findViewById(R.id.rg_pin_style);
+        int checkedId = rdoGroup.getCheckedRadioButtonId();
+        if (checkedId == R.id.rb_pin_style_normal) {
+            initPinPad();
+        } else if (checkedId == R.id.rb_pin_style_normal_extend) {
+            initPinPadEx();
         }
     }
 
@@ -191,22 +183,27 @@ public class PinPadActivity extends BaseAppCompatActivity {
             Bundle bundle = new Bundle();
             if (chkModeList.get(R.id.chk_mode_normal).isChecked()) {//Normal mode
                 bundle.putInt("normal", 1);
-            } else {
-                if (chkModeList.get(R.id.chk_mode_long_press_to_clear).isChecked()) {
-                    bundle.putInt("longPressToClear", 1);
-                }
-                if (chkModeList.get(R.id.chk_mode_silent).isChecked()) {
-                    bundle.putInt("silent", 1);
-                }
-                if (chkModeList.get(R.id.chk_mode_green_led).isChecked()) {
-                    bundle.putInt("greenLed", 1);
-                }
-                if (chkModeList.get(R.id.chk_mode_monitor_clear_key).isChecked()) {
-                    bundle.putInt("monitorClearKey", 1);
-                }
-                if (chkModeList.get(R.id.chk_mode_cancel_to_clear).isChecked()) {
-                    bundle.putInt("cancelToClear", 1);
-                }
+            }
+            if (chkModeList.get(R.id.rdo_mode_vi).isChecked()) {
+                bundle.putInt("visualImpairment", 1);
+            }
+            if (chkModeList.get(R.id.chk_mode_long_press_to_clear).isChecked()) {
+                bundle.putInt("longPressToClear", 1);
+            }
+            if (chkModeList.get(R.id.chk_mode_silent).isChecked()) {
+                bundle.putInt("silent", 1);
+            }
+            if (chkModeList.get(R.id.chk_mode_green_led).isChecked()) {
+                bundle.putInt("greenLed", 1);
+            }
+            if (chkModeList.get(R.id.chk_mode_monitor_clear_key).isChecked()) {
+                bundle.putInt("monitorClearKey", 1);
+            }
+            if (chkModeList.get(R.id.chk_mode_cancel_to_clear).isChecked()) {
+                bundle.putInt("cancelToClear", 1);
+            }
+            if (chkModeList.get(R.id.chk_mode_long_timeout_time).isChecked()) {
+                bundle.putInt("longTimeoutTime", 1);
             }
             addStartTimeWithClear("setPinPadMode()");
             int code = MyApplication.app.pinPadOptV2.setPinPadMode(bundle);
@@ -216,6 +213,57 @@ public class PinPadActivity extends BaseAppCompatActivity {
             showToast(msg);
             showSpendTime();
         } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** 设置视障模式参数 */
+    private void setVisualImpairmentParam() {
+        boolean visualImpairment = chkModeList.get(R.id.rdo_mode_vi).isChecked();
+        if (visualImpairment) {
+            int rnibSelectMode = 0;
+            int rnibHoldTime = 30;
+            String edtSelectModeStr = this.<EditText>findViewById(R.id.edit_rnib_select_mode).getText().toString();
+            if (!TextUtils.isEmpty(edtSelectModeStr)) {
+                rnibSelectMode = Integer.parseInt(edtSelectModeStr);
+            }
+            String edtHoldTimeStr = this.<EditText>findViewById(R.id.edit_rnib_hold_time).getText().toString();
+            if (!TextUtils.isEmpty(edtHoldTimeStr)) {
+                rnibHoldTime = Integer.parseInt(edtHoldTimeStr);
+            }
+            try {
+                Bundle bundle = new Bundle();
+                bundle.putInt("timeoutGap1", 5);
+                bundle.putInt("timeoutGap2", 10);
+                bundle.putInt("ttsLanguage", 0);
+                bundle.putInt("rnibSelectMode", rnibSelectMode);
+                bundle.putInt("rnibHoldTime", rnibHoldTime);
+                int code = MyApplication.app.pinPadOptV2.setVisualImpairmentModeParam(bundle);
+                String msg = "setVisualImpairmentModeParam() code:" + code;
+                LogUtil.e(TAG, msg);
+                showToast(msg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /** 获取视障模式参数 */
+    private void getVisualImpairmentModeParam() {
+        try {
+            Bundle bundle = new Bundle();
+            int code = MyApplication.app.pinPadOptV2.getVisualImpairmentModeParam(bundle);
+            LogUtil.e(TAG, "getVisualImpairmentModeParam() code:" + code);
+            if (code < 0) {
+                return;
+            }
+            int timeoutGap1 = bundle.getInt("timeoutGap1");
+            int timeoutGap2 = bundle.getInt("timeoutGap2");
+            int ttsLanguage = bundle.getInt("ttsLanguage");
+            int rnibSelectMode = bundle.getInt("rnibSelectMode");
+            int rnibHoldTime = bundle.getInt("rnibHoldTime");
+            LogUtil.e(TAG, "getVisualImpairmentModeParam():\n" + Utility.bundle2String(bundle));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -237,8 +285,9 @@ public class PinPadActivity extends BaseAppCompatActivity {
             int longPressToClear = bundle.getInt("longPressToClear");
             int silent = bundle.getInt("silent");
             int greenLed = bundle.getInt("greenLed");
-            LogUtil.e(TAG, Utility.formatStr("PinPad mode:\nnormal:%d\nlongPressToClear:%d\nsilent:%d\ngreenLed:%d",
-                    normal, longPressToClear, silent, greenLed));
+            int visualImpairment = bundle.getInt("visualImpairment");
+            LogUtil.e(TAG, Utility.formatStr("PinPad mode:\nnormal:%d\nvisualImpairment:%d\nlongPressToClear:%d\nsilent:%d\ngreenLed:%d",
+                    normal, visualImpairment, longPressToClear, silent, greenLed));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -295,7 +344,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
                 // start input PIN
                 addStartTimeWithClear("initPinPad()");
                 String result = MyApplication.app.pinPadOptV2.initPinPad(configV2, mPinPadListener);
-                if (TextUtils.isEmpty(result)) {
+                if (configV2.getPinPadType() == 1 && TextUtils.isEmpty(result)) {//自定义密码键盘
                     String msg = "initPinPad failed";
                     LogUtil.e(TAG, msg);
                     showToast(msg);
@@ -315,9 +364,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
         }
         int pinKeyIndex = Integer.parseInt(pikIndexStr);
         boolean isKeyDukpt = mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_dukpt;
-        if ((isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 19) && (pinKeyIndex < 1100 || pinKeyIndex > 1199)
-                && (pinKeyIndex < 2100 || pinKeyIndex > 2199))
-                || (!isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 19))) {
+        if (!KeyIndexUtil.checkMkskOrDukptKeyIndex(pinKeyIndex, isKeyDukpt)) {
             showToast(R.string.pin_pad_key_index_hint);
             mEditKeyIndex.requestFocus();
             return;
@@ -327,8 +374,9 @@ public class PinPadActivity extends BaseAppCompatActivity {
             showToast(R.string.pin_pad_timeout_hint);
             return;
         }
+        boolean visualImpairment = chkModeList.get(R.id.rdo_mode_vi).isChecked();
         int timeout = Integer.parseInt(timeoutStr) * 1000;
-        if (timeout < 0 || timeout > 60000) {
+        if (timeout < 0 || (!visualImpairment && timeout > 60000)) {
             showToast(R.string.pin_pad_timeout_hint);
             return;
         }
@@ -364,8 +412,12 @@ public class PinPadActivity extends BaseAppCompatActivity {
             bundle.putInt("pinType", mRGIsOnline.getCheckedRadioButtonId() == R.id.rb_online_pin ? 0 : 1);
             // isOrderNumberKey: true-order number PinPad, false-disorder number PinPad
             bundle.putInt("isOrderNumKey", mRGKeyboard.getCheckedRadioButtonId() == R.id.rb_orderly_keyboard ? 1 : 0);
-            // PAN(Person Identify Number) ASCII格式转换成的byte 例如 “123456”.getBytes("us ascii")
-            byte[] panBytes = cardNo.substring(cardNo.length() - 13, cardNo.length() - 1).getBytes("US-ASCII");
+            byte[] panBytes = null;
+            if (pinBlockFormat == PinBlockFormat.SEC_PIN_BLK_ISO_FMT4) {//for format 4,the whole card number(12-19 digits) is PAN
+                panBytes = cardNo.getBytes(StandardCharsets.US_ASCII);
+            } else { // PAN(Person Identify Number) convert ASCII characters to bytes, eg: “123456”.getBytes("US-ASCII")
+                panBytes = cardNo.substring(cardNo.length() - 13, cardNo.length() - 1).getBytes(StandardCharsets.US_ASCII);
+            }
             bundle.putByteArray("pan", panBytes);
             // PIK(PIN key) index
             bundle.putInt("pinKeyIndex", pinKeyIndex);
@@ -387,7 +439,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
             bundle.putInt("keySystem", mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_mksk ? 0 : 1);
             addStartTimeWithClear("initPinPadEx()");
             String result = MyApplication.app.pinPadOptV2.initPinPadEx(bundle, mPinPadListener);
-            if (TextUtils.isEmpty(result)) {
+            if (bundle.getInt("pinPadType") == 1 && TextUtils.isEmpty(result)) {//自定义密码键盘
                 String msg = "initPinPad failed";
                 LogUtil.e(TAG, msg);
                 showToast(msg);
@@ -401,12 +453,19 @@ public class PinPadActivity extends BaseAppCompatActivity {
     private void initCustomPinPad() {
         try {
             PinPadConfigV2 pinPadConfigV2 = initPinPadConfigV2();
-            if (pinPadConfigV2 != null) {
-                Intent mIntent = new Intent(this, CustomPinPadActivity.class);
-                mIntent.putExtra("PinPadConfigV2", (Serializable) pinPadConfigV2);
-                mIntent.putExtra("cardNo", cardNo);
-                startActivityForResult(mIntent, 0);
+            if (pinPadConfigV2 == null) {
+                LogUtil.e(TAG, "init customize pinpad failed");
+                return;
             }
+            Intent intent = new Intent();
+            intent.putExtra("PinPadConfigV2", (Serializable) pinPadConfigV2);
+            intent.putExtra("cardNo", cardNo);
+            if (chkModeList.get(R.id.rdo_mode_vi).isChecked()) {//视障模式
+                intent.setClass(this, CustomizedVisualImpairmentPinActivity.class);
+            } else {
+                intent.setClass(this, CustomizedPinPadActivity.class);
+            }
+            startActivityForResult(intent, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -421,9 +480,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
         }
         int pinKeyIndex = Integer.parseInt(pikIndex);
         boolean isKeyDukpt = mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_dukpt;
-        if ((isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 19) && (pinKeyIndex < 1100 || pinKeyIndex > 1199)
-                && (pinKeyIndex < 2100 || pinKeyIndex > 2199))
-                || (!isKeyDukpt && (pinKeyIndex < 0 || pinKeyIndex > 199))) {
+        if (!KeyIndexUtil.checkMkskOrDukptKeyIndex(pinKeyIndex, isKeyDukpt)) {
             showToast(R.string.pin_pad_key_index_hint);
             mEditKeyIndex.requestFocus();
             return null;
@@ -433,8 +490,10 @@ public class PinPadActivity extends BaseAppCompatActivity {
             showToast(R.string.pin_pad_timeout_hint);
             return null;
         }
+        boolean visualImpairment = chkModeList.get(R.id.rdo_mode_vi).isChecked();
+        boolean longTimeOutTime = chkModeList.get(R.id.chk_mode_long_timeout_time).isChecked();
         int timeout = Integer.parseInt(timeoutStr) * 1000;
-        if (timeout < 0 || timeout > 60000) {
+        if (timeout < 0 || !visualImpairment && (longTimeOutTime && timeout > 600000 || !longTimeOutTime && timeout > 60000)) {
             showToast(R.string.pin_pad_timeout_hint);
             return null;
         }
@@ -453,20 +512,27 @@ public class PinPadActivity extends BaseAppCompatActivity {
             pinPadConfig.setOrderNumKey(mRGKeyboard.getCheckedRadioButtonId() == R.id.rb_orderly_keyboard);
             // PinAlgType: 0-3DES, 1-SM4, 2-AES
             int pinAlgType = 0;//3DES
+            int pinBlockFormat = PinBlockFormat.SEC_PIN_BLK_ISO_FMT0;
             if (mRGPinAlgorithmType.getCheckedRadioButtonId() == R.id.rb_pin_type_sm4) {
                 pinAlgType = 1;//SM4
             } else if (mRGPinAlgorithmType.getCheckedRadioButtonId() == R.id.rb_pin_type_aes) {
                 pinAlgType = 2;//AES
-                pinPadConfig.setPinblockFormat(PinBlockFormat.SEC_PIN_BLK_ISO_FMT4);
+                pinBlockFormat = PinBlockFormat.SEC_PIN_BLK_ISO_FMT4;
             }
             pinPadConfig.setAlgorithmType(pinAlgType);
             // PIK key system: 0-MKSK, 1-Dukpt
             pinPadConfig.setKeySystem(mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_mksk ? 0 : 1);
-            // PAN(Person Identify Number) ASCII格式转换成的byte 例如 “123456”.getBytes("us ascii")
-            byte[] panBytes = cardNo.substring(cardNo.length() - 13, cardNo.length() - 1).getBytes(StandardCharsets.US_ASCII);
+            byte[] panBytes = null;
+            if (pinBlockFormat == PinBlockFormat.SEC_PIN_BLK_ISO_FMT4) {//for format 4,the whole card number(12-19 digits) is PAN
+                panBytes = cardNo.getBytes(StandardCharsets.US_ASCII);
+            } else { // PAN(Person Identify Number) convert ASCII characters to bytes, eg: “123456”.getBytes("US-ASCII")
+                panBytes = cardNo.substring(cardNo.length() - 13, cardNo.length() - 1).getBytes(StandardCharsets.US_ASCII);
+            }
             pinPadConfig.setPan(panBytes);
             // Input PIN timeout time
             pinPadConfig.setTimeout(timeout);
+            // PIN block format
+            pinPadConfig.setPinblockFormat(pinBlockFormat);
             // PIK(PIN key) index
             pinPadConfig.setPinKeyIndex(pinKeyIndex);
             // Minimum input PIN number
@@ -480,11 +546,10 @@ public class PinPadActivity extends BaseAppCompatActivity {
         return null;
     }
 
-    private final PinPadListenerV2 mPinPadListener = new PinPadListenerV2.Stub() {
+    private final PinPadListenerV2 mPinPadListener = new PinPadListenerV2Wrapper() {
         @Override
         public void onPinLength(int i) {
             LogUtil.e(Constant.TAG, "onPinLength:" + i);
-//            mHandler.obtainMessage(HANDLER_PIN_LENGTH, i, 0).sendToTarget();
         }
 
         @Override
@@ -493,7 +558,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
             addEndTime("initPinPadEx()");
             String hexStr = ByteUtil.bytes2HexStr(bytes);
             LogUtil.e(Constant.TAG, "onConfirm, pinType:" + pinType + ",PinBlock:" + hexStr);
-            mHandler.obtainMessage(HANDLER_CONFIRM, hexStr).sendToTarget();
+            handleUpdateShowingPinBlockAndKsn(hexStr);
             showSpendTime();
         }
 
@@ -502,7 +567,9 @@ public class PinPadActivity extends BaseAppCompatActivity {
             addEndTime("initPinPad()");
             addEndTime("initPinPadEx()");
             LogUtil.e(Constant.TAG, "onCancel");
-            mHandler.sendEmptyMessage(HANDLER_WHAT_CANCEL);
+            runOnUiThread(() -> {
+                showToast("user cancel");
+            });
             showSpendTime();
         }
 
@@ -512,10 +579,38 @@ public class PinPadActivity extends BaseAppCompatActivity {
             addEndTime("initPinPadEx()");
             LogUtil.e(Constant.TAG, "onError:" + code);
             String msg = AidlErrorCodeV2.valueOf(code).getMsg();
-            mHandler.obtainMessage(HANDLER_ERROR, code, code, msg).sendToTarget();
+            runOnUiThread(() -> {
+                showToast("error:" + msg + " -- " + code);
+            });
             showSpendTime();
         }
     };
+
+    private void handleUpdateShowingPinBlockAndKsn(String pinBlock) {
+        runOnUiThread(() -> {
+            try {
+                mTvPinBlock.setText("PinBlock:" + pinBlock);
+                if (mRGPikKeySystem.getCheckedRadioButtonId() == R.id.rb_key_system_dukpt) {//dukpt key
+                    int pikIndex = Integer.parseInt(mEditKeyIndex.getText().toString());
+                    byte[] buffer = new byte[10];
+                    if (pikIndex >= 10 && pikIndex <= 19 || pikIndex >= 2100 && pikIndex <= 2199) {//dukpt-aes
+                        buffer = new byte[12];
+                    }
+                    int code = MyApplication.app.securityOptV2.dukptCurrentKSN(pikIndex, buffer);
+                    if (code < 0) {
+                        showToast("get Ksn failed, code:" + code);
+                        return;
+                    }
+                    mTvKSN.setText("KSN:" + ByteUtil.bytes2HexStr(buffer));
+                } else {
+                    mTvKSN.setText("KSN:");
+                }
+                showToast("click ok");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -523,7 +618,7 @@ public class PinPadActivity extends BaseAppCompatActivity {
         if (data != null) {
             String pinCipher = data.getStringExtra("pinCipher");
             if (!TextUtils.isEmpty(pinCipher)) {
-                mTvInfo.setText("PinBlock:" + pinCipher);
+                mTvPinBlock.setText("PinBlock:" + pinCipher);
             }
         }
     }

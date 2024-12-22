@@ -3,15 +3,16 @@ package com.sm.sdk.demo.emv;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.ThreadPoolUtil;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;

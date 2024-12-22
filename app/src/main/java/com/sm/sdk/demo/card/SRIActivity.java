@@ -2,16 +2,17 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
@@ -282,6 +283,21 @@ public class SRIActivity extends BaseAppCompatActivity {
 //        } catch (RemoteException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancelCheckCard();
+    }
+
+    private void cancelCheckCard() {
+        try {
+            MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.SRI.getValue());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

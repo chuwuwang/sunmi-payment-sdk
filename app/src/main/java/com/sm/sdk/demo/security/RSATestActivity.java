@@ -1,11 +1,12 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
@@ -41,7 +42,7 @@ public class RSATestActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
-        initToolbarBringBack(R.string.hsm_rsa_keypair_test);
+        initToolbarBringBack(R.string.security_rsa_test);
         findViewById(R.id.btn_gen_key_pair).setOnClickListener(this);
         findViewById(R.id.btn_inject_pub_key).setOnClickListener(this);
         findViewById(R.id.btn_inject_pvt_key).setOnClickListener(this);
@@ -122,10 +123,10 @@ public class RSATestActivity extends BaseAppCompatActivity {
                 if (publicKeyStr.contains(module)) {
                     showToast("generate RSA keypair success");
                 } else {
-                    showToast("generate RSA keypair failed");
+                    showToast("generate RSA keypair failed,code:" + len);
                 }
             } else {
-                showToast("generate RSA keypair failed");
+                showToast("generate RSA keypair failed,code:" + len);
             }
         } catch (Exception e) {
             e.printStackTrace();

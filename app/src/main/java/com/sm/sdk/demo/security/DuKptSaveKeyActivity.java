@@ -1,18 +1,20 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 
-public class DuKptSaveKeyActivity extends BaseAppCompatActivity {
+public class DukptSaveKeyActivity extends BaseAppCompatActivity {
     private EditText mEditKSN;
     private EditText mEditKeyIndex;
     private EditText mEditKeyValue;
@@ -60,8 +62,11 @@ public class DuKptSaveKeyActivity extends BaseAppCompatActivity {
         mEditKeyValue = findViewById(R.id.key_value);
         mEditCheckValue = findViewById(R.id.check_value);
         findViewById(R.id.mb_ok).setOnClickListener(this);
-
-        mEditKeyIndex.setHint(getString(R.string.security_key_index) + "(0-9,1100-1199)");
+        if (DeviceUtil.isBrazilCKD()) {
+            mEditKeyIndex.setHint(getString(R.string.security_key_index) + "(0~99)");
+        } else {
+            mEditKeyIndex.setHint(getString(R.string.security_key_index) + "(0-9,1100-1199)");
+        }
         mEditKSN.setText("FFFF9876543210E00000");
         mEditKeyValue.setText("86772A2D72A29EF0A4D03ED5074DB927");
         mEditCheckValue.setText("F2204B822FD84A65");
@@ -94,13 +99,13 @@ public class DuKptSaveKeyActivity extends BaseAppCompatActivity {
             int keyIndex;
             try {
                 keyIndex = Integer.parseInt(keyIndexStr);
-                if ((keyIndex < 0 || keyIndex > 9) && (keyIndex < 1100 || keyIndex > 1199)) {
-                    showToast(R.string.security_duKpt_3des_key_hint);
+                if (!KeyIndexUtil.checkDukpt3DesKeyIndex(keyIndex)) {
+                    showKeyIndexToast();
                     return;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                showToast(R.string.security_duKpt_3des_key_hint);
+                showKeyIndexToast();
                 return;
             }
             byte[] ksnBytes = ByteUtil.hexStr2Bytes(ksnStr);
@@ -113,6 +118,14 @@ public class DuKptSaveKeyActivity extends BaseAppCompatActivity {
             showSpendTime();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void showKeyIndexToast() {
+        if (DeviceUtil.isBrazilCKD()) {
+            showToast(R.string.security_duKpt_dea_key_index_hint);
+        } else {
+            showToast(R.string.security_duKpt_3des_key_hint);
         }
     }
 

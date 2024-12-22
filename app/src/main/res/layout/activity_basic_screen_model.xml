@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -27,7 +27,7 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
@@ -60,11 +60,11 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/itemSize"
+                        android:layout_height="@dimen/titleSize"
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_set_screen_monopoly"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -78,7 +78,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_clear_screen_monopoly"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -96,9 +96,9 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -128,7 +128,7 @@
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_disable_status_bar_drop_down"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -142,7 +142,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_enable_status_bar_drop_down"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -159,9 +159,9 @@
                     </LinearLayout>
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -191,7 +191,7 @@
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_bar"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -205,7 +205,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_show_nav_bar"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -223,11 +223,11 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/itemSize"
+                        android:layout_height="@dimen/titleSize"
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_back"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -241,7 +241,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_home"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -256,7 +256,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_recent"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -274,11 +274,11 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/itemSize"
+                        android:layout_height="@dimen/titleSize"
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_back_and_home"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -292,7 +292,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_back_and_recent"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -307,7 +307,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_home_and_recent"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -329,7 +329,7 @@
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_hide_nav_all"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -343,7 +343,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_show_nav_all"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -362,7 +362,7 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

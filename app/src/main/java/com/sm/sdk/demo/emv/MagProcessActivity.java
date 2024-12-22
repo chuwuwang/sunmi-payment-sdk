@@ -12,11 +12,12 @@ import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.ThreadPoolUtil;
 import com.sm.sdk.demo.utils.Utility;
+import com.sm.sdk.demo.wrapper.PinPadListenerV2Wrapper;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
 import com.sunmi.pay.hardware.aidlv2.bean.PinPadConfigV2;
@@ -201,7 +202,7 @@ public class MagProcessActivity extends BaseAppCompatActivity {
         }
     };
 
-    private final PinPadListenerV2 mPinPadListener = new PinPadListenerV2.Stub() {
+    private final PinPadListenerV2 mPinPadListener = new PinPadListenerV2Wrapper() {
 
         @Override
         public void onPinLength(int len) {

@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -27,7 +27,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
@@ -71,9 +71,9 @@
                             android:textSize="14sp" />
                     </RadioGroup>
                 </LinearLayout>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_open_close"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"
@@ -86,7 +86,7 @@
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_data_exchange"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"

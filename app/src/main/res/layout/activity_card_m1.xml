@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -46,11 +46,11 @@
                     android:paddingEnd="16dp"
                     android:paddingBottom="8dp">
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_sector_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -60,15 +60,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="12">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_keyA_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -77,15 +77,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="12">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_keyB_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -94,15 +94,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="32">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_block_0"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -111,15 +111,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="32">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_block_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -128,15 +128,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="32">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_block_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -153,7 +153,7 @@
                         android:layout_marginTop="16dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_read"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -166,7 +166,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_write"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -184,9 +184,9 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -207,11 +207,11 @@
                     android:paddingEnd="16dp"
                     android:paddingBottom="8dp">
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_sector_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -221,13 +221,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_block"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -237,15 +237,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="12">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_keyA_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -254,15 +254,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="12">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_keyB_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -271,7 +271,7 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
                         android:id="@+id/view_init"
@@ -280,7 +280,7 @@
                         android:layout_marginTop="16dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_init"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -293,7 +293,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_balance"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -318,12 +318,12 @@
                         android:textColor="@color/colorTextTitle"
                         android:textSize="14sp" />
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_cost"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -333,7 +333,7 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -341,7 +341,7 @@
                         android:layout_marginTop="16dp"
                         android:orientation="horizontal">
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_add"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -354,7 +354,7 @@
                             app:backgroundTint="@color/colorOrange"
                             app:cornerRadius="8dp" />
 
-                        <android.support.design.button.MaterialButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/mb_reduce"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -372,9 +372,9 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -395,11 +395,11 @@
                     android:paddingEnd="16dp"
                     android:paddingBottom="8dp">
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_sector_3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -409,13 +409,13 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_block_3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -425,15 +425,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="12">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_keyA_3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -442,15 +442,15 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="12">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_keyB_3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -459,9 +459,9 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/mb_restore"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
@@ -476,7 +476,7 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
 
         </LinearLayout>

@@ -1,16 +1,19 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.utils.Utility;
 
 import java.math.BigInteger;
 import java.security.Key;
@@ -40,6 +43,7 @@ public class HsmRsaTestActivity extends BaseAppCompatActivity {
         findViewById(R.id.btn_hsm_gen_key_pair).setOnClickListener(this);
         findViewById(R.id.btn_hsm_inject_pub_key).setOnClickListener(this);
         findViewById(R.id.btn_hsm_inject_pvt_key).setOnClickListener(this);
+        findViewById(R.id.btn_hsm_read_rsa_key).setOnClickListener(this);
 
         //test data
 //        EditText edtPubSize = findViewById(R.id.edt_inject_pub_key_size);
@@ -67,6 +71,9 @@ public class HsmRsaTestActivity extends BaseAppCompatActivity {
                 break;
             case R.id.btn_hsm_inject_pvt_key:
                 injectRsaPrivateKey();
+                break;
+            case R.id.btn_hsm_read_rsa_key:
+                readRsaKey();
                 break;
         }
     }
@@ -289,6 +296,31 @@ public class HsmRsaTestActivity extends BaseAppCompatActivity {
             e.printStackTrace();
         }
         return null;//解密失败
+    }
+
+    /** Read RSA key */
+    private void readRsaKey() {
+        try {
+            String keyIndexStr = this.<EditText>findViewById(R.id.edt_read_key_index).getText().toString();
+            if (TextUtils.isEmpty(keyIndexStr)) {
+                showToast("key index should not be empty");
+                return;
+            }
+            TextView tvKeyInfo = findViewById(R.id.tv_rsa_key_info);
+            int keyIndex = Integer.parseInt(keyIndexStr);
+            Bundle bundle = new Bundle();
+            int code = MyApplication.app.securityOptV2.readRSAKey(keyIndex, bundle);
+            if (code < 0) {
+                showToast("Read RSA key failed, code:" + code);
+                return;
+            }
+            byte[] modulus = bundle.getByteArray("modulus");
+            byte[] exponent = bundle.getByteArray("exponent");
+            String msg = Utility.formatStr("modulus:%s\nexponent:%s", ByteUtil.bytes2HexStr(modulus), ByteUtil.bytes2HexStr(exponent));
+            tvKeyInfo.setText(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -27,7 +27,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
@@ -41,14 +41,49 @@
                     android:orientation="vertical"
                     android:padding="10dp">
 
-                    <android.support.design.widget.TextInputLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Key System"
+                        android:textColor="@color/colorTextHelp"
+                        android:textSize="14sp" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_key_system"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_1_mksk"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:checked="true"
+                            android:text="@string/security_key_system_mksk"
+                            android:textColor="@color/colorTextContent"
+                            android:textSize="14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rb_1_rsa"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/security_key_system_rsa_key"
+                            android:textColor="@color/colorTextContent"
+                            android:textSize="14sp" />
+                    </RadioGroup>
+
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         app:counterEnabled="true"
                         app:counterMaxLength="3">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edt_key_index"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -58,15 +93,50 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="KEK key System"
+                        android:textColor="@color/colorTextHelp"
+                        android:textSize="14sp" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_kek_key_system"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_2_mksk"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:checked="true"
+                            android:text="@string/security_key_system_mksk"
+                            android:textColor="@color/colorTextContent"
+                            android:textSize="14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rb_3_rsa"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/security_key_system_rsa_key"
+                            android:textColor="@color/colorTextContent"
+                            android:textSize="14sp" />
+                    </RadioGroup>
+
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
                         app:counterMaxLength="3">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edt_kek_index"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -76,7 +146,7 @@
                             android:textColorHint="@color/colorTextHelp"
                             android:textSize="14sp" />
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -141,42 +211,8 @@
 
                     </RadioGroup>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="KEK System"
-                        android:textColor="@color/colorTextHelp"
-                        android:textSize="14sp" />
 
-                    <RadioGroup
-                        android:id="@+id/rg_kek_system"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="vertical">
-
-                        <RadioButton
-                            android:id="@+id/rb_mksk"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:checked="true"
-                            android:text="@string/security_key_system_mksk"
-                            android:textColor="@color/colorTextContent"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rb_rsa"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:text="@string/security_key_system_rsa_key"
-                            android:textColor="@color/colorTextContent"
-                            android:textSize="14sp" />
-                    </RadioGroup>
-
-                    <android.support.design.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_ok"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/titleSize"
@@ -201,7 +237,7 @@
 
                 </LinearLayout>
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

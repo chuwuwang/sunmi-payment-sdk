@@ -1,10 +1,10 @@
 package com.sm.sdk.demo.scan;
 
 import android.os.Bundle;
-import android.support.design.button.MaterialButton;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.android.material.button.MaterialButton;
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;

@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -27,12 +27,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraint"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.design.chip.Chip
+                <com.google.android.material.chip.Chip
                     android:id="@+id/chip_blue"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/smallSize"
@@ -47,7 +47,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_blue_open"
                     app:layout_constraintTop_toTopOf="@+id/mb_blue_open" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_blue_open"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -66,7 +66,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_blue_close"
                     app:layout_constraintTop_toTopOf="@+id/constraint" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_blue_close"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -97,7 +97,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mb_blue_open" />
 
-                <android.support.design.chip.Chip
+                <com.google.android.material.chip.Chip
                     android:id="@+id/chip_yellow"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/smallSize"
@@ -112,7 +112,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_yellow_open"
                     app:layout_constraintTop_toTopOf="@+id/mb_yellow_open" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_yellow_open"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -131,7 +131,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_yellow_close"
                     app:layout_constraintTop_toBottomOf="@+id/view_blue" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_yellow_close"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -162,7 +162,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mb_yellow_open" />
 
-                <android.support.design.chip.Chip
+                <com.google.android.material.chip.Chip
                     android:id="@+id/chip_green"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/smallSize"
@@ -177,7 +177,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_green_open"
                     app:layout_constraintTop_toTopOf="@+id/mb_green_open" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_green_open"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -196,7 +196,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_green_close"
                     app:layout_constraintTop_toBottomOf="@+id/view_yellow" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_green_close"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -227,7 +227,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mb_green_open" />
 
-                <android.support.design.chip.Chip
+                <com.google.android.material.chip.Chip
                     android:id="@+id/chip_red"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/smallSize"
@@ -242,7 +242,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_red_open"
                     app:layout_constraintTop_toTopOf="@+id/mb_red_open" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_red_open"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -261,7 +261,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_red_close"
                     app:layout_constraintTop_toBottomOf="@+id/view_green" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_red_close"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -292,7 +292,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mb_red_open" />
 
-                <android.support.design.chip.Chip
+                <com.google.android.material.chip.Chip
                     android:id="@+id/chip_white"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/smallSize"
@@ -307,7 +307,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_white_open"
                     app:layout_constraintTop_toTopOf="@+id/mb_white_open" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_white_open"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -326,7 +326,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_white_close"
                     app:layout_constraintTop_toBottomOf="@+id/view_red" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_white_close"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/itemSize"
@@ -357,7 +357,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mb_white_open" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_all_open"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/titleSize"
@@ -376,7 +376,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_all_close"
                     app:layout_constraintTop_toBottomOf="@+id/view_white" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_all_close"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/titleSize"
@@ -408,7 +408,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mb_all_close" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_new_rb_on"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/titleSize"
@@ -427,7 +427,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_new_yg_on"
                     app:layout_constraintTop_toBottomOf="@+id/view_divide_new" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_new_yg_on"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/titleSize"
@@ -447,7 +447,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view_divide_new" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_new_all_on"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/titleSize"
@@ -466,7 +466,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/mb_new_all_off"
                     app:layout_constraintTop_toBottomOf="@+id/mb_new_rb_on" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/mb_new_all_off"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/titleSize"
@@ -486,7 +486,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mb_new_rb_on" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
 

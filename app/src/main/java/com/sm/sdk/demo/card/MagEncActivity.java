@@ -3,15 +3,16 @@ package com.sm.sdk.demo.card;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
-import android.support.design.button.MaterialButton;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.material.button.MaterialButton;
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
@@ -165,7 +166,7 @@ public class MagEncActivity extends BaseAppCompatActivity {
          *
          * @param bundle return data，contain the following keys:
          *             <br/>cardType: card type (int)
-         *             <br/>code: the error code (String)
+         *             <br/>code: the error code (int)
          *             <br/>message: the error message (String)
          */
         @Override

@@ -82,4 +82,26 @@ public final class Utility {
     public static void showToast(int resId) {
         showToast(MyApplication.app.getString(resId));
     }
+
+    /** 根据结果码获取成功失败信息 */
+    public static String getStateString(int code) {
+        return code == 0 ? "success" : "failed, code:" + code;
+    }
+
+    /** 根据结果状态获取成功失败信息 */
+    public static String getStateString(boolean state) {
+        return state ? "success" : "failed";
+    }
+
+    /** 将dp转成px */
+    public static int dp2px(int dp) {
+        float density = MyApplication.app.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
+
+    /** 将px转成dp */
+    public static int px2dp(int px) {
+        float density = MyApplication.app.getResources().getDisplayMetrics().density;
+        return Math.round(px / density);
+    }
 }

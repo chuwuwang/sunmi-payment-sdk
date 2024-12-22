@@ -1,18 +1,15 @@
 package com.sm.sdk.demo.other;
 
-import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
-import com.sm.sdk.demo.BuildConfig;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
-import com.sunmi.pay.hardware.aidlv2.system.BasicOptV2;
-
-import java.lang.reflect.Method;
+import com.sm.sdk.demo.utils.SystemPropertiesUtil;
+import com.sunmi.pay.hardware.aidl.AidlConstants.SysParam;
 
 public class VersionActivity extends BaseAppCompatActivity {
 
@@ -26,41 +23,50 @@ public class VersionActivity extends BaseAppCompatActivity {
 
     private void initView() {
         TextView tvInfo = findViewById(R.id.tv_info);
-        String serviceVersion = "未知";
-        try {
-            PackageInfo pkgInfo = getPackageManager().getPackageInfo("com.sunmi.pay.hardware_v3", 0);
-            serviceVersion = pkgInfo.versionName;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         try {
             addStartTimeWithClear("getSysParam() total");
-            BasicOptV2 basicOptV2 = MyApplication.app.basicOptV2;
-            String info = getString(R.string.other_version_device) + basicOptV2.getSysParam(AidlConstantsV2.SysParam.DEVICE_MODEL) + "\n";
-            info += getString(R.string.other_version_rom) + getRomVersionName() + "\n";
-            info += getString(R.string.other_version_sn) + basicOptV2.getSysParam(AidlConstantsV2.SysParam.SN) + "\n";
-            info += getString(R.string.other_version_demo) + BuildConfig.VERSION_NAME + "\n";
-            info += getString(R.string.other_version_service) + serviceVersion;
+            StringBuilder sb = new StringBuilder();
+            sb.append(getString(R.string.other_version_device)).append(getSysParam(SysParam.DEVICE_MODEL)).append("\n");
+            sb.append(getString(R.string.other_version_rom)).append(getRomVersion()).append("\n");
+            sb.append(getString(R.string.other_version_sn)).append(getSysParam(SysParam.SN)).append("\n");
+            sb.append(getString(R.string.other_version_demo)).append(getApkVersion("com.sm.sdk.demo")).append("\n");
+            sb.append(getString(R.string.other_version_service)).append(getApkVersion("com.sunmi.pay.hardware_v3")).append("\n");
+            sb.append(getString(R.string.other_version_rnib)).append(getSysParam(SysParam.RNIB_VERSION)).append("\n");
             addEndTime("getSysParam() total");
-            tvInfo.setText(info);
+            tvInfo.setText(sb);
             showSpendTime();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @SuppressLint("PrivateApi")
-    private String getRomVersionName() {
+    private String getSysParam(String key) {
+        String result = null;
+        String unknown = getString(R.string.other_version_known);
         try {
-            String filed = "ro.version.SunMi_VersionName".toLowerCase();
-            Class<?> clazz = Class.forName("android.os.SystemProperties");
-            Method get = clazz.getMethod("get", String.class);
-            return (String) get.invoke(clazz, filed);
+            result = MyApplication.app.basicOptV2.getSysParam(key);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return TextUtils.isEmpty(result) ? unknown : result;
     }
 
+    private String getApkVersion(String pkgName) {
+        String result = null;
+        String unknown = getString(R.string.other_version_known);
+        try {
+            PackageInfo pkgInfo = getPackageManager().getPackageInfo(pkgName, 0);
+            result = pkgInfo.versionName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return TextUtils.isEmpty(result) ? unknown : result;
+    }
+
+    private String getRomVersion() {
+        String result = SystemPropertiesUtil.get("ro.version.sunmi_versionname");
+        String unknown = getString(R.string.other_version_known);
+        return TextUtils.isEmpty(result) ? unknown : result;
+    }
 
 }

@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
@@ -20,7 +22,7 @@ import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.SystemDateTime;
-import com.sunmi.peripheral.printer.InnerResultCallbcak;
+import com.sunmi.peripheral.printer.InnerResultCallback;
 import com.sunmi.peripheral.printer.SunmiPrinterService;
 
 public class PrintTextActivity extends BaseAppCompatActivity {
@@ -31,6 +33,7 @@ public class PrintTextActivity extends BaseAppCompatActivity {
     private EditText edtWaitTime;
     private EditText edtIntervalTime;
     private ScreenOnOffReceiver receiver;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class PrintTextActivity extends BaseAppCompatActivity {
         setContentView(R.layout.activity_print_text);
         initToolbarBringBack(R.string.print_text);
         sunmiPrinterService = MyApplication.app.sunmiPrinterService;
+        wakeLock = createWakeLock("tag");
         initView();
     }
 
@@ -133,7 +137,7 @@ public class PrintTextActivity extends BaseAppCompatActivity {
 
     private boolean is = true;
 
-    private final InnerResultCallbcak innerResultCallbcak = new InnerResultCallbcak() {
+    private final InnerResultCallback innerResultCallbcak = new InnerResultCallback() {
         @Override
         public void onRunResult(boolean isSuccess) {
             LogUtil.e("lxy", "isSuccess:" + isSuccess);
@@ -176,9 +180,20 @@ public class PrintTextActivity extends BaseAppCompatActivity {
         sunmiPrinterService.sendRAWData(returnText, null);
     }
 
+    /** 创建wakelock对象 */
+    private static PowerManager.WakeLock createWakeLock(String tag) {
+        PowerManager pm = (PowerManager) MyApplication.app.getSystemService(Context.POWER_SERVICE);
+        //获取电源管理器对象
+        PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.PARTIAL_WAKE_LOCK, tag);
+        //获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
+        wakeLock.setReferenceCounted(false);
+        return wakeLock;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        wakeLock.release();
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
@@ -194,7 +209,7 @@ public class PrintTextActivity extends BaseAppCompatActivity {
             public boolean handleMessage(Message msg) {
                 LogUtil.e(Constant.TAG, "PrintTextActivity test screen off print...");
                 onPrintClick();
-                handler.sendEmptyMessageDelayed(0, intervalTime * 1000);
+                handler.sendEmptyMessageDelayed(0, intervalTime * 1000L);
                 return true;
             }
         });
@@ -202,9 +217,11 @@ public class PrintTextActivity extends BaseAppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (Intent.ACTION_SCREEN_ON.equalsIgnoreCase(intent.getAction())) {
+                wakeLock.release();
                 handler.removeCallbacksAndMessages(null);
             } else if (Intent.ACTION_SCREEN_OFF.equalsIgnoreCase(intent.getAction())) {
-                handler.sendEmptyMessageDelayed(0, waitTime * 1000);
+                wakeLock.acquire();
+                handler.sendEmptyMessageDelayed(0, waitTime * 1000L);
             }
         }
     }

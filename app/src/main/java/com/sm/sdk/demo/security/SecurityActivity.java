@@ -1,9 +1,10 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.R;
@@ -59,35 +60,35 @@ public class SecurityActivity extends BaseAppCompatActivity {
         view.setOnClickListener(this);
         leftText.setText(R.string.security_get_encrypt_sn);
 
-        view = findViewById(R.id.security_DuKpt_save_key);
+        view = findViewById(R.id.security_dukpt_save_key);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.security_DuKpt_save_key);
 
-        view = findViewById(R.id.security_DuKpt_AES_save_key);
+        view = findViewById(R.id.security_duKpt_aes_save_key);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.security_DuKpt_aes_save_key);
 
-        view = findViewById(R.id.security_DuKpt_calc_mac);
+        view = findViewById(R.id.security_duKpt_calc_mac);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.security_DuKpt_calc_mac);
 
-        view = findViewById(R.id.security_DuKpt_data_encrypt);
+        view = findViewById(R.id.security_dukpt_data_encrypt);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.security_DuKpt_data_encrypt);
 
-        view = findViewById(R.id.security_DuKpt_data_decrypt);
+        view = findViewById(R.id.security_duKpt_data_decrypt);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.security_DuKpt_data_decrypt);
 
-        view = findViewById(R.id.security_DuKpt_current_ksn);
+        view = findViewById(R.id.security_dukpt_ksn_operate);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
-        leftText.setText(R.string.security_DuKpt_current_ksn);
+        leftText.setText(R.string.security_duKpt_ksn_control);
 
         view = findViewById(R.id.security_get_kcv);
         leftText = view.findViewById(R.id.left_text);
@@ -102,7 +103,7 @@ public class SecurityActivity extends BaseAppCompatActivity {
         view = findViewById(R.id.rsa_recover);
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
-        leftText.setText(R.string.hsm_rsa_recover);
+        leftText.setText(R.string.security_rsa_recover);
 
         view = findViewById(R.id.save_tr31_key);
         leftText = view.findViewById(R.id.left_text);
@@ -148,6 +149,11 @@ public class SecurityActivity extends BaseAppCompatActivity {
         leftText = view.findViewById(R.id.left_text);
         view.setOnClickListener(this);
         leftText.setText(R.string.security_inejct_symmetric_key);
+
+        view = findViewById(R.id.security_tr34_test);
+        leftText = view.findViewById(R.id.left_text);
+        view.setOnClickListener(this);
+        leftText.setText(R.string.security_tr34_test);
     }
 
     @Override
@@ -178,23 +184,23 @@ public class SecurityActivity extends BaseAppCompatActivity {
             case R.id.security_get_encrypt_sn:
                 openActivity(GetEncryptBySerialNumberActivity.class);
                 break;
-            case R.id.security_DuKpt_save_key:
-                openActivity(DuKptSaveKeyActivity.class);
+            case R.id.security_dukpt_save_key:
+                openActivity(DukptSaveKeyActivity.class);
                 break;
-            case R.id.security_DuKpt_AES_save_key:
-                openActivity(DuKptAesSaveKeyActivity.class);
+            case R.id.security_duKpt_aes_save_key:
+                openActivity(DukptAesSaveKeyActivity.class);
                 break;
-            case R.id.security_DuKpt_calc_mac:
-                openActivity(DuKptCalcMacActivity.class);
+            case R.id.security_duKpt_calc_mac:
+                openActivity(DukptCalcMacActivity.class);
                 break;
-            case R.id.security_DuKpt_data_encrypt:
-                openActivity(DuKptDataEncryptActivity.class);
+            case R.id.security_dukpt_data_encrypt:
+                openActivity(DukptDataEncryptActivity.class);
                 break;
-            case R.id.security_DuKpt_data_decrypt:
-                openActivity(DuKptDataDecryptActivity.class);
+            case R.id.security_duKpt_data_decrypt:
+                openActivity(DukptDataDecryptActivity.class);
                 break;
-            case R.id.security_DuKpt_current_ksn:
-                openActivity(DuKptKSNOperateActivity.class);
+            case R.id.security_dukpt_ksn_operate:
+                openActivity(DukptKSNOperateActivity.class);
                 break;
             case R.id.security_get_kcv:
                 openActivity(GetKeyCheckValueActivity.class);
@@ -218,7 +224,7 @@ public class SecurityActivity extends BaseAppCompatActivity {
                 openActivity(CalcHashActivity.class);
                 break;
             case R.id.device_cert_test:
-                openActivity(DeviceCertificateTestActivity.class);
+                openActivity(HsmAndDeviceCertificateTestActivity.class);
                 break;
             case R.id.apacs_mac_test:
                 openActivity(APACSMacTestActivity.class);
@@ -231,6 +237,9 @@ public class SecurityActivity extends BaseAppCompatActivity {
                 break;
             case R.id.security_inject_sym_key:
                 openActivity(InjectSymKeyActivity.class);
+                break;
+            case R.id.security_tr34_test:
+                openActivity(TR34TestActivity.class);
                 break;
         }
     }

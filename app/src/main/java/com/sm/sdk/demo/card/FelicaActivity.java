@@ -2,23 +2,22 @@ package com.sm.sdk.demo.card;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
-import com.sunmi.pay.hardware.aidl.AidlConstants;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.bean.ApduRecvV2;
 import com.sunmi.pay.hardware.aidlv2.bean.ApduSendV2;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
@@ -169,7 +168,7 @@ public class FelicaActivity extends BaseAppCompatActivity {
             showToast("Lc value should in [0,0x0100]");
             return false;
         }
-        if (indata.length() != lcValue * 2 || (indata.length() > 0 && !Utility.checkHexValue(indata))) {
+        if (indata.length() != lcValue * 2 || (!indata.isEmpty() && !Utility.checkHexValue(indata))) {
             apduIndata.requestFocus();
             showToast("indata value should lc*2 hex characters!");
             return false;
@@ -206,7 +205,7 @@ public class FelicaActivity extends BaseAppCompatActivity {
         try {
             ApduRecvV2 recv = new ApduRecvV2();
             addStartTimeWithClear("apduCommand()");
-            int code = MyApplication.app.readCardOptV2.apduCommand(AidlConstantsV2.CardType.FELICA.getValue(), send, recv);
+            int code = MyApplication.app.readCardOptV2.apduCommand(CardType.FELICA.getValue(), send, recv);
             addEndTime("apduCommand()");
             if (code < 0) {
                 LogUtil.e(TAG, "apduCommand failed,code:" + code);
@@ -241,8 +240,8 @@ public class FelicaActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(CardType.FELICA.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.FELICA.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -255,12 +254,12 @@ public class FelicaActivity extends BaseAppCompatActivity {
             byte[] dataIn = ByteUtil.short2BytesBE((short) 0x8008);
             byte[] dataOut = new byte[0];
             addStartTimeWithClear("smartCardIoControl()");
-            int code = MyApplication.app.readCardOptV2.smartCardIoControl(AidlConstants.CardType.FELICA.getValue(), 0, dataIn, dataOut);
+            int code = MyApplication.app.readCardOptV2.smartCardIoControl(CardType.FELICA.getValue(), 0, dataIn, dataOut);
             addEndTime("smartCardIoControl()");
             Log.e(Constant.TAG, "set Felica polling system code, code:" + code);
             //set Felica apdu timeout time as 200ms
             dataIn = ByteUtil.int2BytesBE(200);
-            code = MyApplication.app.readCardOptV2.smartCardIoControl(AidlConstants.CardType.FELICA.getValue(), 1, dataIn, dataOut);
+            code = MyApplication.app.readCardOptV2.smartCardIoControl(CardType.FELICA.getValue(), 1, dataIn, dataOut);
             Log.e(Constant.TAG, "set Felica apdu timeout time, code:" + code);
             showSpendTime();
         } catch (Exception e) {

@@ -7,10 +7,8 @@ import android.widget.EditText;
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sunmi.pay.hardware.aidlv2.system.BasicOptV2;
 
 public class SetSysParamActivity extends BaseAppCompatActivity {
-
     private EditText mEditKey;
     private EditText mEditValue;
 
@@ -25,7 +23,6 @@ public class SetSysParamActivity extends BaseAppCompatActivity {
     private void initView() {
         mEditKey = findViewById(R.id.edit_key);
         mEditValue = findViewById(R.id.edit_value);
-
         findViewById(R.id.mb_ok).setOnClickListener(this);
     }
 
@@ -41,15 +38,14 @@ public class SetSysParamActivity extends BaseAppCompatActivity {
 
     private void setSysParam() {
         try {
-            BasicOptV2 basicOptV2 = MyApplication.app.basicOptV2;
             String name = mEditKey.getText().toString();
             String value = mEditValue.getText().toString();
-            if (name.trim().length() == 0) {
+            if (name.trim().isEmpty()) {
                 showToast(R.string.basic_sys_key_hint);
                 return;
             }
             addStartTimeWithClear("setSysParam()");
-            int result = basicOptV2.setSysParam(name, value);
+            int result = MyApplication.app.basicOptV2.setSysParam(name, value);
             addEndTime("setSysParam()");
             toastHint(result);
             showSpendTime();

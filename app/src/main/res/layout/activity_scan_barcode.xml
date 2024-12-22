@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -37,7 +37,7 @@
                 android:textColor="@color/colorTextTitle"
                 android:textSize="14sp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/scan_barcode_start"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"

@@ -2,20 +2,20 @@ package com.sm.sdk.demo.tax;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.LogUtil;
 import com.sunmi.pay.hardware.aidl.AidlErrorCode;
 import com.sunmi.pay.hardware.aidlv2.tax.TaxOptV2;
 
 import java.util.Arrays;
-
-import sunmi.sunmiui.utils.LogUtil;
 
 /**
  * This page only used for test, please don't refer

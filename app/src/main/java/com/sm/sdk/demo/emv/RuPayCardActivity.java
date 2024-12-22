@@ -2,17 +2,21 @@ package com.sm.sdk.demo.emv;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.ThreadPoolUtil;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
+import com.sunmi.pay.hardware.aidl.AidlConstants.EMV.FlowType;
+import com.sunmi.pay.hardware.aidl.AidlConstants.EMV.TLVOpCode;
 import com.sunmi.pay.hardware.aidlv2.bean.EMVCandidateV2;
 import com.sunmi.pay.hardware.aidlv2.bean.EMVTransDataV2;
 import com.sunmi.pay.hardware.aidlv2.emv.EMVListenerV2;
@@ -22,8 +26,6 @@ import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import sunmi.sunmiui.utils.LogUtil;
 
 /**
  * This page show how to read the India RuPay card.
@@ -76,7 +78,7 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
         try {
             emvOptV2.initEmvProcess(); // clear all TLV data
             showLoadingDialog("swipe card or insert card");
-            int cardType = AidlConstantsV2.CardType.NFC.getValue() | AidlConstantsV2.CardType.IC.getValue();
+            int cardType = CardType.NFC.getValue() | CardType.IC.getValue();
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(cardType, mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -98,7 +100,7 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
             addEndTime("checkCard()");
             LogUtil.e(Constant.TAG, "findICCard:" + atr);
             showSpendTime();
-            carType = AidlConstantsV2.CardType.IC.getValue();
+            carType = CardType.IC.getValue();
             runOnUiThread(
                     () -> {
                         tvUUID.setText(R.string.card_uuid);
@@ -114,7 +116,7 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
             addEndTime("checkCard()");
             LogUtil.e(Constant.TAG, "findRFCard:" + uuid);
             showSpendTime();
-            carType = AidlConstantsV2.CardType.NFC.getValue();
+            carType = CardType.NFC.getValue();
             runOnUiThread(
                     () -> {
                         String text = getString(R.string.card_uuid) + uuid;
@@ -142,7 +144,7 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
         try {
             EMVTransDataV2 emvTransData = new EMVTransDataV2();
             emvTransData.amount = "1";
-            emvTransData.flowType = 0x02;
+            emvTransData.flowType = FlowType.TYPE_EMV_BRIEF;
             emvTransData.cardType = carType;
             addTransactionStartTimes();
             emvOptV2.transactProcess(emvTransData, mEMVListener);
@@ -160,7 +162,7 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
             String[] values = {
                     "0356", "02"
             };
-            emvOptV2.setTlvList(AidlConstantsV2.EMV.TLVOpCode.OP_NORMAL, tags, values);
+            emvOptV2.setTlvList(TLVOpCode.OP_NORMAL, tags, values);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -284,7 +286,7 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
                 "5F24", "5F20"
         };
         addStartTimeWithClear("getTlvList()");
-        int len = emvOptV2.getTlvList(AidlConstantsV2.EMV.TLVOpCode.OP_NORMAL, tags, out);
+        int len = emvOptV2.getTlvList(TLVOpCode.OP_NORMAL, tags, out);
         addEndTime("getTlvList()");
         showSpendTime();
         if (len > 0) {
@@ -341,8 +343,8 @@ public class RuPayCardActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.IC.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.IC.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }

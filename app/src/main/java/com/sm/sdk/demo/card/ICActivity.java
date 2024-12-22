@@ -3,19 +3,20 @@ package com.sm.sdk.demo.card;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.SettingUtil;
 import com.sm.sdk.demo.utils.Utility;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 public class ICActivity extends BaseAppCompatActivity {
@@ -49,7 +50,7 @@ public class ICActivity extends BaseAppCompatActivity {
 
     private void checkCard() {
         try {
-            int cardType = AidlConstantsV2.CardType.IC.getValue();
+            int cardType = CardType.IC.getValue();
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(cardType, mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -104,7 +105,7 @@ public class ICActivity extends BaseAppCompatActivity {
          *
          * @param info return data，contain the following keys:
          *             <br/>cardType: card type (int)
-         *             <br/>code: the error code (String)
+         *             <br/>code: the error code (int)
          *             <br/>message: the error message (String)
          */
         @Override
@@ -159,8 +160,8 @@ public class ICActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.IC.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.IC.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }

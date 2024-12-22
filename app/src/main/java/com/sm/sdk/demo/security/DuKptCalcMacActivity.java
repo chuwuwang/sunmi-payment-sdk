@@ -1,7 +1,6 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -9,18 +8,22 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sunmi.pay.hardware.aidl.AidlConstants.Security;
 
 import java.util.Arrays;
 
-public class DuKptCalcMacActivity extends BaseAppCompatActivity {
+public class DukptCalcMacActivity extends BaseAppCompatActivity {
     private EditText mEditData;
     private EditText mEditKeyIndex;
+    private EditText mEditKeyLen;
     private EditText mMacData;
     private TextView mTvInfo;
     private RadioGroup mMacOptGroup;
@@ -74,12 +77,22 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
                         case R.id.rb_mac_type3:
                             mCalcType = Security.MAC_ALG_CBC_INTERNATIONAL;
                             break;
+                        case R.id.rb_mac_type4:
+                            mCalcType = Security.MAC_ALG_HMAC_SHA1;
+                            break;
+                        case R.id.rb_mac_type5:
+                            mCalcType = Security.MAC_ALG_HMAC_SHA256;
+                            break;
+                        case R.id.rb_mac_type6:
+                            mCalcType = Security.MAC_ALG_CMAC;
+                            break;
                     }
                 }
         );
 
         mEditData = findViewById(R.id.source_data);
         mEditKeyIndex = findViewById(R.id.key_index);
+        mEditKeyLen = findViewById(R.id.mac_key_len);
         mMacData = findViewById(R.id.mac_data);
         mTvInfo = findViewById(R.id.tv_info);
         mEditData.setText("123456789012345678901234");
@@ -107,35 +120,55 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
     /** Calculate Mac */
     private void calcMac() {
         try {
-            String dataStr = mEditData.getText().toString();
             String keyIndexStr = mEditKeyIndex.getText().toString();
-            if (TextUtils.isEmpty(dataStr)) {
-                showToast(R.string.security_source_data_hint);
-                return;
-            }
             if (TextUtils.isEmpty(keyIndexStr)) {
-                showToast(R.string.security_dukpt_key_index_hint);
+                showToast(R.string.security_duKpt_key_index_hint);
+                mEditKeyIndex.requestFocus();
                 return;
             }
             int keyIndex = Integer.parseInt(keyIndexStr);
-            if (!isDukpt3DesKey(keyIndex) && !isDukptAesKey(keyIndex)) {
-                showToast(R.string.security_dukpt_key_index_hint);
+            if (!KeyIndexUtil.checkDukptKeyIndex(keyIndex)) {
+                if (DeviceUtil.isBrazilCKD()) {
+                    showToast(R.string.security_duKpt_key_index_hint);
+                } else {
+                    showToast(R.string.security_dukpt_key_index_hint);
+                }
+                mEditKeyIndex.requestFocus();
+            }
+            String keyLenStr = mEditKeyLen.getText().toString();
+            if (TextUtils.isEmpty(keyLenStr)) {
+                showToast("key length shouldn't be empty");
+                mEditKeyLen.requestFocus();
+                return;
+            }
+            int keyLength = Integer.parseInt(keyLenStr);
+            String dataStr = mEditData.getText().toString();
+            if (TextUtils.isEmpty(dataStr)) {
+                showToast(R.string.security_source_data_hint);
+                mEditData.requestFocus();
                 return;
             }
             byte[] dataIn = ByteUtil.hexStr2Bytes(dataStr);
             if (dataIn.length > 1016) {
                 showToast("Dukpt-extension key calculate MAC input data length should <=1016");
+                mEditData.requestFocus();
                 return;
             }
             byte[] dataOut = new byte[16];
-            addStartTimeWithClear("calcMacDukptEx()");
-            int code = MyApplication.app.securityOptV2.calcMacDukptEx(mKeySelect, keyIndex, mCalcType, dataIn, dataOut);
-            addEndTime("calcMacDukptEx()");
+            Bundle bundle = new Bundle();
+            bundle.putInt("keySelect", mKeySelect);
+            bundle.putInt("keyIndex", keyIndex);
+            bundle.putInt("keyLength", keyLength);
+            bundle.putInt("macType", mCalcType);
+            bundle.putByteArray("dataIn", dataIn);
+            addStartTimeWithClear("calcMacDukptExtended()");
+            int code = MyApplication.app.securityOptV2.calcMacDukptExtended(bundle, dataOut);
+            addEndTime("calcMacDukptExtended()");
             String macHexStr = null;
             if (code == 0) {
-                if (isDukpt3DesKey(keyIndex)) {//dukpt-3DES, 8 bytes Mac data
+                if (KeyIndexUtil.checkDukpt3DesKeyIndex(keyIndex)) {//dukpt-3DES, 8 bytes Mac data
                     macHexStr = ByteUtil.bytes2HexStr(Arrays.copyOf(dataOut, 8));
-                } else if (isDukptAesKey(keyIndex)) {//Dukpt-AES, 16 bytes Mac data
+                } else if (KeyIndexUtil.checkDukptAesKeyIndex(keyIndex)) {//Dukpt-AES, 16 bytes Mac data
                     macHexStr = ByteUtil.bytes2HexStr(dataOut);
                 }
                 mTvInfo.setText(macHexStr);
@@ -160,13 +193,17 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
                 return;
             }
             if (TextUtils.isEmpty(keyIndexStr)) {
-                showToast(R.string.security_dukpt_key_index_hint);
+                showToast(R.string.security_duKpt_key_index_hint);
                 return;
             }
             int keyIndex = Integer.parseInt(keyIndexStr);
-            if (!isDukpt3DesKey(keyIndex) && !isDukptAesKey(keyIndex)) {
-                showToast(R.string.security_dukpt_key_index_hint);
-                return;
+            if (!KeyIndexUtil.checkDukptKeyIndex(keyIndex)) {
+                if (DeviceUtil.isBrazilCKD()) {
+                    showToast(R.string.security_duKpt_key_index_hint);
+                } else {
+                    showToast(R.string.security_dukpt_key_index_hint);
+                }
+                mEditKeyIndex.requestFocus();
             }
             byte[] sourceData = ByteUtil.hexStr2Bytes(sourceDataStr);
             byte[] macData = ByteUtil.hexStr2Bytes(macDataStr);
@@ -179,16 +216,6 @@ public class DuKptCalcMacActivity extends BaseAppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /** check dukpt-3DES key */
-    private boolean isDukpt3DesKey(int keyIndex) {
-        return (keyIndex >= 0 && keyIndex <= 9) || (keyIndex >= 1100 && keyIndex <= 1199);
-    }
-
-    /** check dukpt-AES key */
-    private boolean isDukptAesKey(int keyIndex) {
-        return (keyIndex >= 10 && keyIndex <= 19) || (keyIndex >= 2100 && keyIndex <= 2199);
     }
 
 }

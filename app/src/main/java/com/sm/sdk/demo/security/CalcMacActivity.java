@@ -1,12 +1,13 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
@@ -78,6 +79,15 @@ public class CalcMacActivity extends BaseAppCompatActivity {
                         case R.id.rb_mac_type9:
                             mCalcType = AidlConstantsV2.Security.MAC_ALG_CBC_INTERNATIONAL;
                             break;
+                        case R.id.rb_mac_type10:
+                            mCalcType = AidlConstantsV2.Security.MAC_ALG_HMAC_SHA1;
+                            break;
+                        case R.id.rb_mac_type11:
+                            mCalcType = AidlConstantsV2.Security.MAC_ALG_HMAC_SHA256;
+                            break;
+                        case R.id.rb_mac_type12:
+                            mCalcType = AidlConstantsV2.Security.MAC_ALG_CMAC;
+                            break;
                     }
                 }
         );
@@ -130,6 +140,10 @@ public class CalcMacActivity extends BaseAppCompatActivity {
             byte[] dataOut = new byte[8];
             if (mCalcType == AidlConstantsV2.Security.MAC_ALG_CUP_SM4_MAC_ALG1) {
                 dataOut = new byte[16];
+            } else if (mCalcType == AidlConstantsV2.Security.MAC_ALG_HMAC_SHA1) {
+                dataOut = new byte[20];
+            } else if (mCalcType == AidlConstantsV2.Security.MAC_ALG_HMAC_SHA256) {
+                dataOut = new byte[32];
             }
             byte[] dataBytes = ByteUtil.hexStr2Bytes(dataStr);
             addStartTimeWithClear("calcMac()");
@@ -180,17 +194,26 @@ public class CalcMacActivity extends BaseAppCompatActivity {
             byte[] dataOut = new byte[8];
             if (mCalcType == AidlConstantsV2.Security.MAC_ALG_CUP_SM4_MAC_ALG1) {
                 dataOut = new byte[16];
+            } else if (mCalcType == AidlConstantsV2.Security.MAC_ALG_HMAC_SHA1) {
+                dataOut = new byte[20];
+            } else if (mCalcType == AidlConstantsV2.Security.MAC_ALG_HMAC_SHA256) {
+                dataOut = new byte[32];
             }
             byte[] dataBytes = ByteUtil.hexStr2Bytes(dataStr);
-            addStartTimeWithClear("calcMacEx()");
-            int code = MyApplication.app.securityOptV2.calcMacEx(keyIndex, keyLen, mCalcType, null, dataBytes, dataOut);
-            addEndTime("calcMacEx()");
+            Bundle bundle = new Bundle();
+            bundle.putInt("keyIndex", keyIndex);
+            bundle.putInt("keyLength", keyLen);
+            bundle.putInt("macType", mCalcType);
+            bundle.putByteArray("dataIn", dataBytes);
+            addStartTimeWithClear("calcMacExtended()");
+            int code = MyApplication.app.securityOptV2.calcMacExtended(bundle, dataOut);
+            addEndTime("calcMacExtended()");
             if (code >= 0) {
                 String hexStr = ByteUtil.bytes2HexStr(dataOut);
                 mTvInfo.setText(hexStr);
-                LogUtil.e(TAG, "calcMacEx() result:" + hexStr);
+                LogUtil.e(TAG, "calcMacExtended() result:" + hexStr);
             } else {
-                LogUtil.e(TAG, "calcMacEx() failed code:" + code);
+                LogUtil.e(TAG, "calcMacExtended() failed code:" + code);
                 toastHint(code);
             }
             showSpendTime();

@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -29,7 +29,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
@@ -62,7 +62,7 @@
                     android:textColor="@color/colorTextTitle"
                     android:textSize="24sp" />
 
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -80,11 +80,11 @@
 
             </ScrollView>
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_ok"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"
-                android:layout_margin="24dp"
+                android:layout_marginTop="24dp"
                 android:elevation="8dp"
                 android:gravity="center"
                 android:text="@string/ok"

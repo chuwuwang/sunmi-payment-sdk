@@ -7,13 +7,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.view.LoadingDialog;
@@ -35,17 +38,17 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setStatusBarColor();
+        setStatusBarColor(Color.TRANSPARENT);
         MyApplication.initLocaleLanguage();
     }
 
-    public void setStatusBarColor() {
+    public void setStatusBarColor(int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setStatusBarColor(color);
         }
     }
 
@@ -159,6 +162,13 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         );
     }
 
+    protected void addTextViewText(TextView tv, CharSequence msg) {
+        runOnUiThread(() -> {
+            CharSequence preMsg = tv.getText();
+            tv.setText(TextUtils.concat(preMsg, "\n", msg));
+        });
+    }
+
     protected void openActivity(Class<? extends Activity> clazz) {
         Intent intent = new Intent(this, clazz);
         openActivity(intent, false);
@@ -205,14 +215,15 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     }
 
     protected void showSpendTime() {
+        Map<String, Long> map = new LinkedHashMap<>(timeMap);
         Long startValue = null, endValue = null;
-        for (String key : timeMap.keySet()) {
+        for (String key : map.keySet()) {
             if (!key.startsWith("start_")) {
                 continue;
             }
             key = key.substring("start_".length());
-            startValue = timeMap.get("start_" + key);
-            endValue = timeMap.get("end_" + key);
+            startValue = map.get("start_" + key);
+            endValue = map.get("end_" + key);
             if (startValue == null || endValue == null) {
                 continue;
             }

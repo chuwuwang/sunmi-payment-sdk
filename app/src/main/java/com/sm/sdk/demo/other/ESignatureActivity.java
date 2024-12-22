@@ -3,9 +3,10 @@ package com.sm.sdk.demo.other;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
@@ -14,7 +15,7 @@ import com.sm.sdk.demo.utils.BitmapUtils;
 import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.view.LinePathView;
-import com.sunmi.peripheral.printer.InnerResultCallbcak;
+import com.sunmi.peripheral.printer.InnerResultCallback;
 import com.sunmi.peripheral.printer.SunmiPrinterService;
 
 public class ESignatureActivity extends BaseAppCompatActivity {
@@ -82,7 +83,7 @@ public class ESignatureActivity extends BaseAppCompatActivity {
         }
     }
 
-    private final InnerResultCallbcak innerResultCallbcak = new InnerResultCallbcak() {
+    private final InnerResultCallback innerResultCallbcak = new InnerResultCallback() {
         @Override
         public void onRunResult(boolean isSuccess) {
             LogUtil.e("lxy", "isSuccess:" + isSuccess);

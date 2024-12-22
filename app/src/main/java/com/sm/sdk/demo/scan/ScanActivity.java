@@ -1,6 +1,7 @@
 package com.sm.sdk.demo.scan;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -52,8 +53,13 @@ public class ScanActivity extends BaseAppCompatActivity {
 
     private void startScan() {
         Intent intent = new Intent();
-        intent.setAction("com.summi.scan");
-        intent.setPackage("com.sunmi.sunmiqrcodescanner");
+        if (hasScanner()) {
+            intent.setAction("com.sunmi.scanner.qrscanner");
+            intent.setPackage("com.sunmi.scanner");
+        } else {
+            intent.setAction("com.summi.scan");
+            intent.setPackage("com.sunmi.sunmiqrcodescanner");
+        }
         intent.putExtra("IS_SHOW_SETTING", false);      // whether to display the setting button, default true
         intent.putExtra("IDENTIFY_MORE_CODE", true);    // identify multiple qr code in the screen
         intent.putExtra("IS_AZTEC_ENABLE", true);       // allow read of AZTEC code
@@ -88,4 +94,37 @@ public class ScanActivity extends BaseAppCompatActivity {
         }
     }
 
+    private boolean hasScanner() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("com.sunmi.scanner", 0);
+            return info != null && compareVer(info.versionName, "4.4.4", true, 3);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean compareVer(String nVer, String oVer, boolean isEq, int bit) {
+        if (nVer.isEmpty() || oVer.isEmpty()) return false;
+        String[] nArr = nVer.split("[.]");
+        String[] oArr = oVer.split("[.]");
+        if (nArr.length < bit || oArr.length < bit) return false;
+        boolean vup = false;
+        for (int i = 0; i < bit; i++) {
+            int n = Integer.parseInt(nArr[i]);
+            int o = Integer.parseInt(oArr[i]);
+            if (n >= o) {
+                if (n > o) {
+                    vup = true;
+                    break;
+                } else if (isEq && i == (bit - 1)) {
+                    vup = true;
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return vup;
+    }
 }

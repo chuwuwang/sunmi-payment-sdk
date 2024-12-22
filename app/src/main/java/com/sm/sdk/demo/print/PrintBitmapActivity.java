@@ -4,15 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.LogUtil;
-import com.sunmi.peripheral.printer.InnerResultCallbcak;
+import com.sunmi.peripheral.printer.InnerResultCallback;
 
 public class PrintBitmapActivity extends BaseAppCompatActivity {
 
@@ -59,7 +60,7 @@ public class PrintBitmapActivity extends BaseAppCompatActivity {
 //            bitmap = getBinaryzationBitmap(bitmap);
             addStartTimeWithClear("printBitmap()");
             MyApplication.app.sunmiPrinterService.enterPrinterBuffer(true);
-            MyApplication.app.sunmiPrinterService.printBitmap(bitmap, new InnerResultCallbcak() {
+            MyApplication.app.sunmiPrinterService.printBitmap(bitmap, new InnerResultCallback() {
                 @Override
                 public void onRunResult(boolean isSuccess) throws RemoteException {
                     addEndTime("printBitmap()");

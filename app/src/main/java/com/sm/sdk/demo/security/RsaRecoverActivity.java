@@ -25,7 +25,7 @@ public class RSARecoverActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rsa_recover);
-        initToolbarBringBack(R.string.hsm_rsa_recover);
+        initToolbarBringBack(R.string.security_rsa_recover);
         initView();
     }
 

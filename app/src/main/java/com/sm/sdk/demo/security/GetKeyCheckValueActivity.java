@@ -1,21 +1,24 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sm.sdk.demo.utils.LogUtil;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
+import com.sunmi.pay.hardware.aidl.AidlConstants.Security;
 
 public class GetKeyCheckValueActivity extends BaseAppCompatActivity {
-    private int keySystem = AidlConstantsV2.Security.SEC_MKSK;
+    private int keySystem = Security.SEC_MKSK;
+    private int kcvMode = Security.KCV_MODE_CHK0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,20 +32,51 @@ public class GetKeyCheckValueActivity extends BaseAppCompatActivity {
         RadioGroup group = findViewById(R.id.key_system_group);
         group.setOnCheckedChangeListener((group1, checkedId) -> {
             if (checkedId == R.id.rdo_sys_mksk) {
-                keySystem = AidlConstantsV2.Security.SEC_MKSK;
+                keySystem = Security.SEC_MKSK;
             } else if (checkedId == R.id.rdo_sys_dukpt) {
-                keySystem = AidlConstantsV2.Security.SEC_DUKPT;
+                keySystem = Security.SEC_DUKPT;
             }
         });
         group.check(R.id.rdo_sys_mksk);
+        group = findViewById(R.id.kcv_mode_group);
+        group.setOnCheckedChangeListener((group1, checkedId) -> {
+            switch (checkedId) {
+                case R.id.kcv_mode_nochk:
+                    kcvMode = Security.KCV_MODE_NOCHK;
+                    break;
+                case R.id.kcv_mode_chk0:
+                    kcvMode = Security.KCV_MODE_CHK0;
+                    break;
+                case R.id.kcv_mode_chkfix:
+                    kcvMode = Security.KCV_MODE_CHKFIX;
+                    break;
+                case R.id.kcv_mode_chkmac:
+                    kcvMode = Security.KCV_MODE_CHKMAC;
+                    break;
+                case R.id.kcv_mode_chkcmac:
+                    kcvMode = Security.KCV_MODE_CHKCMAC;
+                    break;
+                case R.id.kcv_mode_chkfix_16:
+                    kcvMode = Security.KCV_MODE_CHKFIX_16;
+                    break;
+                case R.id.kcv_mode_chkbuf:
+                    kcvMode = Security.KCV_MODE_CHK_BUF;
+                    break;
+                case R.id.kcv_mode_chkcmac_buf:
+                    kcvMode = Security.KCV_MODE_CHKCMAC_BUF;
+                    break;
+            }
+        });
+        group.check(R.id.kcv_mode_chk0);
         findViewById(R.id.mb_get_kcv).setOnClickListener((v) -> getKcv());
     }
 
     private void getKcv() {
         try {
+            String targetPkgName = this.<EditText>findViewById(R.id.edt_target_pkg_name).getText().toString();
             String keyIndexStr = this.<EditText>findViewById(R.id.key_index).getText().toString();
             int keyIndex = -1;
-            if (keySystem == AidlConstantsV2.Security.SEC_MKSK) {
+            if (keySystem == Security.SEC_MKSK) {
                 if (TextUtils.isEmpty(keyIndexStr)) {
                     showToast(R.string.security_mksk_key_index_hint);
                     return;
@@ -52,20 +86,27 @@ public class GetKeyCheckValueActivity extends BaseAppCompatActivity {
                     showToast(R.string.security_mksk_key_index_hint);
                     return;
                 }
-            } else if (keySystem == AidlConstantsV2.Security.SEC_DUKPT) {
+            } else if (keySystem == Security.SEC_DUKPT) {
                 if (TextUtils.isEmpty(keyIndexStr)) {
-                    showToast(R.string.security_dukpt_key_index_hint);
+                    showKeyIndexToast();
                     return;
                 }
                 keyIndex = Integer.parseInt(keyIndexStr);
-                if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
-                    showToast(R.string.security_dukpt_key_index_hint);
+                if (!KeyIndexUtil.checkDukptKeyIndex(keyIndex)) {
+                    showKeyIndexToast();
                     return;
                 }
             }
             byte[] dataOut = new byte[4];
             addStartTimeWithClear("getKeyCheckValue()");
-            int code = MyApplication.app.securityOptV2.getKeyCheckValue(keySystem, keyIndex, dataOut);
+            Bundle bundle = new Bundle();
+            bundle.putInt("keySystem", keySystem);
+            bundle.putInt("keyIndex", keyIndex);
+            bundle.putInt("kcvMode", kcvMode);
+            if (!TextUtils.isEmpty(targetPkgName)) {
+                bundle.putString("targetAppPkgName", targetPkgName);
+            }
+            int code = MyApplication.app.securityOptV2.getKeyCheckValueEx(bundle, dataOut);
             addEndTime("getKeyCheckValue()");
             if (code < 0) {
                 String msg = "Get kcv error:" + code;
@@ -79,6 +120,14 @@ public class GetKeyCheckValueActivity extends BaseAppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             showToast("key illegal key index");
+        }
+    }
+
+    private void showKeyIndexToast() {
+        if (DeviceUtil.isBrazilCKD()) {
+            showToast(R.string.security_duKpt_key_index_hint);
+        } else {
+            showToast(R.string.security_dukpt_key_index_hint);
         }
     }
 

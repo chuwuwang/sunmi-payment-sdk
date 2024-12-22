@@ -1,20 +1,22 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sunmi.pay.hardware.aidl.AidlConstants.Security;
 
-public class DuKptDataEncryptActivity extends BaseAppCompatActivity {
+public class DukptDataEncryptActivity extends BaseAppCompatActivity {
 
     private EditText mEditData;
     private EditText mEditInitIV;
@@ -89,13 +91,13 @@ public class DuKptDataEncryptActivity extends BaseAppCompatActivity {
             int keyIndex;
             try {
                 keyIndex = Integer.parseInt(keyIndexStr);
-                if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
-                    showToast(R.string.security_dukpt_key_index_hint);
+                if (!KeyIndexUtil.checkDukptKeyIndex(keyIndex)) {
+                    showKeyIndexToast();
                     return;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                showToast(R.string.security_dukpt_key_index_hint);
+                showKeyIndexToast();
                 return;
             }
             if (mEncryptType != Security.DATA_MODE_ECB && ivStr.length() != 16) {
@@ -130,5 +132,12 @@ public class DuKptDataEncryptActivity extends BaseAppCompatActivity {
         }
     }
 
+    private void showKeyIndexToast() {
+        if (DeviceUtil.isBrazilCKD()) {
+            showToast(R.string.security_duKpt_key_index_hint);
+        } else {
+            showToast(R.string.security_dukpt_key_index_hint);
+        }
+    }
 
 }

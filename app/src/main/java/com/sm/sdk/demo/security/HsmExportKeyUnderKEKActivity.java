@@ -1,11 +1,12 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 public class HsmExportKeyUnderKEKActivity extends BaseAppCompatActivity {
     private TextView tvResult;
     private int paddingMode = Security.NOTHING_PADDING;
+    private int keySystem = Security.SEC_MKSK;
     private int kekKeySystem = Security.SEC_MKSK;
 
     @Override
@@ -30,7 +32,29 @@ public class HsmExportKeyUnderKEKActivity extends BaseAppCompatActivity {
 
     private void initView() {
         initToolbarBringBack(R.string.hsm_export_key_under_kek);
-        RadioGroup group = findViewById(R.id.rg_padding_mode);
+        RadioGroup group = findViewById(R.id.rg_key_system);
+        group.setOnCheckedChangeListener((group1, checkedId) -> {
+            switch (checkedId) {
+                case R.id.rb_1_mksk:
+                    keySystem = Security.SEC_MKSK;
+                    break;
+                case R.id.rb_1_rsa:
+                    keySystem = Security.SEC_RSA_KEY;
+                    break;
+            }
+        });
+        group = findViewById(R.id.rg_kek_key_system);
+        group.setOnCheckedChangeListener((group1, checkedId) -> {
+            switch (checkedId) {
+                case R.id.rb_2_mksk:
+                    kekKeySystem = Security.SEC_MKSK;
+                    break;
+                case R.id.rb_3_rsa:
+                    kekKeySystem = Security.SEC_RSA_KEY;
+                    break;
+            }
+        });
+        group = findViewById(R.id.rg_padding_mode);
         group.setOnCheckedChangeListener((group1, checkedId) -> {
             switch (checkedId) {
                 case R.id.rb_mode_none:
@@ -47,17 +71,6 @@ public class HsmExportKeyUnderKEKActivity extends BaseAppCompatActivity {
                     break;
                 case R.id.rb_mode_pkcs1_oaep:
                     paddingMode = Security.PKCS1_OAEP_PADDING;
-                    break;
-            }
-        });
-        group = findViewById(R.id.rg_kek_system);
-        group.setOnCheckedChangeListener((group1, checkedId) -> {
-            switch (checkedId) {
-                case R.id.rb_mksk:
-                    kekKeySystem = Security.SEC_MKSK;
-                    break;
-                case R.id.rb_rsa:
-                    kekKeySystem = Security.SEC_RSA_KEY;
                     break;
             }
         });
@@ -85,15 +98,16 @@ public class HsmExportKeyUnderKEKActivity extends BaseAppCompatActivity {
             int kekIndex = Integer.parseInt(kekIndexStr);
 
             Bundle bundle = new Bundle();
+            bundle.putInt("keySystem", keySystem);
             bundle.putInt("keyIndex", keyIndex);
+            bundle.putInt("kekKeySystem", kekKeySystem);
             bundle.putInt("kekIndex", kekIndex);
             bundle.putInt("paddingMode", paddingMode);
-            bundle.putInt("kekKeySystem", kekKeySystem);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[2048];
             int len = MyApplication.app.securityOptV2.hsmExportKeyUnderKEKEx(bundle, buffer);
             String msg = null;
             if (len < 0) {
-                msg = "hsmSaveKeyUnderKEKEx failed,code:" + len;
+                msg = "hsmExportKeyUnderKEKEx() failed,code:" + len;
                 LogUtil.e(TAG, msg);
                 showToast(msg);
             }

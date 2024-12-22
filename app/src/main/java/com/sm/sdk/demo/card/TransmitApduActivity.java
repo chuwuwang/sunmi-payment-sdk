@@ -3,7 +3,6 @@ package com.sm.sdk.demo.card;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -14,11 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
+import com.sm.sdk.demo.utils.LogUtil;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
 import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
@@ -26,8 +29,6 @@ import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
-
-import sunmi.sunmiui.utils.LogUtil;
 
 /**
  * This page show how to transmit apdu to RFC card.
@@ -100,8 +101,8 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
         public void findICCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
             String atr = info.getString("atr");
-            LogUtil.e(TAG, "findICCard, atr:" + atr);
-            handleCheckCardSuccess("findICCard, atr:" + atr);
+            LogUtil.e(TAG, "findICCardEx, atr:" + atr);
+            handleCheckCardSuccess("findICCardEx, atr:" + atr);
             cardType = info.getInt("cardType");
             showSpendTime();
         }
@@ -109,10 +110,34 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
         @Override
         public void findRFCardEx(Bundle info) throws RemoteException {
             addEndTime("checkCard()");
-            String uuid = info.getString("uuid");
-            LogUtil.e(TAG, "findRFCard, uuid:" + uuid);
-            handleCheckCardSuccess("findRFCard, uuid:" + uuid);
             cardType = info.getInt("cardType");
+            String uuid = info.getString("uuid");
+            String ats = info.getString("ats");
+            LogUtil.e(TAG, "findRFCardEx,cardType:" + cardType + ", uuid:" + uuid);
+            StringBuilder sb = new StringBuilder();
+            //ISO15693返回多条UID，多条UID以|分割
+            if (cardType == CardType.ISO15693.getValue()) {
+                String[] uids = uuid.split("\\|");
+                for (int i = 0; i < uids.length; i++) {
+                    sb.append("uid");
+                    sb.append(i);
+                    sb.append(":");
+                    sb.append(uids[i]);
+                    sb.append("\n");
+                }
+                if (sb.length() > 0) {
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+            } else {
+                sb.append("cardType:");
+                sb.append(cardType);
+                sb.append("\nuuid:");
+                sb.append(uuid);
+                sb.append("\nats:");
+                sb.append(ats);
+            }
+            handleCheckCardSuccess("findRFCardEx, " + sb);
+
             showSpendTime();
             //If want to transmit apdu to Mifare or Felica card,
             //change cardType to corresponding value, eg:
@@ -141,11 +166,16 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
             }
             int activeCtr = Integer.parseInt(ctrStr, 16);
             //支持M1卡
-            int allType = CardType.NFC.getValue()
-                    | CardType.IC.getValue()
-                    | CardType.MIFARE.getValue()
-                    | CardType.FELICA.getValue()
-                    | CardType.PSAM0.getValue();
+            int allType = CardType.IC.getValue() | CardType.PSAM0.getValue() | CardType.SAM1.getValue()
+                    | CardType.NFC.getValue() | CardType.MIFARE.getValue() | CardType.FELICA.getValue()
+                    | CardType.ISO15693.getValue() | CardType.INNOVATRON.getValue();
+            if (DeviceUtil.isTossTerminal()) {//TOSS terminal无NFC功能
+                allType &= ~CardType.NFC.getValue();
+                allType &= ~CardType.MIFARE.getValue();
+                allType &= ~CardType.FELICA.getValue();
+                allType &= ~CardType.ISO15693.getValue();
+                allType &= ~CardType.INNOVATRON.getValue();
+            }
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCardEx(allType, activeCtr, 0, mReadCardCallback, 60);
         } catch (Exception e) {
@@ -168,12 +198,14 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
     }
 
     private boolean checkInputData() {
-        if (cardType != AidlConstantsV2.CardType.NFC.getValue()
-                && cardType != AidlConstantsV2.CardType.MIFARE.getValue()
-                && cardType != AidlConstantsV2.CardType.FELICA.getValue()
+        if (cardType != CardType.NFC.getValue()
+                && cardType != CardType.MIFARE.getValue()
+                && cardType != CardType.FELICA.getValue()
+                && cardType != CardType.ISO15693.getValue()
                 && cardType != CardType.IC.getValue()
                 && cardType != CardType.PSAM0.getValue()
-                && cardType != CardType.SAM1.getValue()) {
+                && cardType != CardType.SAM1.getValue()
+                && cardType != CardType.INNOVATRON.getValue()) {
             showToast("transmit apdu not support card type:" + cardType);
             return false;
         }
@@ -191,7 +223,7 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
         String apduCtrStr = edtApduCtr.getText().toString();
         if (TextUtils.isEmpty(apduCtrStr)) {
             edtApduCtr.requestFocus();
-            showToast("卡片数据交互控制参数不能为空！");
+            showToast("APDU exchange control code shouldn't be empty!");
             return false;
         }
         return true;
@@ -220,7 +252,8 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
                 byte[] valid = Arrays.copyOf(recv, len);
                 if (cardType == CardType.NFC.getValue() || cardType == CardType.IC.getValue()
                         || cardType == CardType.PSAM0.getValue() || cardType == CardType.SAM1.getValue()
-                        || cardType == CardType.MIFARE_DESFIRE.getValue()) {
+                        || cardType == CardType.SAM2.getValue() || cardType == CardType.SAM3.getValue()
+                        || cardType == CardType.SAM4.getValue() || cardType == CardType.SAM5.getValue()) {
                     // (NFC)received data contains swa,swb
                     byte[] outData = Arrays.copyOf(valid, valid.length - 2);
                     byte swa = valid[valid.length - 2];//swa
@@ -273,8 +306,8 @@ public class TransmitApduActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.NFC.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }

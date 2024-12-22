@@ -2,12 +2,13 @@ package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
@@ -151,7 +152,7 @@ public class SaveTR31KeyActivity extends BaseAppCompatActivity {
             addStartTimeWithClear("savePlaintextKey()");
             int code = MyApplication.app.securityOptV2.savePlaintextKey(Security.KEY_TYPE_KBPK, keyValue, checkValue, Security.KEY_ALG_TYPE_3DES, keyIndex);
             addEndTime("savePlaintextKey()");
-            String msg = "save KBPK " + (code == 0 ? "success" : "failed");
+            String msg = "save KBPK " + Utility.getStateString(code);
             LogUtil.e(TAG, msg);
             showToast(msg);
             showSpendTime();
@@ -192,7 +193,7 @@ public class SaveTR31KeyActivity extends BaseAppCompatActivity {
             int code = MyApplication.app.securityOptV2.saveTR31Key(keyValue, kbpkIndex, keyIndex);
             addEndTime("saveTR31Key()");
             long end = System.currentTimeMillis();
-            String msg = "save saveTR31Key " + (code == 0 ? "success" : "failed") + ", time:" + (end - start);
+            String msg = "save saveTR31Key " + Utility.getStateString(code) + ", time:" + (end - start);
             LogUtil.e(TAG, msg);
             showToast(msg);
             showSpendTime();

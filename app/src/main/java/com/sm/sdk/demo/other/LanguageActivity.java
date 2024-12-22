@@ -1,9 +1,10 @@
 package com.sm.sdk.demo.other;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RadioButton;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.CacheHelper;

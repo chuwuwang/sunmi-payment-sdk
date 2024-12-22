@@ -14,6 +14,8 @@ public final class SettingUtil {
     private static final String KEY_SUPPORT_KEY_PARTITION = "supportKeyPartition";
     private static final String KEY_PSAM_CHANNEL = "psamChannel";
     private static final String KEY_AUTO_RESTORE_NFC = "autoRestoreNfc";
+    private static final String KEY_PERSIST_ACTIVATE = "persistActivate";
+
     private static final String KEY_MAX_APP_SELECT_TIME = "maxAppSelectTime";
     private static final String KEY_MAX_APP_FINAL_SELECT_TIME = "maxAppFinalSelectTime";
     private static final String KEY_MAX_CONFIRM_CARD_NO_TIME = "maxConfirmCardNoTime";
@@ -22,10 +24,16 @@ public final class SettingUtil {
     private static final String KEY_MAX_CERT_VERIFY_TIME = "maxCertVerifyTime";
     private static final String KEY_MAX_ONLINE_TIME = "maxOnlineTime";
     private static final String KEY_MAX_DATA_EXCHANGE_TIME = "maxDataExchangeTime";
+    private static final String KEY_TERM_RISK_MANAGEMENT = "termRiskManagement";
     private static final String KEY_MAX_TERM_RISK_TIME = "maxTermRiskTime";
+    private static final String KEY_PRE_FIRST_GEN_AC = "preFirstGenAC";
+    private static final String KEY_MAX_PRE_FIRST_GEN_AC_TIME = "maxPreFirstGenACTime";
+
     private static final String KEY_ISOLATE_M1_CPU = "isolateM1AndCPU";
     private static final String KEY_CARD_POLL_INTERVAL_TIME = "cardPollIntervalTime";
     private static final int DEFAULT_CHANNEL_COUNT = 2;
+    private static final String KEY_MAG_CARD_ROUND_POLL_TIMES = "magCardRoundPollTimes";
+
 
     private SettingUtil() {
         throw new AssertionError("Create instance of SettingUtil is prohibited");
@@ -162,6 +170,48 @@ public final class SettingUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * V1s/V2s/V2s_PLUS serial device set persist activate flag.
+     * Set this flag will prevent MCU go into sleep mode after active PSAM card, this may cause high power use.
+     * Call cardOff() after card operation finished allow MCU go to sleep as soon as possible.
+     *
+     * @param wakeup true- keep mcu wakeup, false-not keep mcu wakeup
+     */
+    public static void setPersistActivate(boolean wakeup) {
+        try {
+            JSONObject jobj = new JSONObject();
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (!TextUtils.isEmpty(jsonStr)) {
+                jobj = new JSONObject(jsonStr);
+            }
+            jobj.put("persistActivate", wakeup);
+            MyApplication.app.basicOptV2.setSysParam(AidlConstantsV2.SysParam.RESERVED, jobj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * V1s/V2s/V2s_PLUS serial device get persist activate flag
+     *
+     * @return true-keep mcu wakeup, false-not keep mcu wakeup
+     */
+    public static boolean getPersistActivate() {
+        try {
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (TextUtils.isEmpty(jsonStr)) {
+                return false;
+            }
+            JSONObject jobj = new JSONObject(jsonStr);
+            boolean value = jobj.optBoolean(KEY_PERSIST_ACTIVATE);
+            LogUtil.e(TAG, "keepMcuWakeup:" + value);
+            return value;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -385,6 +435,25 @@ public final class SettingUtil {
     }
 
     /**
+     * Set EMV enable termRiskManagement callback
+     */
+    public static int setEmvEnableTermRiskManagementCallback(boolean enable) {
+        int code = -1;
+        try {
+            JSONObject jobj = new JSONObject();
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (!TextUtils.isEmpty(jsonStr)) {
+                jobj = new JSONObject(jsonStr);
+            }
+            jobj.put(KEY_TERM_RISK_MANAGEMENT, enable);
+            code = MyApplication.app.basicOptV2.setSysParam(AidlConstantsV2.SysParam.RESERVED, jobj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
+    /**
      * Set EMV max term risk tme
      *
      * @param maxTermRiskTime max term risk time, unit: s
@@ -402,6 +471,50 @@ public final class SettingUtil {
                 jobj = new JSONObject(jsonStr);
             }
             jobj.put(KEY_MAX_TERM_RISK_TIME, maxTermRiskTime);
+            code = MyApplication.app.basicOptV2.setSysParam(AidlConstantsV2.SysParam.RESERVED, jobj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
+    /**
+     * Set EMV enable preFirstGenAC callback
+     */
+    public static int setEmvEnablePreFirstGenACCallback(boolean enable) {
+        int code = -1;
+        try {
+            JSONObject jobj = new JSONObject();
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (!TextUtils.isEmpty(jsonStr)) {
+                jobj = new JSONObject(jsonStr);
+            }
+            jobj.put(KEY_PRE_FIRST_GEN_AC, enable);
+            code = MyApplication.app.basicOptV2.setSysParam(AidlConstantsV2.SysParam.RESERVED, jobj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
+    /**
+     * Set EMV max term risk tme
+     *
+     * @param maxPreFirstGenACTime max pre first gen AC time, unit: s
+     *                             <br/> (1) if set maxPreFirstGenACTime<=60s, SDK use default value 60s.
+     *                             <br/> (2) if set maxPreFirstGenACTime>60, SDK use set value.
+     *                             <br/>Note: The set maxPreFirstGenACTime should be a int value, not a String.
+     * @return code >=0-success, <0-failed
+     */
+    public static int setEmvMaxPreFistGenACTime(int maxPreFirstGenACTime) {
+        int code = -1;
+        try {
+            JSONObject jobj = new JSONObject();
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (!TextUtils.isEmpty(jsonStr)) {
+                jobj = new JSONObject(jsonStr);
+            }
+            jobj.put(KEY_MAX_PRE_FIRST_GEN_AC_TIME, maxPreFirstGenACTime);
             code = MyApplication.app.basicOptV2.setSysParam(AidlConstantsV2.SysParam.RESERVED, jobj.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -510,6 +623,51 @@ public final class SettingUtil {
             }
             int value = jobj.getInt(KEY_CARD_POLL_INTERVAL_TIME);
             LogUtil.e(TAG, "cardPollIntervalTime:" + value);
+            return value;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Set magnetic card polling times in a polling round
+     * SDK default polling times is 1
+     *
+     * @param times polling times
+     */
+    public static void setMagCardRoundPollTimes(int times) {
+        try {
+            JSONObject jobj = new JSONObject();
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (!TextUtils.isEmpty(jsonStr)) {
+                jobj = new JSONObject(jsonStr);
+            }
+            jobj.put(KEY_MAG_CARD_ROUND_POLL_TIMES, times);
+            MyApplication.app.basicOptV2.setSysParam(AidlConstantsV2.SysParam.RESERVED, jobj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get magnetic card polling times in a polling round
+     *
+     * @return The polling times, unit:ms
+     */
+    public static int getMagCardRoundPollTimes() {
+        int defaultValue = 1;
+        try {
+            String jsonStr = MyApplication.app.basicOptV2.getSysParam(AidlConstantsV2.SysParam.RESERVED);
+            if (TextUtils.isEmpty(jsonStr)) {
+                return defaultValue;
+            }
+            JSONObject jobj = new JSONObject(jsonStr);
+            if (!jobj.has(KEY_MAG_CARD_ROUND_POLL_TIMES)) {
+                return defaultValue;
+            }
+            int value = jobj.getInt(KEY_MAG_CARD_ROUND_POLL_TIMES);
+            LogUtil.e(TAG, "magCardRoundPollTimes:" + value);
             return value;
         } catch (Exception e) {
             e.printStackTrace();

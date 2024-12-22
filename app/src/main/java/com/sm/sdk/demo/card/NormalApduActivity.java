@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -16,13 +15,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
 import com.sm.sdk.demo.utils.ByteUtil;
+import com.sm.sdk.demo.utils.DeviceUtil;
+import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.Utility;
-import com.sunmi.pay.hardware.aidl.AidlConstants;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
 import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
 import com.sunmi.pay.hardware.aidlv2.AidlErrorCodeV2;
 import com.sunmi.pay.hardware.aidlv2.bean.ApduRecvV2;
@@ -31,7 +34,6 @@ import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 import java.util.Arrays;
 
-import sunmi.sunmiui.utils.LogUtil;
 
 /**
  * This page show how to send/receive apdu to IC/RFC card.
@@ -109,7 +111,10 @@ public class NormalApduActivity extends BaseAppCompatActivity {
     private void checkCard() {
         try {
             //支持M1卡
-            int allType = AidlConstants.CardType.NFC.getValue() | AidlConstants.CardType.IC.getValue();
+            int allType = CardType.NFC.getValue() | CardType.IC.getValue();
+            if (DeviceUtil.isTossTerminal()) {//TOSS terminal无NFC功能
+                allType &= ~CardType.NFC.getValue();
+            }
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(allType, mReadCardCallback, 60);
         } catch (Exception e) {
@@ -189,7 +194,7 @@ public class NormalApduActivity extends BaseAppCompatActivity {
             showToast("Lc value should in [0,0x0100]");
             return false;
         }
-        if (indata.length() != lcValue * 2 || (indata.length() > 0 && !Utility.checkHexValue(indata))) {
+        if (indata.length() != lcValue * 2 || (!indata.isEmpty() && !Utility.checkHexValue(indata))) {
             apduIndata.requestFocus();
             showToast("indata value should lc*2 hex characters!");
             return false;
@@ -313,8 +318,8 @@ public class NormalApduActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.NFC.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }

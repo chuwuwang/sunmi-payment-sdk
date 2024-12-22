@@ -3,11 +3,12 @@ package com.sm.sdk.demo.other;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
@@ -103,6 +104,17 @@ public class SettingActivity extends BaseAppCompatActivity {
         btnSwitch.setText(R.string.setting);
         btnSwitch.setOnClickListener(v -> {
             openActivity(CardPollIntervalTimeActivity.class);
+        });
+
+        //mag card round poll times
+        view = findViewById(R.id.mag_card_round_poll_times);
+        txtName = view.findViewById(R.id.name);
+        txtName.setText(R.string.setting_mag_card_round_poll_times);
+        view.findViewById(R.id.value).setVisibility(View.INVISIBLE);
+        btnSwitch = view.findViewById(R.id.mb_switch);
+        btnSwitch.setText(R.string.setting);
+        btnSwitch.setOnClickListener(v -> {
+            openActivity(MagCardRoundPollTimesActivity.class);
         });
 
         //device shutdown

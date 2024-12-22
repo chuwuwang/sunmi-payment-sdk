@@ -3,23 +3,27 @@ package com.sm.sdk.demo.card;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.Constant;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
-import com.sm.sdk.demo.card.wrapper.CheckCardCallbackV2Wrapper;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sm.sdk.demo.utils.LogUtil;
 import com.sm.sdk.demo.utils.SettingUtil;
 import com.sm.sdk.demo.utils.Utility;
-import com.sunmi.pay.hardware.aidlv2.AidlConstantsV2;
+import com.sm.sdk.demo.wrapper.CheckCardCallbackV2Wrapper;
+import com.sunmi.pay.hardware.aidl.AidlConstants.CardType;
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2;
 
 public class NFCActivity extends BaseAppCompatActivity {
     private TextView tvDepictor;
+    private TextView tvCardType;
+    private TextView tvCardCate;
     private TextView tvUUID;
     private TextView tvAts;
     private Button tvTotal;
@@ -33,7 +37,11 @@ public class NFCActivity extends BaseAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_card_nfc);
+        if (DeviceUtil.isP2liteSE()) {
+            setContentView(R.layout.activity_card_nfc_with_card_indicator);
+        } else {
+            setContentView(R.layout.activity_card_nfc);
+        }
         initView();
         checkCard();
     }
@@ -45,13 +53,15 @@ public class NFCActivity extends BaseAppCompatActivity {
         tvSuccess = findViewById(R.id.mb_success);
         tvFail = findViewById(R.id.mb_fail);
         tvDepictor = findViewById(R.id.tv_depictor);
+        tvCardType = findViewById(R.id.tv_card_type);
+        tvCardCate = findViewById(R.id.tv_card_category);
         tvUUID = findViewById(R.id.tv_uuid);
         tvAts = findViewById(R.id.tv_ats);
     }
 
     private void checkCard() {
         try {
-            int cardType = AidlConstantsV2.CardType.NFC.getValue();
+            int cardType = CardType.NFC.getValue() | CardType.MIFARE.getValue() | CardType.FELICA.getValue() | CardType.ISO15693.getValue();
             addStartTimeWithClear("checkCard()");
             MyApplication.app.readCardOptV2.checkCard(cardType, mCheckCardCallback, 60);
         } catch (Exception e) {
@@ -137,6 +147,8 @@ public class NFCActivity extends BaseAppCompatActivity {
             if (success) {
                 successCount++;
                 tvDepictor.setText(getString(R.string.card_check_rf_card));
+                tvCardType.setText(getCardType(info.getInt("cardType")));
+                tvCardCate.setText(getCardCategory(info.getInt("cardCategory")));
                 tvUUID.setText(info.getString("uuid"));
                 tvAts.setText(info.getString("ats"));
             } else {//on Error
@@ -153,6 +165,28 @@ public class NFCActivity extends BaseAppCompatActivity {
         });
     }
 
+    /** get card type */
+    private String getCardType(int type) {
+        for (CardType ct : CardType.values()) {
+            if (type == ct.getValue()) {
+                return ct.toString();
+            }
+        }
+        return "Unknown";
+    }
+
+    /** get card category */
+    private String getCardCategory(int cate) {
+        switch (cate) {
+            case 'A':
+                return "A";
+            case 'B':
+                return "B";
+            default:
+                return "Unknown";
+        }
+    }
+
     @Override
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
@@ -162,8 +196,8 @@ public class NFCActivity extends BaseAppCompatActivity {
 
     private void cancelCheckCard() {
         try {
-            MyApplication.app.readCardOptV2.cardOff(AidlConstantsV2.CardType.NFC.getValue());
             MyApplication.app.readCardOptV2.cancelCheckCard();
+            MyApplication.app.readCardOptV2.cardOff(CardType.NFC.getValue());
         } catch (Exception e) {
             e.printStackTrace();
         }

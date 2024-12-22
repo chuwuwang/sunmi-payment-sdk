@@ -1,17 +1,21 @@
 package com.sm.sdk.demo.security;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import androidx.annotation.Nullable;
+
 import com.sm.sdk.demo.BaseAppCompatActivity;
 import com.sm.sdk.demo.MyApplication;
 import com.sm.sdk.demo.R;
+import com.sm.sdk.demo.utils.DeviceUtil;
 import com.sunmi.pay.hardware.aidl.AidlConstants.Security;
 
 public class DeleteKeyActivity extends BaseAppCompatActivity {
+    private EditText mEditTargetPkgName;
     private EditText mEditKeyIndex;
     private int keySystem = Security.SEC_MKSK;
 
@@ -35,7 +39,11 @@ public class DeleteKeyActivity extends BaseAppCompatActivity {
                             break;
                         case R.id.rb_sec_dukpt:
                             keySystem = Security.SEC_DUKPT;
-                            mEditKeyIndex.setHint(keyIndexHint + "[0,19][1100,1199][2100,2199]");
+                            if (DeviceUtil.isBrazilCKD()) {
+                                mEditKeyIndex.setHint(keyIndexHint + "[0,199]");
+                            } else {
+                                mEditKeyIndex.setHint(keyIndexHint + "[0,19][1100,1199][2100,2199]");
+                            }
                             break;
                         case R.id.rb_sec_rsa_key:
                             keySystem = Security.SEC_RSA_KEY;
@@ -48,6 +56,7 @@ public class DeleteKeyActivity extends BaseAppCompatActivity {
                     }
                 }
         );
+        mEditTargetPkgName = findViewById(R.id.edt_target_pkg_name);
         mEditKeyIndex = findViewById(R.id.key_index);
         findViewById(R.id.mb_ok).setOnClickListener(this);
         rdoGroup.check(R.id.rb_sec_mksk);
@@ -65,6 +74,7 @@ public class DeleteKeyActivity extends BaseAppCompatActivity {
 
     private void deleteKey() {
         try {
+            String targetPkgName = mEditTargetPkgName.getText().toString();
             String keyIndexStr = mEditKeyIndex.getText().toString().trim();
             int keyIndex;
             try {
@@ -75,8 +85,8 @@ public class DeleteKeyActivity extends BaseAppCompatActivity {
                         return;
                     }
                 } else if (keySystem == Security.SEC_DUKPT) {
-                    if ((keyIndex < 0 || keyIndex > 19) && (keyIndex < 1100 || keyIndex > 1199) && (keyIndex < 2100 || keyIndex > 2199)) {
-                        showToast(R.string.security_dukpt_key_index_hint);
+                    if (!KeyIndexUtil.checkDukptKeyIndex(keyIndex)) {
+                        showToast(R.string.security_duKpt_key_index_hint);
                         return;
                     }
                 } else if (keySystem == Security.SEC_RSA_KEY) {
@@ -96,7 +106,13 @@ public class DeleteKeyActivity extends BaseAppCompatActivity {
                 return;
             }
             addStartTimeWithClear("deleteKey()");
-            int result = MyApplication.app.securityOptV2.deleteKey(keySystem, keyIndex);
+            Bundle bundle = new Bundle();
+            bundle.putInt("keySystem", keySystem);
+            bundle.putInt("keyIndex", keyIndex);
+            if (!TextUtils.isEmpty(targetPkgName)) {
+                bundle.putString("targetAppPkgName", targetPkgName);
+            }
+            int result = MyApplication.app.securityOptV2.deleteKeyEx(bundle);
             addEndTime("deleteKey()");
             toastHint(result);
             showSpendTime();

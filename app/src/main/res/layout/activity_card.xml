@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -35,6 +35,10 @@
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/card_mag_enc_pan"
+                layout="@layout/common_item" />
+
+            <include
                 android:id="@+id/card_ic"
                 layout="@layout/common_item" />
 
@@ -43,7 +47,15 @@
                 layout="@layout/common_item" />
 
             <include
+                android:id="@+id/card_composite"
+                layout="@layout/common_item" />
+
+            <include
                 android:id="@+id/card_sam"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/card_sam_multi"
                 layout="@layout/common_item" />
 
             <include
@@ -56,17 +68,25 @@
                 android:visibility="gone" />
 
             <include
-                android:id="@+id/card_MIFARE_Ultralight"
+                android:id="@+id/card_mifare_ultralight"
                 layout="@layout/common_item"
                 android:visibility="visible" />
 
             <include
-                android:id="@+id/card_MIFARE_Ultralight_ev1"
+                android:id="@+id/card_mifare_ultralight_ev1"
                 layout="@layout/common_item"
                 android:visibility="gone" />
 
             <include
                 android:id="@+id/card_mifare_desfire_ev2"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/card_mifare_plus"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/card_mifare_plus_transmit_apdu"
                 layout="@layout/common_item" />
 
             <include
@@ -82,7 +102,11 @@
                 layout="@layout/common_item" />
 
             <include
-                android:id="@+id/card_mifare_plus"
+                android:id="@+id/card_extended_apdu"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/card_pass_apdu"
                 layout="@layout/common_item" />
 
             <include
@@ -107,6 +131,18 @@
 
             <include
                 android:id="@+id/card_ctr_code_test"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/card_exist_status"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/card_ping_test"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/card_innovatron_test"
                 layout="@layout/common_item" />
 
         </LinearLayout>

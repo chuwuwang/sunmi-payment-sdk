@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -29,12 +29,12 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/key_index"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -44,7 +44,7 @@
                     android:textColorHint="@color/colorTextHelp"
                     android:textSize="14sp" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/tv_info"
@@ -55,7 +55,7 @@
                 android:textColor="@color/colorTextHelp"
                 android:textSize="14sp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_get_ksn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"
@@ -71,12 +71,12 @@
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mb_ksn_increased"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/titleSize"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="32dp"
                 android:elevation="8dp"
                 android:gravity="center"
@@ -84,6 +84,23 @@
                 android:textAppearance="?android:attr/textAppearanceLargeInverse"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                app:backgroundTint="@color/colorOrange"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/mb_get_init_ksn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/titleSize"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="32dp"
+                android:elevation="8dp"
+                android:gravity="center"
+                android:text="@string/security_duKpt_get_init_ksn"
+                android:textAppearance="?android:attr/textAppearanceLargeInverse"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="gone"
                 app:backgroundTint="@color/colorOrange"
                 app:cornerRadius="8dp" />
 

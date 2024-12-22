@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/titleSize"
@@ -60,27 +60,27 @@
                 layout="@layout/common_item" />
 
             <include
-                android:id="@+id/security_DuKpt_save_key"
+                android:id="@+id/security_dukpt_save_key"
                 layout="@layout/common_item" />
 
             <include
-                android:id="@+id/security_DuKpt_AES_save_key"
+                android:id="@+id/security_duKpt_aes_save_key"
                 layout="@layout/common_item" />
 
             <include
-                android:id="@+id/security_DuKpt_calc_mac"
+                android:id="@+id/security_duKpt_calc_mac"
                 layout="@layout/common_item" />
 
             <include
-                android:id="@+id/security_DuKpt_data_encrypt"
+                android:id="@+id/security_dukpt_data_encrypt"
                 layout="@layout/common_item" />
 
             <include
-                android:id="@+id/security_DuKpt_data_decrypt"
+                android:id="@+id/security_duKpt_data_decrypt"
                 layout="@layout/common_item" />
 
             <include
-                android:id="@+id/security_DuKpt_current_ksn"
+                android:id="@+id/security_dukpt_ksn_operate"
                 layout="@layout/common_item" />
 
             <include
@@ -129,6 +129,10 @@
 
             <include
                 android:id="@+id/security_inject_sym_key"
+                layout="@layout/common_item" />
+
+            <include
+                android:id="@+id/security_tr34_test"
                 layout="@layout/common_item" />
 
         </LinearLayout>

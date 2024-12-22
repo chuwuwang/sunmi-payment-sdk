@@ -17,8 +17,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import sunmi.sunmiui.utils.LogUtil;
-
 public class SystemDateTime {
 
     public static void setDateTime(int year, int month, int day, int hour, int minute) throws IOException, InterruptedException {
